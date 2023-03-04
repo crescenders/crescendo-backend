@@ -10,7 +10,7 @@ class User(BaseModel, TimeStampedMixin, UUIDMixin):
     first_name = db.Column(db.String(4))
     last_name = db.Column(db.String(4))
     gender = db.Column(db.Enum("남자", "여자"))
-    phone_number = db.Column(db.String(20))
+    phone_number = db.Column(db.String(20), unique=True)
     password = db.Column(db.String(120))
 
     def get_full_name(self):
@@ -24,4 +24,4 @@ class User(BaseModel, TimeStampedMixin, UUIDMixin):
         return check_password_hash(self.password, password)
 
     def __repr__(self):
-        return f"<id{self.id}, full_name:{self.get_full_name()}>"
+        return f"<id:{self.id}, full_name:{self.get_full_name()}>"
