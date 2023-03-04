@@ -1,17 +1,18 @@
 from flask import Flask
 from flask_smorest import Api
 
-from crescenders.auth.resources import blp as auth_blp
+from crescenders.users.resources import blp as account_blp
 
 from .extensions import db, jwt, migrate
 
 
 def create_app():
-    app = Flask(__name__)
+    app = Flask("crescenders-backend")
     set_config(app)
     configure_extensions(app=app)
     api = Api(app)
     register_blueprints(api)
+    import_models()
     return app
 
 
@@ -22,8 +23,14 @@ def configure_extensions(app):
 
 
 def register_blueprints(api):
-    api.register_blueprint(auth_blp)
+    api_prefix = "api"
+    version = "1"
+    api.register_blueprint(account_blp, url_prefix=f"/{api_prefix}/v{version}/users")
 
 
 def set_config(app):
     app.config.from_object("core.config.dev")
+
+
+def import_models():
+    from crescenders.users.models import User
