@@ -50,7 +50,7 @@ class TimeStampedMixin:
 class UUIDMixin:
     """UUID 필드를 더해주는 믹스인"""
 
-    uuid = db.Column(db.String(36), primary_key=True, default=uuid4())
+    uuid = db.Column(db.String(36), default=uuid4().hex)
 
     @classmethod
     def get_by_uuid(cls, uuid_str):
