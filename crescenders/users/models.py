@@ -5,13 +5,13 @@ from core.utils.basemodel import BaseModel, TimeStampedMixin, UUIDMixin
 
 
 class User(BaseModel, TimeStampedMixin, UUIDMixin):
-    email = db.Column(db.String(80), unique=True)
-    username = db.Column(db.String(10), unique=True)
-    first_name = db.Column(db.String(4))
-    last_name = db.Column(db.String(4))
-    gender = db.Column(db.Enum("남자", "여자"))
-    phone_number = db.Column(db.String(20), unique=True)
-    password = db.Column(db.String(120))
+    email = db.Column(db.String(80), unique=True, nullable=False)
+    username = db.Column(db.String(10), unique=True, nullable=False)
+    first_name = db.Column(db.String(4), nullable=False)
+    last_name = db.Column(db.String(4), nullable=False)
+    gender = db.Column(db.Enum("남자", "여자"), nullable=False)
+    phone_number = db.Column(db.String(20), unique=True, nullable=False)
+    password = db.Column(db.String(120), nullable=False)
 
     def get_full_name(self):
         """성 + 이름"""

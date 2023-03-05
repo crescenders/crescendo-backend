@@ -43,14 +43,16 @@ class BaseModel(db.Model):
 class TimeStampedMixin:
     """생성일자, 수정일자를 자동 저장하기 위한 믹스인"""
 
-    created_on = db.Column(db.DateTime, default=db.func.now())
-    updated_on = db.Column(db.DateTime, default=db.func.now(), onupdate=db.func.now())
+    created_on = db.Column(db.DateTime, default=db.func.now(), nullable=False)
+    updated_on = db.Column(
+        db.DateTime, default=db.func.now(), onupdate=db.func.now(), nullable=False
+    )
 
 
 class UUIDMixin:
     """UUID 필드를 더해주는 믹스인"""
 
-    uuid = db.Column(db.String(36), default=uuid4().hex)
+    uuid = db.Column(db.String(36), unique=True, default=uuid4().hex, nullable=False)
 
     @classmethod
     def get_by_uuid(cls, uuid_str):
