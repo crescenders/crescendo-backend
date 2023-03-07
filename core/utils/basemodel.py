@@ -1,5 +1,7 @@
 from uuid import uuid4
 
+from flask import abort
+
 from core.extensions import db
 
 
@@ -21,8 +23,11 @@ class BaseModel(db.Model):
         return cls.query.all()
 
     @classmethod
-    def find_by_id(cls, id):
-        return cls.query.get(id)
+    def find_by_id(cls, id, raise_404=False):
+        if raise_404:
+            return cls.query.get_or_404(ident=id)
+        if not raise_404:
+            return cls.query.get(id)
 
     def create(self):
         db.session.add(self)
@@ -52,8 +57,14 @@ class TimeStampedMixin:
 class UUIDMixin:
     """UUID 필드를 더해주는 믹스인"""
 
-    uuid = db.Column(db.String(36), unique=True, default=uuid4().hex, nullable=False)
+    uuid = db.Column(db.String(36), unique=True, default=str(uuid4()), nullable=False)
 
     @classmethod
-    def get_by_uuid(cls, uuid_str):
-        return cls.query.filter_by(uuid=uuid_str).first()
+    def find_by_uuid(cls, uuid_str, raise_404=False):
+        if raise_404:
+            user = cls.query.filter_by(uuid=uuid_str).first()
+            if not user:
+                return abort(404)
+            return user
+        if not raise_404:
+            return cls.query.filter_by(uuid=uuid_str).first()
