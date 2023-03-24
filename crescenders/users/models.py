@@ -1,5 +1,8 @@
+import abc
+
 from core.extensions import db
-from core.utils.basemodel import BaseModel, TimeStampedMixin, UUIDMixin
+from core.models.sqlalchemy.basemodel import BaseModel
+from core.models.sqlalchemy.mixins import TimeStampedMixin, UUIDMixin
 
 
 class User(BaseModel, TimeStampedMixin, UUIDMixin):
@@ -11,5 +14,9 @@ class User(BaseModel, TimeStampedMixin, UUIDMixin):
     phone_number = db.Column(db.String(20), unique=True, nullable=False)
     password = db.Column(db.String(120), nullable=False)
 
+    @property
+    def full_name(self):
+        return f"{self.first_name} {self.last_name}"
+
     def __repr__(self):
-        return f"<id:{self.id}, full_name:{self.get_full_name()}>"
+        return f"<id:{self.id}, full_name:{self.full_name}>"

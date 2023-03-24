@@ -1,36 +1,68 @@
+import os
+
 from flask import Flask
-from flask_smorest import Api
+from flask_restx import Api
 
-from crescenders.users.resources import blp as account_blp
+from crescenders.users.resources import user_resource
 
-from .extensions import db, jwt, migrate
+from .extensions import db, jwt, ma, migrate
 
 
 def create_app():
+    """Flask Application factory"""
+
+    # 기본 Application 생성
     app = Flask("crescenders-backend")
+    # config 설정
     set_config(app)
+    # extensions 등록
     configure_extensions(app=app)
-    api = Api(app)
-    register_blueprints(api)
+
+    # Flask-RestX API 생성
+    api = create_api(app=app)
+
+    # namespace 등록
+    register_namespaces(api)
+
+    # model 등록
     import_models()
+
     return app
 
 
+def create_api(app):
+    return Api(
+        app,
+        version="v1",
+        title="Crescenders-Backend API Server",
+        terms_url="/",
+        contact="twicegoddessana1229@gmail.com",
+        license="MIT",
+    )
+
+
 def configure_extensions(app):
+    """Flask extensions 등록"""
     db.init_app(app)
     jwt.init_app(app)
+    ma.init_app(app)
     migrate.init_app(app, db)
 
 
-def register_blueprints(api):
-    api_prefix = "api"
-    version = "1"
-    api.register_blueprint(account_blp, url_prefix=f"/{api_prefix}/v{version}/users")
+def register_namespaces(api):
+    """API 에 Namespace 등록"""
+    api.add_namespace(user_resource, path="/api/v1/users")
 
 
 def set_config(app):
-    app.config.from_object("core.config.dev")
+    """config 설정"""
+    env = os.environ.get("FLASK_DEBUG")
+    if env == "1":
+        app.config.from_object("core.config.dev")
+    else:
+        app.config.from_object("core.config.prod")
 
 
 def import_models():
+    """Flask-Migrate 를 위한 model import"""
     from crescenders.users.models import User
