@@ -1,8 +1,6 @@
-import abc
-
 from core.extensions import db
-from core.models.sqlalchemy.basemodel import BaseModel
-from core.models.sqlalchemy.mixins import TimeStampedMixin, UUIDMixin
+from core.models.basemodel import BaseModel
+from core.models.mixins import TimeStampedMixin, UUIDMixin
 
 
 class User(BaseModel, TimeStampedMixin, UUIDMixin):
