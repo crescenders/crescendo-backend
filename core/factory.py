@@ -3,16 +3,16 @@ import os
 from flask import Flask
 from flask_restx import Api
 
-from crescenders.users.resources import user_resource
+from crescendo.users.resources import user_resource
 
-from .extensions import db, jwt, ma, migrate
+from .extensions import db, jwt, migrate
 
 
 def create_app():
     """Flask Application factory"""
 
     # 기본 Application 생성
-    app = Flask("crescenders-backend")
+    app = Flask("crescendo-backend")
     # config 설정
     set_config(app)
     # extensions 등록
@@ -45,7 +45,6 @@ def configure_extensions(app):
     """Flask extensions 등록"""
     db.init_app(app)
     jwt.init_app(app)
-    ma.init_app(app)
     migrate.init_app(app, db)
 
 
@@ -65,4 +64,4 @@ def set_config(app):
 
 def import_models():
     """Flask-Migrate 를 위한 model import"""
-    from crescenders.users.models import User
+    from crescendo.users.models import User

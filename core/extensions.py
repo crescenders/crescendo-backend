@@ -6,4 +6,3 @@ from flask_sqlalchemy import SQLAlchemy
 db = SQLAlchemy()
 jwt = JWTManager()
 migrate = Migrate()
-ma = Marshmallow()

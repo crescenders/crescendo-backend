@@ -15,3 +15,4 @@ SWAGGER_UI_REQUEST_DURATION = True
 
 RESTX_MASK_HEADER = None  # field mask 비활성화
 RESTX_MASK_SWAGGER = False  # field mask 비활성화
+BUNDLE_ERRORS = True
