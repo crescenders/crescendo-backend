@@ -5,4 +5,5 @@ from flask_sqlalchemy import SQLAlchemy
 
 db = SQLAlchemy()
 jwt = JWTManager()
+ma = Marshmallow()
 migrate = Migrate()

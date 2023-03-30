@@ -1,11 +1,10 @@
 import os
 
+from crescendo.users.resources import users_api
 from flask import Flask
 from flask_restx import Api
 
-from crescendo.users.resources import user_resource
-
-from .extensions import db, jwt, migrate
+from .extensions import db, jwt, ma, migrate
 
 
 def create_app():
@@ -45,12 +44,13 @@ def configure_extensions(app):
     """Flask extensions 등록"""
     db.init_app(app)
     jwt.init_app(app)
+    ma.init_app(app)
     migrate.init_app(app, db)
 
 
 def register_namespaces(api):
     """API 에 Namespace 등록"""
-    api.add_namespace(user_resource, path="/api/v1/users")
+    api.add_namespace(users_api, path="/api/v1/users")
 
 
 def set_config(app):

@@ -1,3 +1,4 @@
+from crescendo.users.models import User
 from sqlalchemy.exc import IntegrityError
 from werkzeug.security import check_password_hash, generate_password_hash
 
@@ -12,6 +13,7 @@ class UserService:
 
     def get_all_users(self, **kwargs):
         """모든 사용자 리스트를 반환합니다."""
+        return User.query.all()
 
     def get_one_user(self, uuid):
         """한 명의 사용자 인스턴스를 반환합니다."""
