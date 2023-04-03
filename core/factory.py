@@ -1,8 +1,10 @@
 import os
 
-from crescendo.users.resources import users_api
 from flask import Flask
 from flask_restx import Api
+
+from crescendo.users.container import UserContainer
+from crescendo.users.resources import users_api
 
 from .extensions import db, jwt, ma, migrate
 
@@ -12,13 +14,18 @@ def create_app():
 
     # 기본 Application 생성
     app = Flask("crescendo-backend")
+
     # config 설정
     set_config(app)
+
     # extensions 등록
     configure_extensions(app=app)
 
     # Flask-RestX API 생성
     api = create_api(app=app)
+
+    # di container 준비
+    set_di_container(app=app)
 
     # namespace 등록
     register_namespaces(api)
@@ -65,3 +72,8 @@ def set_config(app):
 def import_models():
     """Flask-Migrate 를 위한 model import"""
     from crescendo.users.models import User
+
+
+def set_di_container(app):
+    user_container = UserContainer()
+    app.user_container = user_container
