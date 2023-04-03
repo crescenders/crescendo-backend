@@ -1,0 +1,32 @@
+[[source]]
+url = "https://pypi.org/simple"
+verify_ssl = true
+name = "pypi"
+
+[packages]
+werkzeug = "==2.2.3"
+flask = "==2.2.2"
+flask-jwt-extended = "==4.4.4"
+flask-migrate = "==4.0.4"
+flask-sqlalchemy = "==3.0.3"
+flask-moreshell = "*"
+marshmallow = "*"
+marshmallow-sqlalchemy = "*"
+flask-marshmallow = "*"
+python-dotenv = "==1.0.0"
+alembic = "~=1.10.2"
+sqlalchemy = "~=2.0.5.post1"
+dependency_injector = "*"
+types-flask-migrate = "*"
+flask-restx = {extras = ["types"], version = "*"}
+
+[dev-packages]
+ipython = "*"
+flake8 = "*"
+black = "*"
+isort = "*"
+pre-commit = "*"
+
+[requires]
+python_version = "3.11"
+python_full_version = "3.11.2"

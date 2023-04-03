@@ -1,6 +1,0 @@
--r default.txt
-
-flake8
-black
-isort
-pre-commit
