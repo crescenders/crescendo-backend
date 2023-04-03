@@ -7,4 +7,4 @@ class UserContainer(containers.DeclarativeContainer):
     wiring_config = containers.WiringConfiguration(
         modules=["crescendo.users.resources"]
     )
-    user_service = providers.Factory(UserService)
+    user_service_abc = providers.Dependency(instance_of=UserServiceABC)
