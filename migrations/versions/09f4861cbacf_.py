@@ -1,15 +1,15 @@
 """empty message
 
-Revision ID: d7eddb3a7dee
+Revision ID: 09f4861cbacf
 Revises: 
-Create Date: 2023-03-16 00:05:51.729759
+Create Date: 2023-04-02 15:18:32.857372
 
 """
 import sqlalchemy as sa
 from alembic import op
 
 # revision identifiers, used by Alembic.
-revision = "d7eddb3a7dee"
+revision = "09f4861cbacf"
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -21,18 +21,14 @@ def upgrade():
         "User",
         sa.Column("email", sa.String(length=80), nullable=False),
         sa.Column("username", sa.String(length=10), nullable=False),
-        sa.Column("first_name", sa.String(length=4), nullable=False),
-        sa.Column("last_name", sa.String(length=4), nullable=False),
+        sa.Column("name", sa.String(length=10), nullable=False),
         sa.Column("gender", sa.Enum("남자", "여자"), nullable=False),
-        sa.Column("phone_number", sa.String(length=20), nullable=False),
-        sa.Column("password", sa.String(length=120), nullable=False),
         sa.Column("id", sa.Integer(), nullable=False),
         sa.Column("created_at", sa.DateTime(), nullable=False),
         sa.Column("updated_at", sa.DateTime(), nullable=False),
         sa.Column("uuid", sa.String(length=36), nullable=False),
         sa.PrimaryKeyConstraint("id"),
         sa.UniqueConstraint("email"),
-        sa.UniqueConstraint("phone_number"),
         sa.UniqueConstraint("username"),
         sa.UniqueConstraint("uuid"),
     )
