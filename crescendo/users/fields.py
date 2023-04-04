@@ -35,8 +35,12 @@ user_list = users_api.model(
         "total": fields.Integer(
             readonly=True,
         ),
-        "next": fields.String(),
-        "previous": fields.String(),
+        "has_next": fields.String(
+            readonly=True,
+        ),
+        "has_prev": fields.String(
+            readonly=True,
+        ),
         "users": fields.List(
             fields.Nested(user),
         ),

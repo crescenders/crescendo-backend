@@ -1,4 +1,7 @@
+import typing as t
 from abc import ABC, abstractmethod
+
+from flask_sqlalchemy.query import Query
 
 from crescendo.users.models import User
 
@@ -31,8 +34,32 @@ class UserService(UserServiceABC):
     def register(self):
         pass
 
-    def get_lists(self):
-        pass
+    def get_lists(
+        self,
+        page: int,
+        per_page: int,
+        filter_by: t.Optional[str],
+        ordering: str,
+    ):
+        query = User.query
+        # 검색어가 있을 경우 처리
+        if filter_by:
+            pass
+        # 정렬 조건 처리, 기본값은 내림차순인 "desc"
+        if ordering == "desc":
+            Query.order_by
+            query = query.order_by(User.id.desc())
+        elif ordering == "asc":
+            query = query.order_by(User.id.asc())
+        # 페이지네이션 처리
+        query = query.paginate(page=page, per_page=per_page, count=True)
+
+        return dict(
+            total=query.total,
+            has_prev=query.has_prev,
+            has_next=query.has_next,
+            users=query.items,
+        )
 
     def get_one(self):
         pass
