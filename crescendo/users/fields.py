@@ -28,7 +28,6 @@ user = users_api.model(
     },
 )
 
-
 user_list = users_api.model(
     "UserList",
     {
