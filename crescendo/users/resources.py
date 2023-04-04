@@ -46,7 +46,7 @@ class UserListAPI(Resource):
             else "desc"
         )
 
-        return self.user_service.get_lists(
+        return self.user_service.get_list(
             page=page, per_page=per_page, filter_by=filter_by, ordering=ordering
         )
 
