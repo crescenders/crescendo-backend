@@ -43,7 +43,7 @@ def create_api(app):
     return Api(
         app,
         version="v1",
-        title="Crescenders-Backend API Server",
+        title="Crescendo_backend Server API",
         terms_url="/",
         contact="twicegoddessana1229@gmail.com",
         license="MIT",
