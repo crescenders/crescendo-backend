@@ -1,10 +1,13 @@
 import os
 
+from dependency_injector import providers
 from flask import Flask
 from flask_restx import Api
 
+from crescendo.auth.resources import auth_api
 from crescendo.users.container import UserContainer
 from crescendo.users.resources import users_api
+from crescendo.users.services import UserService, UserServiceABC
 
 from .extensions import db, jwt, ma, migrate
 
@@ -25,7 +28,7 @@ def create_app():
     api = create_api(app=app)
 
     # di container 준비
-    set_di_container(app=app)
+    set_di_container()
 
     # namespace 등록
     register_namespaces(api)
@@ -58,6 +61,7 @@ def configure_extensions(app):
 def register_namespaces(api):
     """API 에 Namespace 등록"""
     api.add_namespace(users_api, path="/api/v1/users")
+    api.add_namespace(auth_api, path="/api/v1/auth")
 
 
 def set_config(app):
@@ -69,11 +73,10 @@ def set_config(app):
         app.config.from_object("core.config.prod")
 
 
-def import_models():
+def import_models() -> None:
     """Flask-Migrate 를 위한 model import"""
     from crescendo.users.models import User
 
 
-def set_di_container(app):
-    user_container = UserContainer()
-    app.user_container = user_container
+def set_di_container() -> None:
+    user_container = UserContainer(user_service_abc=providers.Singleton(UserService))
