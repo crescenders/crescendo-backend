@@ -7,7 +7,7 @@ class BaseMixin:
     """모든 믹스인들의 부모 믹스인
     믹스인이 클래스 자체로 사용되지 못하도록 합니다."""
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args, **kwargs) -> None:
         if type(self) is self.__class__:
             raise TypeError(
                 f"You can only use {self.__class__.__name__} for implementing Mixin."
