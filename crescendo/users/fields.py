@@ -3,8 +3,8 @@ from flask_restx import fields
 from crescendo.users import users_api
 
 user = users_api.model(
-    "User",
-    dict(
+    name="User",
+    model=dict(
         id=fields.Integer(
             readonly=True,
             example="1",
@@ -29,8 +29,8 @@ user = users_api.model(
 )
 
 user_list = users_api.model(
-    "UserList",
-    dict(
+    name="UserList",
+    model=dict(
         total_user_count=fields.Integer(
             readonly=True,
             example="1",
