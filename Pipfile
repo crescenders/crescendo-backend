@@ -10,15 +10,16 @@ flask-jwt-extended = "==4.4.4"
 flask-migrate = "==4.0.4"
 flask-sqlalchemy = "==3.0.3"
 flask-moreshell = "*"
+flask-smorest = "*"
+python-dotenv = "==1.0.0"
 marshmallow = "*"
 marshmallow-sqlalchemy = "*"
 flask-marshmallow = "*"
-python-dotenv = "==1.0.0"
 alembic = "~=1.10.2"
 sqlalchemy = "~=2.0.5.post1"
 dependency_injector = "*"
 types-flask-migrate = "*"
-flask-restx = "*"
+
 
 [dev-packages]
 ipython = "*"
