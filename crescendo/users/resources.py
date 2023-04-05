@@ -5,7 +5,6 @@ from flask_restx import Resource
 from crescendo.users import users_api
 from crescendo.users.container import UserContainer
 from crescendo.users.fields import user_list
-from crescendo.users.services import UserService, UserServiceABC
 
 
 @users_api.route("/")
@@ -47,7 +46,10 @@ class UserListAPI(Resource):
         )
 
         return self.user_service.get_list(
-            page=page, per_page=per_page, filter_by=filter_by, ordering=ordering
+            page=page,
+            per_page=per_page,
+            filter_by=filter_by,
+            ordering=ordering,
         )
 
     def post(self):
@@ -72,9 +74,9 @@ class UserDetail(Resource):
         """UUID 로 특정되는 사용자 한 명의 정보를 조회합니다."""
         return self.user_service.get_one_user(user_uuid)
 
-    # def put(self, user_uuid):
-    #     """UUID로 특정되는 사용자 한 명의 정보를 수정합니다."""
-    #     return self.user_service.update_user(user_uuid, **request.json)
+    def put(self, user_uuid):
+        """UUID로 특정되는 사용자 한 명의 정보를 수정합니다."""
+        return self.user_service.update_user(user_uuid, **request.json)
 
     def delete(self, user_uuid):
         """UUID로 특정되는 사용자 한 명을 삭제합니다."""
