@@ -28,7 +28,7 @@ def create_app():
     # set_di_container()
 
     # namespace 등록
-    register_namespaces(api)
+    register_blueprints(api)
 
     # model 등록
     import_models()
@@ -48,7 +48,7 @@ def configure_extensions(app):
     migrate.init_app(app, db)
 
 
-def register_namespaces(api):
+def register_blueprints(api):
     """API 에 Namespace 등록"""
     api.register_blueprint(users_api, url_prefix="/api/v1/users")
     api.register_blueprint(auth_api, url_prefix="/api/v1/auth")
