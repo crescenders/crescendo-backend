@@ -12,6 +12,7 @@ flask-migrate = "==4.0.4"
 flask-sqlalchemy = "==3.0.3"
 flask-moreshell = "*"
 flask-smorest = "*"
+types-smorest = "*"
 flask-marshmallow = "*"
 types-flask-migrate = "*"
 
