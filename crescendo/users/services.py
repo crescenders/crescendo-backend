@@ -35,9 +35,6 @@ class UserServiceABC(ABC):
 class UserService(UserServiceABC):
     """회원정보조회, 회원가입, 회원정보수정, 회원탈퇴, 검색"""
 
-    def __init__(self, model: t.Type[User]):
-        self.model = model
-
     def register(self):
         pass
 
@@ -67,14 +64,7 @@ class UserService(UserServiceABC):
             page=page, per_page=per_page, count=True, error_out=False
         )
 
-        return dict(
-            total=query.total,
-            current_page=query.page,
-            total_page=query.pages,
-            has_prev=query.has_prev,
-            has_next=query.has_next,
-            users=query.items,
-        )
+        return User.query.all()
 
     def get_one(self):
         pass

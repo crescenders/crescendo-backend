@@ -1,7 +1,7 @@
 import os
 
 from flask import Flask
-from flask_restx import Api
+from flask_smorest import Api
 
 from crescendo.auth.resources import auth_api
 from crescendo.users.resources import users_api
@@ -37,14 +37,7 @@ def create_app():
 
 
 def create_api(app):
-    return Api(
-        app,
-        version="v1",
-        title="Crescendo_backend Server API",
-        terms_url="/",
-        contact="twicegoddessana1229@gmail.com",
-        license="MIT",
-    )
+    return Api(app)
 
 
 def configure_extensions(app):
@@ -57,8 +50,8 @@ def configure_extensions(app):
 
 def register_namespaces(api):
     """API 에 Namespace 등록"""
-    api.add_namespace(users_api, path="/api/v1/users")
-    api.add_namespace(auth_api, path="/api/v1/auth")
+    api.register_blueprint(users_api, url_prefix="/api/v1/users")
+    api.register_blueprint(auth_api, url_prefix="/api/v1/auth")
 
 
 def set_config(app):
