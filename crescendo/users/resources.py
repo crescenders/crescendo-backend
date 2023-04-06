@@ -13,7 +13,7 @@ class UserListAPI(MethodView):
     def __init__(
         self,
         *args,
-        user_service=Provide[UserContainer.user_service_abc],
+        user_service=Provide[UserContainer.user_service],
         **kwargs,
     ):
         super().__init__(*args, **kwargs)
@@ -25,7 +25,6 @@ class UserListAPI(MethodView):
         """사용자 전체목록을 조회합니다.
 
         pagination 혹은 filter 결과가 있을 경우도 처리합니다."""
-
         return self.user_service.get_list(**kwargs)
 
     def post(self):
@@ -40,7 +39,7 @@ class UserDetail(MethodView):
     def __init__(
         self,
         *args,
-        user_service=Provide[UserContainer.user_service_abc],
+        user_service=Provide[UserContainer.user_service],
         **kwargs,
     ):
         super().__init__(*args, **kwargs)
