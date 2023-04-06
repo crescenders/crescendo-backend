@@ -10,4 +10,4 @@ users_api = Blueprint(
     description="사용자 API",
 )
 
-user_container = UserContainer(user_service_abc=providers.Singleton(UserService))
+user_container = UserContainer(user_service=providers.Singleton(UserService))
