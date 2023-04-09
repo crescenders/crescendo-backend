@@ -1,13 +1,17 @@
 from marshmallow import Schema, fields, validate
 
+from core.schemas.request import (
+    FilteringArgsSchemaMixin,
+    OrderingArgsSchemaMixin,
+    PaginateArgsSchemaMixin,
+)
+from core.schemas.response import PaginationResultSchemaMixin
 
-class ArgsSchema(Schema):
-    page = fields.Integer(load_default=1)
-    per_page = fields.Integer(load_default=10)
-    filter_by = fields.String(load_default=None)
-    ordering = fields.String(
-        load_validate=validate.OneOf(["asc", "desc"]), load_default="desc"
-    )
+
+class UserListArgsSchema(
+    PaginateArgsSchemaMixin, FilteringArgsSchemaMixin, OrderingArgsSchemaMixin, Schema
+):
+    pass
 
 
 class UserSchema(Schema):
@@ -18,6 +22,26 @@ class UserSchema(Schema):
             "example": 1,
         },
     )
-    uuid = fields.String()
-    username = fields.String()
-    email = fields.String()
+    uuid = fields.String(
+        dump_only=True,
+        metadata={
+            "description": "사용자 UUID",
+            "example": "715fcaff-45f1-4472-814a-a06686241023",
+        },
+    )
+    username = fields.String(
+        metadata={
+            "description": "사용자 닉네임",
+            "example": "goddessana",
+        },
+    )
+    email = fields.String(
+        metadata={
+            "description": "사용자 이메일",
+            "example": "goddessana@gmail.com",
+        }
+    )
+
+
+class UserListSchema(PaginationResultSchemaMixin, Schema):
+    results = fields.List(fields.Nested(UserSchema), metadata={"description": "사용자 목록"})
