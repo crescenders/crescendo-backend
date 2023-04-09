@@ -1,7 +1,7 @@
 import os
 
 from flask import Flask
-from flask_restx import Api
+from flask_smorest import Api
 
 from crescendo.auth.resources import auth_api
 from crescendo.users.resources import users_api
@@ -24,11 +24,8 @@ def create_app():
     # Flask-RestX API 생성
     api = create_api(app=app)
 
-    # di container 준비
-    # set_di_container()
-
     # namespace 등록
-    register_namespaces(api)
+    register_blueprints(api)
 
     # model 등록
     import_models()
@@ -37,14 +34,7 @@ def create_app():
 
 
 def create_api(app):
-    return Api(
-        app,
-        version="v1",
-        title="Crescendo_backend Server API",
-        terms_url="/",
-        contact="twicegoddessana1229@gmail.com",
-        license="MIT",
-    )
+    return Api(app)
 
 
 def configure_extensions(app):
@@ -55,10 +45,10 @@ def configure_extensions(app):
     migrate.init_app(app, db)
 
 
-def register_namespaces(api):
+def register_blueprints(api):
     """API 에 Namespace 등록"""
-    api.add_namespace(users_api, path="/api/v1/users")
-    api.add_namespace(auth_api, path="/api/v1/auth")
+    api.register_blueprint(users_api, url_prefix="/api/v1/users")
+    api.register_blueprint(auth_api, url_prefix="/api/v1/auth")
 
 
 def set_config(app):
@@ -72,4 +62,4 @@ def set_config(app):
 
 def import_models() -> None:
     """Flask-Migrate 를 위한 model import"""
-    from crescendo.users.models import User
+    from crescendo.users.models import UserModel
