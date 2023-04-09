@@ -24,9 +24,6 @@ def create_app():
     # Flask-RestX API 생성
     api = create_api(app=app)
 
-    # di container 준비
-    # set_di_container()
-
     # namespace 등록
     register_blueprints(api)
 
@@ -65,4 +62,4 @@ def set_config(app):
 
 def import_models() -> None:
     """Flask-Migrate 를 위한 model import"""
-    from crescendo.users.models import User
+    from crescendo.users.models import UserModel
