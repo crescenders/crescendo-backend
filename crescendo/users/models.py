@@ -3,7 +3,7 @@ from core.models.base_model import BaseModel
 from core.models.mixins import TimeStampedMixin, UUIDMixin
 
 
-class User(BaseModel, TimeStampedMixin, UUIDMixin):
+class UserModel(BaseModel, TimeStampedMixin, UUIDMixin):
     __tablename__ = "user"
 
     email = db.Column(db.String(80), unique=True, nullable=False)
