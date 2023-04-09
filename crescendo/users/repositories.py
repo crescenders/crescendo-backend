@@ -1,10 +1,11 @@
 from abc import ABC, abstractmethod
-from typing import Any, Dict, List, Optional
+from typing import Any, Optional
 
-from flask_sqlalchemy.pagination import QueryPagination
+from flask_sqlalchemy import Pagination
 from flask_sqlalchemy.query import Query
 
 from core.extensions import db
+from core.utils.mapper import sqlalchemy_pagination_mapper
 from crescendo.users.models import UserModel
 
 
@@ -14,9 +15,7 @@ class UserRepositoryABC(ABC):
         pass
 
     @abstractmethod
-    def read_list(
-        self, page: int, per_page: int, filter_by: str, ordering: str
-    ) -> dict[str, int | list[Any]]:
+    def read_list(self, page: int, per_page: int, filter_by: str, ordering: str):
         pass
 
     @abstractmethod
@@ -40,7 +39,7 @@ class UserRepository(UserRepositoryABC):
 
     def read_list(
         self, page: int, per_page: int, filter_by: Optional[str], ordering: str
-    ) -> dict[str, int | list[Any]]:
+    ) -> dict:
         query = self._get_base_query()
 
         if filter_by:
@@ -48,12 +47,7 @@ class UserRepository(UserRepositoryABC):
 
         query = self._order_by(query, ordering)
         result = self._paginate(query, page, per_page)
-        return dict(
-            current_page=result.page,
-            per_page=result.per_page,
-            total_page=result.pages,
-            results=result.items,
-        )
+        return sqlalchemy_pagination_mapper(result)
 
     def _filter_by(self, query: Query, filter_by: str) -> Query:
         filter_by = f"%%{filter_by}%%"
@@ -70,7 +64,7 @@ class UserRepository(UserRepositoryABC):
         else:
             return query
 
-    def _paginate(self, query: Query, page: int, per_page: int) -> QueryPagination:
+    def _paginate(self, query: Query, page: int, per_page: int) -> Pagination:
         return query.paginate(page=page, per_page=per_page, count=True, error_out=False)
 
     def delete(self, model: UserModel) -> UserModel:
