@@ -1,7 +1,7 @@
-import typing as t
 from abc import ABC, abstractmethod
+from typing import Optional
 
-from crescendo.users.models import User
+from crescendo.users.models import UserModel
 
 
 class UserServiceABC(ABC):
@@ -14,7 +14,7 @@ class UserServiceABC(ABC):
         self,
         page: int,
         per_page: int,
-        filter_by: t.Optional[str],
+        filter_by: Optional[str],
         ordering: str,
     ):
         pass
@@ -35,36 +35,14 @@ class UserServiceABC(ABC):
 class UserService(UserServiceABC):
     """회원정보조회, 회원가입, 회원정보수정, 회원탈퇴, 검색"""
 
+    def __init__(self, user_repository):
+        self.user_repository = user_repository
+
     def register(self):
         pass
 
-    def get_list(
-        self,
-        page: int,
-        per_page: int,
-        filter_by: t.Optional[str],
-        ordering: str,
-    ):
-        query = User.query
-        # 검색어가 있을 경우 처리
-        if filter_by:
-            filter_by = f"%%{filter_by}%%"
-            query = query.filter(
-                # username, email 에 검색어가 포함되어 있다면 결과에 나타남
-                User.username.ilike(filter_by)
-                | User.email.ilike(filter_by)
-            )
-        # 정렬 조건 처리, 기본값은 내림차순인 "desc"
-        if ordering == "desc":
-            query = query.order_by(User.id.desc())
-        elif ordering == "asc":
-            query = query.order_by(User.id.asc())
-        # 페이지네이션 처리
-        query = query.paginate(
-            page=page, per_page=per_page, count=True, error_out=False
-        )
-
-        return User.query.all()
+    def get_list(self, **kwargs):
+        return self.user_repository.read_list(**kwargs)
 
     def get_one(self):
         pass
