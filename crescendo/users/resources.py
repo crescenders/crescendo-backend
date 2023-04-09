@@ -3,8 +3,8 @@ from flask import request
 from flask.views import MethodView
 
 from crescendo.users import users_api
-from crescendo.users.container import UserContainer
-from crescendo.users.schemas import ArgsSchema, UserSchema
+from crescendo.users.containers import UserContainer
+from crescendo.users.schemas import ArgsSchema, UserListSchema
 
 
 @users_api.route("/")
@@ -20,16 +20,13 @@ class UserListAPI(MethodView):
         self.user_service = user_service
 
     @users_api.arguments(ArgsSchema, location="query")
-    @users_api.response(200, UserSchema(many=True))
+    @users_api.response(200, UserListSchema)
     def get(self, kwargs):
-        """사용자 전체목록을 조회합니다.
-
-        pagination 혹은 filter 결과가 있을 경우도 처리합니다."""
+        """사용자 목록을 조회합니다."""
         return self.user_service.get_list(**kwargs)
 
     def post(self):
-        """사용자 한 명을 생성합니다.
-        비밀번호를 암호화하여 저장합니다."""
+        """사용자 한 명을 생성합니다."""
         return self.user_service.register()
 
 
