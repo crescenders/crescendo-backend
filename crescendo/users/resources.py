@@ -4,7 +4,7 @@ from flask.views import MethodView
 
 from crescendo.users import users_api
 from crescendo.users.containers import UserContainer
-from crescendo.users.schemas import ArgsSchema, UserListSchema
+from crescendo.users.schemas import UserListArgsSchema, UserListSchema
 
 
 @users_api.route("/")
@@ -19,7 +19,7 @@ class UserListAPI(MethodView):
         super().__init__(*args, **kwargs)
         self.user_service = user_service
 
-    @users_api.arguments(ArgsSchema, location="query")
+    @users_api.arguments(UserListArgsSchema, location="query")
     @users_api.response(200, UserListSchema)
     def get(self, kwargs):
         """사용자 목록을 조회합니다."""
