@@ -1,8 +1,6 @@
 from abc import ABC, abstractmethod
 from typing import Optional
 
-from crescendo.users.models import UserModel
-
 
 class UserServiceABC(ABC):
     @abstractmethod
