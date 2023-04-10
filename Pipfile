@@ -16,15 +16,14 @@ types-smorest = "*"
 flask-marshmallow = "*"
 types-flask-migrate = "*"
 
-# python
+# python utils
 python-dotenv = "==1.0.0"
 marshmallow = "*"
 marshmallow-sqlalchemy = "*"
 alembic = "~=1.10.2"
 sqlalchemy = "~=2.0.5.post1"
 dependency_injector = "*"
-
-
+google-auth = "*"
 
 [dev-packages]
 ipython = "*"
