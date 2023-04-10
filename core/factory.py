@@ -1,6 +1,7 @@
 import os
 
 from flask import Flask
+from flask_cors import CORS
 from flask_smorest import Api
 
 from crescendo.auth.resources import auth_api
@@ -16,7 +17,10 @@ def create_app():
     app = Flask("crescendo-backend")
 
     # config 설정
-    set_config(app)
+    set_config(app=app)
+
+    # CORS 설정
+    set_cors(app=app)
 
     # extensions 등록
     configure_extensions(app=app)
@@ -58,6 +62,10 @@ def set_config(app):
         app.config.from_object("core.config.dev")
     else:
         app.config.from_object("core.config.prod")
+
+
+def set_cors(app):
+    cors = CORS(app)
 
 
 def import_models() -> None:
