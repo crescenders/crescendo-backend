@@ -25,7 +25,7 @@ def create_app():
     # extensions 등록
     configure_extensions(app=app)
 
-    # Flask-RestX API 생성
+    # Flask-Smorest API 생성
     api = create_api(app=app)
 
     # namespace 등록
