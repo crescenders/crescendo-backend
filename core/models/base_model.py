@@ -1,5 +1,3 @@
-from flask_sqlalchemy import Model
-
 from core.extensions import db
 
 

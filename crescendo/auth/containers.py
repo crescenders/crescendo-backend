@@ -1,8 +1,7 @@
 from dependency_injector import containers, providers
 
-from crescendo.auth.models import UserModel
 from crescendo.auth.repositories import UserRepositoryABC
-from crescendo.auth.services import UserService, UserServiceABC
+from crescendo.auth.services import UserServiceABC
 
 
 class UserContainer(containers.DeclarativeContainer):

@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from typing import Any, Optional
+from typing import Optional
 
 from flask_sqlalchemy import Pagination
 from flask_sqlalchemy.query import Query
