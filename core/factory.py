@@ -69,7 +69,6 @@ def set_config(app):
 def configure_cli(app):
     """cli 등록"""
     app.cli.add_command(cli.init_app)
-    app.cli.add_command(cli.lint)
 
 
 def set_cors(app):
