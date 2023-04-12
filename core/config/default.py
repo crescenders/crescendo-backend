@@ -9,3 +9,16 @@ OPENAPI_VERSION = "3.0.0"
 OPENAPI_URL_PREFIX = "/"
 OPENAPI_SWAGGER_UI_PATH = "/"
 OPENAPI_SWAGGER_UI_URL = "https://cdn.jsdelivr.net/npm/swagger-ui-dist/"
+
+API_SPEC_OPTIONS = {
+    "components": {
+        "securitySchemes": {
+            "Bearer Auth": {
+                "type": "http",
+                "scheme": "bearer",
+                "bearerFormat": "JWT",
+                "description": "JWT 입니다.",
+            }
+        }
+    },
+}
