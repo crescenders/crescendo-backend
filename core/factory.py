@@ -6,6 +6,7 @@ from flask_smorest import Api
 
 from crescendo.auth import auth_api
 
+from . import cli
 from .extensions import db, jwt, ma, migrate
 
 
@@ -26,6 +27,9 @@ def create_app():
 
     # Flask-Smorest API 생성
     api = create_api(app=app)
+
+    # cli 등록
+    configure_cli(app=app)
 
     # namespace 등록
     register_blueprints(api)
@@ -60,6 +64,11 @@ def set_config(app):
         app.config.from_object("core.config.dev")
     else:
         app.config.from_object("core.config.prod")
+
+
+def configure_cli(app):
+    """cli 등록"""
+    app.cli.add_command(cli.init_app)
 
 
 def set_cors(app):
