@@ -7,4 +7,8 @@ exclude =
     *.py[co],
     __pycache__,
     venv,
-    .env
+    .env,
+    migrations
+
+
+max-line-length = 88
