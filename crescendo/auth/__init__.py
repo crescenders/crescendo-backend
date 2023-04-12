@@ -2,8 +2,7 @@ from dependency_injector import providers
 from flask_smorest import Blueprint
 
 from crescendo.auth.containers import UserContainer
-from crescendo.auth.models import UserModel
-from crescendo.auth.repositories import UserRepository, UserRepositoryABC
+from crescendo.auth.repositories import UserRepository
 from crescendo.auth.services import UserService
 
 auth_api = Blueprint(
