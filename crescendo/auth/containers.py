@@ -1,14 +1,12 @@
 from dependency_injector import containers, providers
 
-from crescendo.users.models import UserModel
-from crescendo.users.repositories import UserRepositoryABC
-from crescendo.users.services import UserService, UserServiceABC
+from crescendo.auth.models import UserModel
+from crescendo.auth.repositories import UserRepositoryABC
+from crescendo.auth.services import UserService, UserServiceABC
 
 
 class UserContainer(containers.DeclarativeContainer):
-    wiring_config = containers.WiringConfiguration(
-        modules=["crescendo.users.resources"]
-    )
+    wiring_config = containers.WiringConfiguration(modules=["crescendo.auth.resources"])
 
     user_service_abc = providers.Dependency(
         instance_of=UserServiceABC  # type: ignore[type-abstract]

@@ -4,8 +4,7 @@ from flask import Flask
 from flask_cors import CORS
 from flask_smorest import Api
 
-from crescendo.auth.resources import auth_api
-from crescendo.users.resources import users_api
+from crescendo.auth import auth_api
 
 from .extensions import db, jwt, ma, migrate
 
@@ -51,7 +50,6 @@ def configure_extensions(app):
 
 def register_blueprints(api):
     """API 에 Namespace 등록"""
-    api.register_blueprint(users_api, url_prefix="/api/v1/users")
     api.register_blueprint(auth_api, url_prefix="/api/v1/auth")
 
 
@@ -70,4 +68,4 @@ def set_cors(app):
 
 def import_models() -> None:
     """Flask-Migrate 를 위한 model import"""
-    from crescendo.users.models import UserModel
+    from crescendo.auth.models import UserModel

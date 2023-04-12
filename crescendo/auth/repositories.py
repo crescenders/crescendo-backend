@@ -6,7 +6,7 @@ from flask_sqlalchemy.query import Query
 
 from core.extensions import db
 from core.utils.mapper import sqlalchemy_pagination_mapper
-from crescendo.users.models import UserModel
+from crescendo.auth.models import UserModel
 
 
 class UserRepositoryABC(ABC):

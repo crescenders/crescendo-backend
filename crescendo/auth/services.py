@@ -26,7 +26,7 @@ class UserServiceABC(ABC):
         pass
 
     @abstractmethod
-    def withdraw(self):
+    def withdraw(self, uuid):
         pass
 
 
@@ -48,5 +48,5 @@ class UserService(UserServiceABC):
     def edit_info(self):
         pass
 
-    def withdraw(self):
+    def withdraw(self, uuid):
         pass
