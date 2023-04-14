@@ -1,5 +1,6 @@
 import os
 
+from dotenv import load_dotenv
 from flask import Flask
 from flask_cors import CORS
 from flask_smorest import Api
@@ -15,6 +16,9 @@ def create_app():
 
     # 기본 Application 생성
     app = Flask("crescendo-backend")
+
+    # 환경 변수 로딩
+    set_dotenv()
 
     # config 설정
     set_config(app=app)
@@ -42,6 +46,10 @@ def create_app():
 
 def create_api(app):
     return Api(app)
+
+
+def set_dotenv():
+    load_dotenv(".env", verbose=True)
 
 
 def configure_extensions(app):
