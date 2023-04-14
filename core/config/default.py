@@ -17,7 +17,7 @@ API_SPEC_OPTIONS = {
                 "type": "http",
                 "scheme": "bearer",
                 "bearerFormat": "JWT",
-                "description": "JWT 입니다.",
+                "description": "",
             }
         }
     },
