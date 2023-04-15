@@ -15,6 +15,8 @@ flask-smorest = "*"
 types-smorest = "*"
 flask-marshmallow = "*"
 types-flask-migrate = "*"
+flask-cors = "*"
+types-Flask-Cors = "*"
 # python utils
 python-dotenv = "==1.0.0"
 marshmallow = "*"
@@ -24,7 +26,6 @@ sqlalchemy = "~=2.0.5.post1"
 dependency_injector = "*"
 google-auth = "*"
 requests = "*"
-flask-cors = "*"
 
 [dev-packages]
 ipython = "*"
