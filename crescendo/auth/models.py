@@ -19,4 +19,4 @@ class UserModel(BaseModel, TimeStampedMixin, UUIDMixin):
     role = db.Column(db.Enum(Roles), nullable=False, server_default="USER")
 
     def __repr__(self) -> str:
-        return f"<id:{self.id}, usernamee:{self.username}>"
+        return f"<id:{self.id}, username:{self.username}>"
