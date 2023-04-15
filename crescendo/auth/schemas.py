@@ -11,10 +11,14 @@ from core.schemas.response import PaginationResultSchemaMixin
 class UserListArgsSchema(
     PaginateArgsSchemaMixin, FilteringArgsSchemaMixin, OrderingArgsSchemaMixin, Schema
 ):
+    """사용자 목록을 조회하기 위한 여러가지 요청 파라미터입니다."""
+
     pass
 
 
 class UserSchema(Schema):
+    """사용자 한 명에 대한 직렬화 규칙을 정의합니다."""
+
     id = fields.Integer(
         dump_only=True,
         metadata={
@@ -44,4 +48,10 @@ class UserSchema(Schema):
 
 
 class UserListSchema(PaginationResultSchemaMixin, Schema):
+    """사용자 목록에 대한 직렬화 규칙을 정의합니다."""
+
     results = fields.List(fields.Nested(UserSchema), metadata={"description": "사용자 목록"})
+
+
+class GoogleOauthArgsSchema(Schema):
+    google_jwt = fields.String()
