@@ -25,7 +25,6 @@ alembic = "~=1.10.2"
 sqlalchemy = "~=2.0.5.post1"
 dependency_injector = "*"
 google-auth = "*"
-google-api-python-client-stubs="*"
 requests = "*"
 
 [dev-packages]
