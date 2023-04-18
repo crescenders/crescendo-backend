@@ -1,17 +1,18 @@
 import os
 
+from dependency_injector import providers
 from dotenv import load_dotenv
 from flask import Flask
 from flask_cors import CORS
 from flask_smorest import Api
 
-from crescendo.auth import auth_api
+from crescendo.auth import UserContainer, auth_api, user_container
 
 from . import cli
 from .extensions import db, jwt, ma, migrate
 
 
-def create_app():
+def create_app(is_testing: bool = False) -> Flask:
     """Flask Application factory"""
 
     # 기본 Application 생성
@@ -21,7 +22,7 @@ def create_app():
     set_dotenv()
 
     # config 설정
-    set_config(app=app)
+    set_config(is_testing, app)
 
     # CORS 설정
     set_cors(app=app)
@@ -40,6 +41,8 @@ def create_app():
 
     # model 등록
     import_models()
+
+    set_container(app=app)
 
     return app
 
@@ -65,18 +68,21 @@ def register_blueprints(api):
     api.register_blueprint(auth_api, url_prefix="/api/v1/auth")
 
 
-def set_config(app):
+def set_config(is_testing, app: Flask):
     """config 설정"""
     env = os.environ.get("FLASK_DEBUG")
     if env == "1":
         app.config.from_object("core.config.dev")
     else:
         app.config.from_object("core.config.prod")
+    if is_testing is True:
+        app.config.from_object("core.config.test")
 
 
 def configure_cli(app):
     """cli 등록"""
     app.cli.add_command(cli.init_app)
+    app.cli.add_command(cli.createadminuser)
 
 
 def set_cors(app):
@@ -86,3 +92,8 @@ def set_cors(app):
 def import_models() -> None:
     """Flask-Migrate 를 위한 model import"""
     from crescendo.auth.models import UserModel  # noqa: F401
+
+
+def set_container(app) -> None:
+    """Container 설정"""
+    app.user_container = user_container
