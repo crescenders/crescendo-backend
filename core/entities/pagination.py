@@ -1,12 +1,17 @@
-from abc import ABC, abstractmethod
+from typing import Any, Generic, List, Optional, TypeVar
+
+T = TypeVar("T")
 
 
-class PaginationEntity(ABC):
-    def __init__(self, count: int, next: int, previous: int):
+class PaginationEntity(Generic[T]):
+    def __init__(
+        self,
+        count: int,
+        next_num: Optional[int],
+        previous_num: Optional[int],
+        results: List[T],
+    ):
         self.count = count
-        self.next = next
-        self.previous = previous
-
-    @abstractmethod
-    def set_results(self, results):
-        pass
+        self.next_num = next_num
+        self.previous_num = previous_num
+        self.results = results
