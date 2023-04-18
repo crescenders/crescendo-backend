@@ -21,7 +21,9 @@ class FilteringArgsSchemaMixin:
 
 class OrderingArgsSchemaMixin:
     ordering = fields.String(
-        load_validate=validate.OneOf(["asc", "desc"]),
         load_default="desc",
-        metadata={"description": "정렬 조건"},
+        metadata={
+            "description": "정렬 조건",
+            "load_validate": validate.OneOf(["asc", "desc"]),
+        },
     )
