@@ -23,9 +23,9 @@ class UserContainer(containers.DeclarativeContainer):
         user_service_abc,
         user_repository=providers.Factory(  # UserRepository 에 필요한 종속성 주입
             user_repository_abc,
-            user_model_cls=providers.Object(UserModel),  # UserModel 클래스를 "있는 그대로" 반환
-            pagination_entity_factory=providers.Factory(PaginationEntity).provider,
-            user_entity_factory=providers.Factory(UserEntity).provider,
+            user_model_cls=providers.Object(UserModel),
+            pagination_entity_cls=providers.Object(PaginationEntity[UserEntity]),
+            user_entity_cls=providers.Object(UserEntity),
         ),
-        user_entity_factory=providers.Factory(UserEntity).provider,
+        user_entity_cls=providers.Factory(UserEntity).provider,
     )
