@@ -1,16 +1,14 @@
 from marshmallow import Schema, fields
 
 from core.schemas.request import (
-    FilteringArgsSchemaMixin,
-    OrderingArgsSchemaMixin,
-    PaginateArgsSchemaMixin,
+    FilteringArgsSchema,
+    OrderingArgsSchema,
+    PaginateArgsSchema,
 )
 from core.schemas.response import PaginationResultSchemaMixin
 
 
-class UserListArgsSchema(
-    PaginateArgsSchemaMixin, FilteringArgsSchemaMixin, OrderingArgsSchemaMixin, Schema
-):
+class UserListArgsSchema(PaginateArgsSchema, FilteringArgsSchema, OrderingArgsSchema):
     """사용자 목록을 조회하기 위한 여러가지 요청 파라미터입니다."""
 
     pass
