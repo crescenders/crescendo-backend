@@ -50,7 +50,9 @@ class UserSchema(Schema):
 class UserListSchema(PaginationResultSchemaMixin, Schema):
     """사용자 목록에 대한 직렬화 규칙을 정의합니다."""
 
-    results = fields.List(fields.Nested(UserSchema), metadata={"description": "사용자 목록"})
+    results = fields.List(
+        fields.Nested(UserSchema()), metadata={"description": "사용자 목록"}
+    )
 
 
 class GoogleOauthArgsSchema(Schema):
