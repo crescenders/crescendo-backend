@@ -59,7 +59,11 @@ def configure_extensions(app):
     db.init_app(app)
     jwt.init_app(app)
     ma.init_app(app)
-    migrate.init_app(app, db)
+    # Sqlite 에러 제거용
+    if app.config["SQLALCHEMY_DATABASE_URI"].startswith("sqlite"):
+        migrate.init_app(app, db, render_as_batch=True)
+    else:
+        migrate.init_app(app, db)
 
 
 def register_blueprints(api):
@@ -91,6 +95,7 @@ def set_cors(app):
 def import_models() -> None:
     """Flask-Migrate 를 위한 model import"""
     from crescendo.auth.models import UserModel  # noqa: F401
+    from crescendo.study.models import StudyModel  # noqa: F401
 
 
 def set_container(app) -> None:
