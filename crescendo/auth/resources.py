@@ -6,12 +6,8 @@ from google.auth.exceptions import GoogleAuthError  # type: ignore[import]
 from core.utils.jwt import jwt_required
 from crescendo.auth import auth_api
 from crescendo.auth.containers import UserContainer
-from crescendo.auth.schemas import (
-    GoogleOauthArgsSchema,
-    UserListArgsSchema,
-    UserListSchema,
-    UserSchema,
-)
+from crescendo.auth.schemas import (GoogleOauthArgsSchema, UserListArgsSchema,
+                                    UserListSchema, UserSchema)
 
 
 @auth_api.route("/users/")
@@ -28,6 +24,7 @@ class UserListAPI(MethodView):
         super().__init__(*args, **kwargs)
         self.user_service = user_service
 
+    @jwt_required()
     @auth_api.arguments(UserListArgsSchema, location="query")
     @auth_api.response(200, UserListSchema)
     def get(self, kwargs):
@@ -54,6 +51,7 @@ class UserDetailAPI(MethodView):
         super().__init__(*args, **kwargs)
         self.user_service = user_service
 
+    @jwt_required()
     @auth_api.response(200, UserSchema)
     def get(self, user_uuid):
         """UUID 로 특정되는 사용자 한 명의 정보를 조회합니다.
@@ -62,6 +60,7 @@ class UserDetailAPI(MethodView):
         Crescendo 서비스에서 발급된 JWT가 필요합니다."""
         return self.user_service.get_one_user(user_uuid)
 
+    @jwt_required()
     @auth_api.response(200, UserSchema)
     def put(self, user_uuid):
         """UUID로 특정되는 사용자 한 명의 정보를 수정합니다.
@@ -70,6 +69,7 @@ class UserDetailAPI(MethodView):
         Crescendo 서비스에서 발급된 JWT가 필요합니다."""
         return self.user_service.update_user(user_uuid, **request.json)
 
+    @jwt_required()
     @auth_api.response(204)
     @jwt_required()
     def delete(self, user_uuid):
