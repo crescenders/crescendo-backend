@@ -29,7 +29,7 @@ class CRUDRepositoryABC(BaseRepository, ABC, Generic[T]):
         pass
 
     @abstractmethod
-    def read_by_eid(self) -> Optional[T]:
+    def read_by_eid(self, eid) -> Optional[T]:
         """
         Read the entity with given eid.
 
