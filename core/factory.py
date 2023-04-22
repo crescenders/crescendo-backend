@@ -1,12 +1,11 @@
 import os
 
-from dependency_injector import providers
 from dotenv import load_dotenv
 from flask import Flask
 from flask_cors import CORS
 from flask_smorest import Api
 
-from crescendo.auth import UserContainer, auth_api, user_container
+from crescendo.auth import auth_api, user_container
 
 from . import cli
 from .extensions import db, jwt, ma, migrate
@@ -14,9 +13,11 @@ from .extensions import db, jwt, ma, migrate
 
 def create_app(is_testing: bool = False) -> Flask:
     """Flask Application factory"""
-
     # 기본 Application 생성
     app = Flask("crescendo-backend")
+
+    # cli 등록
+    configure_cli(app=app)
 
     # 환경 변수 로딩
     set_dotenv()
@@ -33,15 +34,13 @@ def create_app(is_testing: bool = False) -> Flask:
     # Flask-Smorest API 생성
     api = create_api(app=app)
 
-    # cli 등록
-    configure_cli(app=app)
-
     # namespace 등록
     register_blueprints(api)
 
     # model 등록
     import_models()
 
+    # DI Container 등록
     set_container(app=app)
 
     return app
