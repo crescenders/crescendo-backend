@@ -20,6 +20,7 @@ class UserModel(BaseModel, TimeStampedMixin, UUIDMixin):
     email = db.Column(db.String(80), unique=True, nullable=False)
     username = db.Column(db.String(10), unique=True, nullable=False)
     role = db.Column(db.Enum(Roles), nullable=False, server_default="USER")
+    study_id = db.Column(db.Integer, db.ForeignKey("study.id"))
 
     def __repr__(self) -> str:
         return f"<id:{self.id}, username:{self.username}>"
