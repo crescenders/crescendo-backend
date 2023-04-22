@@ -1,15 +1,15 @@
 import click
-from flask.cli import with_appcontext
+from flask import cli
 
 
 @click.command("init-app")
-@with_appcontext
+@cli.with_appcontext
 def init_app():
     """애플리케이션을 시작합니다."""
 
 
 @click.command("createadminuser")
-@with_appcontext
+@cli.with_appcontext
 def createadminuser():
     """사용자를 생성합니다."""
     from core.entities.pagination import PaginationEntity
