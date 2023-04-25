@@ -29,20 +29,20 @@ class CRUDRepositoryABC(BaseRepository, ABC, Generic[T]):
         pass
 
     @abstractmethod
-    def read_by_eid(self, eid) -> Optional[T]:
+    def read_by_id(self, id) -> Optional[T]:
         """
-        Read the entity with given eid.
+        Read the entity with given id.
 
-        :return: if entity is found with given eid, return it, else return None
+        :return: if entity is found with given id, return it, else return None
         """
         pass
 
     @abstractmethod
-    def is_exists_by_eid(self) -> bool:
+    def is_exists_by_id(self, id) -> bool:
         """
-        Check if entity with given eid exists.
+        Check if entity with given id exists.
 
-        :return: if entity is found with given eid, return True, else return False
+        :return: if entity is found with given id, return True, else return False
         """
         pass
 
@@ -56,11 +56,11 @@ class CRUDRepositoryABC(BaseRepository, ABC, Generic[T]):
         pass
 
     @abstractmethod
-    def read_all_by_eids(self, ids: List[int]) -> List[T]:
+    def read_all_by_ids(self, ids: List[int]) -> List[T]:
         """
-        Read all entities with given eids.
+        Read all entities with given ids.
 
-        :return: list of all entities, with given eids.
+        :return: list of all entities, with given ids.
         """
         pass
 
@@ -70,8 +70,9 @@ class CRUDRepositoryABC(BaseRepository, ABC, Generic[T]):
         pass
 
     @abstractmethod
-    def delete_by_eid(self, eid: int) -> None:
-        """Delete the entity with given eid."""
+    def delete_by_id(self, id: int) -> None:
+        """Delete the entity with given id."""
+
         pass
 
     @abstractmethod
@@ -80,8 +81,8 @@ class CRUDRepositoryABC(BaseRepository, ABC, Generic[T]):
         pass
 
     @abstractmethod
-    def delete_all_by_eids(self, ids: List[int]) -> None:
-        """Delete all entities with given eids."""
+    def delete_all_by_ids(self, ids: List[int]) -> None:
+        """Delete all entities with given ids."""
         pass
 
     @abstractmethod
