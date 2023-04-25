@@ -1,14 +1,16 @@
-from flask_jwt_extended import create_access_token, create_refresh_token
+from dataclasses import dataclass
+from datetime import datetime
+from enum import Enum
+from typing import Optional
 
 
+@dataclass
 class UserEntity:
-    def __init__(self, email: str, role: str, username: str):
-        self.email = email
-        self.role = role
-        self.username = username
-
-    def create_access_token(self):
-        pass
-
-    def create_refresh_token(self):
-        pass
+    id: Optional[int]
+    uuid: Optional[str]
+    email: str
+    role: Enum
+    username: str
+    created_at: datetime
+    updated_at: datetime
+    study_id: Optional[int] = None  # foreign key
