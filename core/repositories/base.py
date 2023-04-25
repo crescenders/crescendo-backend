@@ -8,10 +8,8 @@ class BaseRepository(Generic[T]):
     The Base Repository class of all Repositories.
     """
 
-    def __init__(self, entity: Type[T], eid_name: str):
+    def __init__(self, entity: Type[T]):
         """
-        :param entity: The types of entities you want to cover in this repository
-        :param eid_name: Primary key name in Entity
+        :param entity: The types of entities you want to cover in this repository.
         """
         self.entity = entity
-        self.eid_name = eid_name
