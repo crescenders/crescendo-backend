@@ -50,13 +50,14 @@ class CRUDRepositoryABC(BaseRepository, ABC, Generic[T]):
     def read_all(self) -> List[T]:
         """
         Read all entities.
+        if no entities are found, return empty list.
 
         :return: list of all entities.
         """
         pass
 
     @abstractmethod
-    def read_all_by_ids(self, ids: List[int]) -> List[T]:
+    def read_all_by_ids(self, ids: List[int]) -> List[Optional[T]]:
         """
         Read all entities with given ids.
 
