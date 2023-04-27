@@ -1,4 +1,3 @@
-from flask import current_app
 from marshmallow import Schema, fields
 from marshmallow.validate import OneOf, Range
 
