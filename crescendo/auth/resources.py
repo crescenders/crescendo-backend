@@ -6,8 +6,12 @@ from google.auth.exceptions import GoogleAuthError  # type: ignore[import]
 from core.utils.jwt import jwt_required
 from crescendo.auth import auth_api
 from crescendo.auth.containers import UserContainer
-from crescendo.auth.schemas import (GoogleOauthArgsSchema, UserListArgsSchema,
-                                    UserListSchema, UserSchema)
+from crescendo.auth.schemas import (
+    GoogleOauthArgsSchema,
+    UserListArgsSchema,
+    UserListSchema,
+    UserSchema,
+)
 
 
 @auth_api.route("/users/")
