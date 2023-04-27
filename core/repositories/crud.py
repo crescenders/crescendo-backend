@@ -2,14 +2,14 @@ from abc import ABC, abstractmethod
 from typing import Generic, List, Optional
 
 from core.repositories.base import BaseRepository
-from core.repositories.type import T
+from core.repositories.type import DBEntity
 
 
-class CRUDRepositoryABC(BaseRepository, ABC, Generic[T]):
+class CRUDRepositoryABC(BaseRepository, ABC, Generic[DBEntity]):
     """The Base CRUD Repository class."""
 
     @abstractmethod
-    def save(self, entity: T) -> T:
+    def save(self, entity: DBEntity) -> DBEntity:
         """
         Save the given entity.
 
@@ -19,7 +19,7 @@ class CRUDRepositoryABC(BaseRepository, ABC, Generic[T]):
         pass
 
     @abstractmethod
-    def save_all(self, entities: List[T]) -> List[T]:
+    def save_all(self, entities: List[DBEntity]) -> List[DBEntity]:
         """
         Save all given entities.
 
@@ -29,7 +29,7 @@ class CRUDRepositoryABC(BaseRepository, ABC, Generic[T]):
         pass
 
     @abstractmethod
-    def read_by_id(self, id) -> Optional[T]:
+    def read_by_id(self, id) -> Optional[DBEntity]:
         """
         Read the entity with given id.
 
@@ -47,7 +47,9 @@ class CRUDRepositoryABC(BaseRepository, ABC, Generic[T]):
         pass
 
     @abstractmethod
-    def read_all(self) -> List[T]:
+    def read_all(
+        self, pagination_entity, filtering_entity, sorting_entity
+    ) -> List[Optional[DBEntity]]:
         """
         Read all entities.
         if no entities are found, return empty list.
@@ -57,7 +59,7 @@ class CRUDRepositoryABC(BaseRepository, ABC, Generic[T]):
         pass
 
     @abstractmethod
-    def read_all_by_ids(self, ids: List[int]) -> List[Optional[T]]:
+    def read_all_by_ids(self, ids: List[int]) -> List[Optional[DBEntity]]:
         """
         Read all entities with given ids.
 
@@ -77,7 +79,7 @@ class CRUDRepositoryABC(BaseRepository, ABC, Generic[T]):
         pass
 
     @abstractmethod
-    def delete(self, entity: T) -> None:
+    def delete(self, entity: DBEntity) -> None:
         """Delete the given entity."""
         pass
 
