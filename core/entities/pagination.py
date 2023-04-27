@@ -1,17 +1,17 @@
-from typing import Any, Generic, List, Optional, TypeVar
+from dataclasses import dataclass
+from typing import Generic, List, Optional, TypeVar
 
 T = TypeVar("T")
 
 
+@dataclass
 class PaginationEntity(Generic[T]):
-    def __init__(
-        self,
-        count: int,
-        next_num: Optional[int],
-        previous_num: Optional[int],
-        results: List[T],
-    ):
-        self.count = count
-        self.next_num = next_num
-        self.previous_num = previous_num
-        self.results = results
+    # request
+    request_page: int
+    request_size: int
+
+    # response
+    count: int
+    next_num: Optional[int]
+    previous_num: Optional[int]
+    results: List[T]
