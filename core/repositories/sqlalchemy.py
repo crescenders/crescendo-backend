@@ -1,7 +1,7 @@
 from typing import List, Optional
 
 from flask_marshmallow.sqla import SQLAlchemyAutoSchema  # type: ignore[import]
-from sqlalchemy import inspect, select
+from sqlalchemy import insert, inspect, select
 from sqlalchemy.orm import Query
 
 from core.repositories.crud import CRUDRepositoryABC
@@ -33,14 +33,13 @@ class SQLAlchemyFullRepository(CRUDRepositoryABC):
         )
 
     def save(self, entity: DBEntity) -> DBEntity:
+        model_instance = self._entity_to_sqlalchemy_model(entity)
         with self.db.session.begin():
-            model_instance = self._entity_to_sqlalchemy_model(entity)
             self.db.session.add(model_instance)
-            self.db.session.commit()
+        self.db.session.refresh(model_instance)
         return self._sqlalchemy_model_to_entity(model_instance)
 
     def save_all(self, entities: List[DBEntity]) -> List[DBEntity]:
-        # TODO : 속도 개선
         model_instances = [
             self._entity_to_sqlalchemy_model(entity) for entity in entities
         ]
@@ -48,6 +47,8 @@ class SQLAlchemyFullRepository(CRUDRepositoryABC):
             for model_instance in model_instances:
                 self.db.session.add(model_instance)
             self.db.session.commit()
+        for model_instance in model_instances:
+            self.db.session.refresh(model_instance)
         return [
             self._sqlalchemy_model_to_entity(model_instance)
             for model_instance in model_instances
@@ -119,9 +120,12 @@ class SQLAlchemyFullRepository(CRUDRepositoryABC):
             pk.name for pk in inspect(self.sqlalchemy_model).primary_key
         ]
         if len(sqlalchemy_model_pk_names) == 1:
+            # print(sqlalchemy_instance.__dict__)
             instance_dict = sqlalchemy_instance.__dict__
             instance_dict.pop("_sa_instance_state")
             return self.entity(**instance_dict)
+            # dump_data = self._get_sqlalchemy_schema().dump(sqlalchemy_instance)
+            # return self.entity(**dump_data)
         else:
             raise ValueError("multi-pk case is not supported in current version.")
             # TODO : handle multi-pk case
