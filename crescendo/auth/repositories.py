@@ -2,8 +2,6 @@ from abc import ABC, abstractmethod
 from typing import Optional
 from uuid import UUID
 
-from sqlalchemy import select
-
 from core.repositories.sqlalchemy import SQLAlchemyFullRepository
 from crescendo.auth.entities import UserEntity
 
@@ -21,9 +19,6 @@ class SQLAlchemyFullUserRepositoryABC(SQLAlchemyFullRepository, ABC):
 class SQLAlchemyFullUserRepository(SQLAlchemyFullUserRepositoryABC):
     # TODO : legacy query 대응 방안 알아보기
     def read_by_uuid(self, uuid: UUID) -> Optional[UserEntity]:
-        # query_result = self.db.session.execute(
-        #     select(self.sqlalchemy_model).filter_by(uuid=str(uuid))
-        # ).first()
         query_result = self.sqlalchemy_model.query.filter_by(uuid=str(uuid)).first()
         return self._sqlalchemy_model_to_entity(query_result)
 

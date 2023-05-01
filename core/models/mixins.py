@@ -25,7 +25,7 @@ class TimeStampedMixin(BaseMixin):
     updated_at = db.Column(
         db.DateTime,
         default=db.func.now(),
-        onupdate=db.func.now(timezone=True),
+        onupdate=db.func.now(),
         nullable=False,
     )
 

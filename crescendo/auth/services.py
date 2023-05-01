@@ -45,6 +45,7 @@ class UserServiceABC(ABC):
         pass
 
 
+@autowired()
 class UserService(UserServiceABC):
     """회원정보조회, 회원가입, 회원정보수정, 회원탈퇴, 검색"""
 
@@ -114,9 +115,3 @@ class UserService(UserServiceABC):
         """
         current_user = self.user_repository.read_one_by_email(email=email)
         return current_user
-
-    def _entity_to_model(self, entity):
-        pass
-
-    def _model_to_entity(self, model):
-        pass
