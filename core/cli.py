@@ -12,18 +12,13 @@ def init_app():
 @cli.with_appcontext
 def createadminuser():
     """사용자를 생성합니다."""
-    from core.entities.pagination import PaginationEntity
-    from crescendo.auth.entities import UserEntity
+    from core.extensions import db
     from crescendo.auth.models import UserModel
-    from crescendo.auth.repositories import SQLAlchemyUserRepository
 
     email = click.prompt("email:", type=str)
     username = click.prompt("username", type=str)
 
-    superuser = UserEntity(email=email, username=username, role="ADMIN")
-
-    SQLAlchemyUserRepository(
-        user_entity_cls=UserEntity,
-        user_model_cls=UserModel,
-        pagination_entity_cls=PaginationEntity,
-    ).save(user_entity=superuser)
+    superuser = UserModel(email=email, username=username, role="ADMIN")
+    db.session.add(superuser)
+    db.session.commit()
+    print(superuser, "is created...")

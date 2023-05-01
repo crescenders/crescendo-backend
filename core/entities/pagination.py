@@ -3,7 +3,7 @@ from typing import Generic, List, Optional, TypeVar
 T = TypeVar("T")
 
 
-class PaginationEntity(Generic[T]):
+class PaginationResponseEntity(Generic[T]):
     def __init__(
         self,
         count: int,
@@ -15,7 +15,3 @@ class PaginationEntity(Generic[T]):
         self.next_num = next_num
         self.previous_num = previous_num
         self.results = results
-
-    # request
-    page: int
-    per_page: int

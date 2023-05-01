@@ -4,28 +4,21 @@ from typing import Optional
 from google.auth.transport import requests  # type: ignore[import]
 from google.oauth2 import id_token  # type: ignore[import]
 
-from core.entities.pagination import PaginationEntity
+from core.entities.pagination import PaginationResponseEntity
 from crescendo.auth.entities import UserEntity
-from crescendo.auth.repositories import UserRepositoryABC
+from crescendo.auth.repositories import SQLAlchemyFullUserRepositoryABC
 
 
 class UserServiceABC(ABC):
     @abstractmethod
     def get_list(
         self,
-        page: int,
-        per_page: int,
-        filter_by: Optional[str],
-        ordering: str,
-    ) -> PaginationEntity[UserEntity]:
+        pagination_request_params: dict,
+        ordering_params: dict,
+        user_filtering_params: dict,
+    ) -> PaginationResponseEntity[UserEntity]:
         """
         페이지네이션, 필터링, 정렬조건을 적용하여 사용자의 목록을 반환합니다.
-
-        :param page: 페이지 숫자
-        :param per_page: 페이지당 보여줄 아이템 갯수
-        :param filter_by: 검색어
-        :param ordering: 정렬 조건
-        :return: 페이지네이션 처리된 사용자 엔티티 목록
         """
         pass
 
@@ -55,23 +48,28 @@ class UserServiceABC(ABC):
 class UserService(UserServiceABC):
     """회원정보조회, 회원가입, 회원정보수정, 회원탈퇴, 검색"""
 
-    def __init__(self, user_repository: UserRepositoryABC, user_entity_cls: UserEntity):
+    def __init__(
+        self, user_repository: SQLAlchemyFullUserRepositoryABC, user_entity: UserEntity
+    ):
         self.user_repository = user_repository
-        self.user_entity_cls = user_entity_cls
+        self.user_entity = user_entity
 
     def get_list(
         self,
-        page: int,
-        per_page: int,
-        filter_by: Optional[str],
-        ordering: str,
-    ) -> PaginationEntity[UserEntity]:
-        return self.user_repository.read_list(
+        pagination_request_params: dict,
+        ordering_params: dict,
+        user_filtering_params: dict,
+    ) -> PaginationResponseEntity[UserEntity]:
+        # pagination 기본값 정하기
+        page = pagination_request_params.get("page", 1)
+        per_page = pagination_request_params.get("per_page", 10)
+        #
+        return self.user_repository.read_all(
             page=page, per_page=per_page, filter_by=filter_by, ordering=ordering
         )
 
-    def get_one(self, uuid) -> UserEntity:
-        return self.user_repository.read_one_by_uuid(uuid=uuid)
+    def get_one(self, uuid) -> Optional[UserEntity]:
+        return self.user_repository.read_by_uuid(uuid=uuid)
 
     def edit_info(self, uuid: str, data) -> UserEntity:
         pass

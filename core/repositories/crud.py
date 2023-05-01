@@ -47,9 +47,7 @@ class CRUDRepositoryABC(BaseRepository, ABC, Generic[DBEntity]):
         pass
 
     @abstractmethod
-    def read_all(
-        self, pagination_entity, filtering_entity, sorting_entity
-    ) -> List[Optional[DBEntity]]:
+    def read_all(self) -> List[Optional[DBEntity]]:
         """
         Read all entities.
         if no entities are found, return empty list.
