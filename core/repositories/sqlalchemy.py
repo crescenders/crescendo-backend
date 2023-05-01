@@ -4,11 +4,11 @@ from flask_marshmallow.sqla import SQLAlchemyAutoSchema  # type: ignore[import]
 from sqlalchemy import inspect, select
 from sqlalchemy.orm import Query
 
-from core.repositories.condition import FilteringSortingPaginationRepository
+from core.repositories.crud import CRUDRepositoryABC
 from core.repositories.type import DBEntity
 
 
-class SQLAlchemyFullRepository(FilteringSortingPaginationRepository):
+class SQLAlchemyFullRepository(CRUDRepositoryABC):
     """
     The implementation of CRUDRepositoryABC, with SQLAlchemy.
 
@@ -54,6 +54,7 @@ class SQLAlchemyFullRepository(FilteringSortingPaginationRepository):
         ]
 
     def read_by_id(self, id) -> Optional[DBEntity]:
+        # TODO : 이 쪽 줄 로직은 필요없는 것 같으니 리팩토링하기
         if id is None:
             raise ValueError("id cannot be None.")
         query_result = self.db.session.get(self.sqlalchemy_model, id)
@@ -66,9 +67,7 @@ class SQLAlchemyFullRepository(FilteringSortingPaginationRepository):
             raise ValueError("id cannot be None.")
         return bool(self.db.session.get(self.sqlalchemy_model, id))
 
-    def read_all(
-        self, pagination_entity, filtering_entity, sorting_entity
-    ) -> List[Optional[DBEntity]]:
+    def read_all(self) -> List[Optional[DBEntity]]:
         return [
             self._sqlalchemy_model_to_entity(query_result)
             for query_result in self.db.session.execute(select(self.sqlalchemy_model))
@@ -120,8 +119,9 @@ class SQLAlchemyFullRepository(FilteringSortingPaginationRepository):
             pk.name for pk in inspect(self.sqlalchemy_model).primary_key
         ]
         if len(sqlalchemy_model_pk_names) == 1:
-            dump_data = self._get_schema().dump(sqlalchemy_instance)
-            return self.entity(**dump_data)
+            instance_dict = sqlalchemy_instance.__dict__
+            instance_dict.pop("_sa_instance_state")
+            return self.entity(**instance_dict)
         else:
             raise ValueError("multi-pk case is not supported in current version.")
             # TODO : handle multi-pk case
@@ -131,9 +131,9 @@ class SQLAlchemyFullRepository(FilteringSortingPaginationRepository):
         assert isinstance(
             entity, self.entity
         ), f"{entity} is not instance of {self.entity}"
-        return self.sqlalchemy_model(**self._get_schema().dump(entity))
+        return self.sqlalchemy_model(**self._get_sqlalchemy_schema().dump(entity))
 
-    def _get_schema(self):
+    def _get_sqlalchemy_schema(self):
         class SQLAlchemyModelSchema(SQLAlchemyAutoSchema):
             class Meta:
                 model = self.sqlalchemy_model

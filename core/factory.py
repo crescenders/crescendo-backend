@@ -5,7 +5,8 @@ from flask import Flask
 from flask_cors import CORS
 from flask_smorest import Api
 
-from crescendo.auth import auth_api, user_container
+from crescendo.auth import user_container
+from crescendo.auth.resources import auth_api
 
 from . import cli
 from .extensions import db, jwt, ma, migrate
@@ -100,4 +101,5 @@ def import_models() -> None:
 
 def set_container(app) -> None:
     """Container 설정"""
-    app.user_container = user_container
+
+    user_container.wire(packages=["crescendo"])

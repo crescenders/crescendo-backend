@@ -1,9 +1,9 @@
-from typing import Any, Generic, List, Optional, TypeVar
+from typing import Generic, List, Optional, TypeVar
 
 T = TypeVar("T")
 
 
-class PaginationEntity(Generic[T]):
+class PaginationResponseEntity(Generic[T]):
     def __init__(
         self,
         count: int,

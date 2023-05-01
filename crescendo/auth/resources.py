@@ -3,11 +3,14 @@ from flask import request
 from flask.views import MethodView
 from google.auth.exceptions import GoogleAuthError  # type: ignore[import]
 
+from core.schemas.pagination import PaginateArgsSchema
 from core.utils.jwt import jwt_required
 from crescendo.auth import auth_api
 from crescendo.auth.containers import UserContainer
-from crescendo.auth.schemas import (GoogleOauthArgsSchema, UserListArgsSchema,
-                                    UserListSchema, UserSchema)
+from crescendo.auth.schemas import (GoogleOauthArgsSchema, SortingArgsSchema,
+                                    UserFilteringArgsSchema, UserListSchema,
+                                    UserSchema)
+from crescendo.auth.services import UserServiceABC
 
 
 @auth_api.route("/users/")
@@ -15,26 +18,43 @@ class UserListAPI(MethodView):
     """사용자 목록을 다루는 API 입니다."""
 
     @inject
-    def __init__(
-        self,
-        *args,
-        user_service=Provide[UserContainer.user_service],
-        **kwargs,
-    ):
-        super().__init__(*args, **kwargs)
+    def __init__(self, user_service=Provide[UserContainer.user_service]):
         self.user_service = user_service
 
-    @jwt_required()
-    @auth_api.arguments(UserListArgsSchema, location="query")
+    # @jwt_required()
+    @auth_api.arguments(PaginateArgsSchema, location="query")  # 페이지네이션 파라미터
+    @auth_api.arguments(SortingArgsSchema, location="query")  # 정렬 파라미터
+    @auth_api.arguments(UserFilteringArgsSchema, location="query")  # 필터링 파라미터
     @auth_api.response(200, UserListSchema)
-    def get(self, kwargs):
+    def get(
+        self,
+        paginate_args,
+        sorting_args,
+        user_filtering_args,
+    ):
         """
         사용자 목록을 조회합니다.
 
-        STAFF, ADMIN 권한을 가진 사람만 회원정보를 조회할 수 있습니다.
-        Crescendo 서비스에서 발급된 JWT가 필요합니다
+        - `권한`: STAFF, ADMIN 권한을 가진 사람만 회원정보를 조회할 수 있습니다.
+        Crescendo 서비스에서 발급된 JWT가 필요합니다.
+
+        - `페이지네이션`: `per_page` 로 한 페이지에 나타내고자 하는 아이템의 개수를,
+        `page` 로 조회하고자 하는 페이지 번호를 전달할 수 있습니다.
+        아무런 값도 전달되지 않을 경우, 기본적으로 `per_page` 에는 10이, `page` 에는 1이 할당됩니다.
+
+        - `필터링`: 기본적으로 OR 조건이 적용됩니다.
+        예컨대, `/users/?username=hi&email=goddessana` 는
+        "username 에 'hi' 가 포함되고, email에 'goddessana' 가 포함된 모든 사용자" 를 응답합니다.
+
+        - `정렬`: `?sorting` 을 통해서 어떻게 정렬하고자 하는지를 전달할 수 있습니다.
+        예컨대, `/users/?sorting=username:desc,email:asc` 는
+        "username 에 대해서 오름차순으로 정렬하고, email에 대해서 내림차순으로 정렬한 사용자의 모든 목록" 을 응답합니다.
+
         """
-        return self.user_service.get_list(**kwargs)
+
+        return self.user_service.get_list(
+            paginate_args, sorting_args, user_filtering_args
+        )
 
 
 @auth_api.route("users/<uuid:user_uuid>/")
@@ -42,23 +62,17 @@ class UserDetailAPI(MethodView):
     """사용자 한 명을 다루는 API 입니다."""
 
     @inject
-    def __init__(
-        self,
-        *args,
-        user_service=Provide[UserContainer.user_service],
-        **kwargs,
-    ):
-        super().__init__(*args, **kwargs)
-        self.user_service = user_service
+    def __init__(self, user_service=Provide[UserContainer.user_service]):
+        self.user_service: UserServiceABC = user_service
 
-    @jwt_required()
+    # @jwt_required()
     @auth_api.response(200, UserSchema)
     def get(self, user_uuid):
         """UUID 로 특정되는 사용자 한 명의 정보를 조회합니다.
 
         본인, 혹은 STAFF, ADMIN 권한을 가진 사람만 회원정보를 조회할 수 있습니다.
         Crescendo 서비스에서 발급된 JWT가 필요합니다."""
-        return self.user_service.get_one_user(user_uuid)
+        return self.user_service.get_one(user_uuid)
 
     @jwt_required()
     @auth_api.response(200, UserSchema)
@@ -80,7 +94,7 @@ class UserDetailAPI(MethodView):
         return self.user_service.withdraw(user_uuid)
 
 
-@auth_api.route("/login/google/", methods=["POST"])
+@auth_api.post("/login/google/")
 @auth_api.arguments(GoogleOauthArgsSchema)
 @inject
 def google_login_api(

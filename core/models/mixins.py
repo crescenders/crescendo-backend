@@ -1,3 +1,4 @@
+from datetime import datetime
 from uuid import uuid4
 
 from core.extensions import db
@@ -18,9 +19,14 @@ class BaseMixin:
 class TimeStampedMixin(BaseMixin):
     """생성일자, 수정일자를 자동 저장하기 위한 믹스인"""
 
-    created_at = db.Column(db.DateTime, default=db.func.now(), nullable=False)
+    created_at = db.Column(
+        db.DateTime, default=db.func.now(timezone=True), nullable=False
+    )
     updated_at = db.Column(
-        db.DateTime, default=db.func.now(), onupdate=db.func.now(), nullable=False
+        db.DateTime,
+        default=db.func.now(),
+        onupdate=db.func.now(),
+        nullable=False,
     )
 
 
