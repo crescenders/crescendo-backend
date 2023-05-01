@@ -45,7 +45,6 @@ class UserServiceABC(ABC):
         pass
 
 
-@autowired()
 class UserService(UserServiceABC):
     """회원정보조회, 회원가입, 회원정보수정, 회원탈퇴, 검색"""
 
