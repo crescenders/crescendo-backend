@@ -19,8 +19,7 @@ class SQLAlchemyFullUserRepositoryABC(SQLAlchemyFullRepository, ABC):
 class SQLAlchemyFullUserRepository(SQLAlchemyFullUserRepositoryABC):
     # TODO : legacy query 대응 방안 알아보기
     def read_by_uuid(self, uuid: UUID) -> Optional[UserEntity]:
-        query_result = self.sqlalchemy_model.query.filter_by(uuid=str(uuid)).first()
-        return self._sqlalchemy_model_to_entity(query_result)
+        return self.sqlalchemy_model.query.filter_by(uuid=str(uuid)).first()
 
     def read_by_email(self, email: str) -> Optional[UserEntity]:
-        pass
+        return self.sqlalchemy_model.query.filter_by(email=str(email)).first()
