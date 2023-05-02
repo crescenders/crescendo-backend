@@ -120,12 +120,9 @@ class SQLAlchemyFullRepository(CRUDRepositoryABC):
             pk.name for pk in inspect(self.sqlalchemy_model).primary_key
         ]
         if len(sqlalchemy_model_pk_names) == 1:
-            # print(sqlalchemy_instance.__dict__)
             instance_dict = sqlalchemy_instance.__dict__
             instance_dict.pop("_sa_instance_state")
             return self.entity(**instance_dict)
-            # dump_data = self._get_sqlalchemy_schema().dump(sqlalchemy_instance)
-            # return self.entity(**dump_data)
         else:
             raise ValueError("multi-pk case is not supported in current version.")
             # TODO : handle multi-pk case
