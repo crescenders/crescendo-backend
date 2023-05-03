@@ -2,14 +2,13 @@ import os
 
 from dotenv import load_dotenv
 from flask import Flask
-from flask_cors import CORS
 from flask_smorest import Api
 
 from crescendo.auth import user_container
 from crescendo.auth.resources import auth_api
 
 from . import cli
-from .extensions import db, jwt, ma, migrate
+from .extensions import cors, db, jwt, ma, migrate
 
 
 def create_app(is_testing: bool = False) -> Flask:
@@ -25,9 +24,6 @@ def create_app(is_testing: bool = False) -> Flask:
 
     # config 설정
     set_config(is_testing, app)
-
-    # CORS 설정
-    set_cors(app=app)
 
     # extensions 등록
     configure_extensions(app=app)
@@ -60,6 +56,7 @@ def configure_extensions(app):
     db.init_app(app)
     jwt.init_app(app)
     ma.init_app(app)
+    cors.init_app(app)
     # Sqlite 에러 제거용
     if app.config["SQLALCHEMY_DATABASE_URI"].startswith("sqlite"):
         migrate.init_app(app, db, render_as_batch=True)
@@ -87,10 +84,6 @@ def configure_cli(app):
     """cli 등록"""
     app.cli.add_command(cli.init_app)
     app.cli.add_command(cli.createadminuser)
-
-
-def set_cors(app):
-    cors = CORS(app)  # noqa: F841
 
 
 def import_models() -> None:
