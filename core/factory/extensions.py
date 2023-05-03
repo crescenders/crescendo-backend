@@ -1,4 +1,3 @@
-from flask_cors import CORS
 from flask_jwt_extended import JWTManager
 from flask_marshmallow import Marshmallow  # type: ignore[import]
 from flask_migrate import Migrate
@@ -18,5 +17,4 @@ db = SQLAlchemy(
 )
 ma = Marshmallow()
 jwt = JWTManager()
-cors = CORS()
 migrate = Migrate()

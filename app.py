@@ -1,6 +1,6 @@
-from core.factory import create_app
+from core.factory.app_factory import ApplicationFactory
 
-app = create_app()
+app = ApplicationFactory.create_app()
 
 if __name__ == "__main__":
     app.run(

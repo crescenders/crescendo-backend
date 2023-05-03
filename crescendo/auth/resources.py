@@ -1,19 +1,38 @@
 from dependency_injector.wiring import Provide, inject
 from flask import request
 from flask.views import MethodView
+from flask_smorest import Blueprint
 from google.auth.exceptions import GoogleAuthError  # type: ignore[import]
 
 from core.schemas.pagination import PaginateArgsSchema
 from core.utils.jwt import jwt_required
-from crescendo.auth import auth_api
 from crescendo.auth.containers import UserContainer
-from crescendo.auth.schemas import (GoogleOauthArgsSchema, SortingArgsSchema,
-                                    UserFilteringArgsSchema, UserListSchema,
-                                    UserSchema)
+from crescendo.auth.schemas import (
+    GoogleOauthArgsSchema,
+    SortingArgsSchema,
+    UserFilteringArgsSchema,
+    UserListSchema,
+    UserSchema,
+)
 from crescendo.auth.services import UserServiceABC
 
+#########################
+# Define your Blueprint.#
+#########################
 
-@auth_api.route("/users/")
+AUTH_MICRO_APP = Blueprint(
+    name="AuthAPI",
+    import_name=__name__,
+    url_prefix="/auth",
+    description="로그인, 회원가입, 사용자 정보 조회를 위한 API 입니다.",
+)
+
+#############################
+# Define your API endpoints.#
+#############################
+
+
+@AUTH_MICRO_APP.route("/users/")
 class UserListAPI(MethodView):
     """사용자 목록을 다루는 API 입니다."""
 
@@ -22,10 +41,10 @@ class UserListAPI(MethodView):
         self.user_service = user_service
 
     # @jwt_required()
-    @auth_api.arguments(PaginateArgsSchema, location="query")  # 페이지네이션 파라미터
-    @auth_api.arguments(SortingArgsSchema, location="query")  # 정렬 파라미터
-    @auth_api.arguments(UserFilteringArgsSchema, location="query")  # 필터링 파라미터
-    @auth_api.response(200, UserListSchema)
+    @AUTH_MICRO_APP.arguments(PaginateArgsSchema, location="query")  # 페이지네이션 파라미터
+    @AUTH_MICRO_APP.arguments(SortingArgsSchema, location="query")  # 정렬 파라미터
+    @AUTH_MICRO_APP.arguments(UserFilteringArgsSchema, location="query")  # 필터링 파라미터
+    @AUTH_MICRO_APP.response(200, UserListSchema)
     def get(
         self,
         paginate_args,
@@ -57,7 +76,7 @@ class UserListAPI(MethodView):
         )
 
 
-@auth_api.route("users/<uuid:user_uuid>/")
+@AUTH_MICRO_APP.route("users/<uuid:user_uuid>/")
 class UserDetailAPI(MethodView):
     """사용자 한 명을 다루는 API 입니다."""
 
@@ -66,7 +85,7 @@ class UserDetailAPI(MethodView):
         self.user_service: UserServiceABC = user_service
 
     # @jwt_required()
-    @auth_api.response(200, UserSchema)
+    @AUTH_MICRO_APP.response(200, UserSchema)
     def get(self, user_uuid):
         """UUID 로 특정되는 사용자 한 명의 정보를 조회합니다.
 
@@ -75,7 +94,7 @@ class UserDetailAPI(MethodView):
         return self.user_service.get_one(user_uuid)
 
     @jwt_required()
-    @auth_api.response(200, UserSchema)
+    @AUTH_MICRO_APP.response(200, UserSchema)
     def put(self, user_uuid):
         """UUID로 특정되는 사용자 한 명의 정보를 수정합니다.
 
@@ -84,7 +103,7 @@ class UserDetailAPI(MethodView):
         return self.user_service.update_user(user_uuid, **request.json)
 
     @jwt_required()
-    @auth_api.response(204)
+    @AUTH_MICRO_APP.response(204)
     @jwt_required()
     def delete(self, user_uuid):
         """UUID로 특정되는 사용자 한 명을 삭제합니다.
@@ -94,8 +113,8 @@ class UserDetailAPI(MethodView):
         return self.user_service.withdraw(user_uuid)
 
 
-@auth_api.post("/login/google/")
-@auth_api.arguments(GoogleOauthArgsSchema)
+@AUTH_MICRO_APP.post("/login/google/")
+@AUTH_MICRO_APP.arguments(GoogleOauthArgsSchema)
 @inject
 def google_login_api(
     google_oauth_token_data, user_service=Provide[UserContainer.user_service]

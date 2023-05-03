@@ -1,10 +1,11 @@
 from dependency_injector import containers, providers
 
-from core.extensions import db
+from core.factory.extensions import db
 from crescendo.auth.entities import UserEntity
 from crescendo.auth.models import UserModel
-from crescendo.auth.repositories import SQLAlchemyFullUserRepositoryABC
-from crescendo.auth.services import UserServiceABC
+from crescendo.auth.repositories import (SQLAlchemyFullUserRepository,
+                                         SQLAlchemyFullUserRepositoryABC)
+from crescendo.auth.services import UserService, UserServiceABC
 
 
 class UserContainer(containers.DeclarativeContainer):
@@ -27,3 +28,9 @@ class UserContainer(containers.DeclarativeContainer):
         user_repository=user_repository,
         user_entity=providers.Factory(UserEntity).provider,
     )
+
+
+user_container = UserContainer(
+    user_service_abc=providers.Factory(UserService),
+    user_repository_abc=providers.Factory(SQLAlchemyFullUserRepository),
+)

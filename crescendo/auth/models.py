@@ -2,7 +2,7 @@ from enum import Enum
 
 from sqlalchemy.orm import validates
 
-from core.extensions import db
+from core.factory.extensions import db
 from core.models.base_model import BaseModel
 from core.models.mixins import TimeStampedMixin, UUIDMixin
 

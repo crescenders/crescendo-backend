@@ -6,13 +6,13 @@ from unittest import mock
 import pytest
 from flask import url_for
 
-from app import create_app
+from app import ApplicationFactory
 from crescendo.auth.services import UserServiceABC
 
 
 @pytest.fixture
 def test_app():
-    test_app = create_app()
+    test_app = ApplicationFactory.create_app()
     yield test_app
     test_app.user_container.unwire()
 

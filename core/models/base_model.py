@@ -1,4 +1,4 @@
-from core.extensions import db
+from core.factory.extensions import db
 
 
 class BaseModel(db.Model):  # type: ignore[name-defined]

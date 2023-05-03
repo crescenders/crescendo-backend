@@ -5,11 +5,12 @@ from google.auth.transport import requests  # type: ignore[import]
 from google.oauth2 import id_token  # type: ignore[import]
 
 from core.entities.pagination import PaginationResponseEntity
+from core.services.base import BaseService
 from crescendo.auth.entities import UserEntity
 from crescendo.auth.repositories import SQLAlchemyFullUserRepositoryABC
 
 
-class UserServiceABC(ABC):
+class UserServiceABC(BaseService, ABC):
     @abstractmethod
     def get_list(
         self,
