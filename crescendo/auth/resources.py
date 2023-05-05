@@ -6,7 +6,6 @@ from google.auth.exceptions import GoogleAuthError  # type: ignore[import]
 
 from core.schemas.pagination import PaginateArgsSchema
 from core.utils.jwt import jwt_required
-from crescendo.auth.containers import UserContainer
 from crescendo.auth.schemas import (
     GoogleOauthArgsSchema,
     SortingArgsSchema,
@@ -14,7 +13,6 @@ from crescendo.auth.schemas import (
     UserListSchema,
     UserSchema,
 )
-from crescendo.auth.services import UserServiceABC
 
 #########################
 # Define your Blueprint.#
@@ -37,7 +35,7 @@ class UserListAPI(MethodView):
     """사용자 목록을 다루는 API 입니다."""
 
     @inject
-    def __init__(self, user_service=Provide[UserContainer.user_service]):
+    def __init__(self, user_service=Provide["user_service"]):
         self.user_service = user_service
 
     # @jwt_required()
@@ -70,7 +68,6 @@ class UserListAPI(MethodView):
         "username 에 대해서 오름차순으로 정렬하고, email에 대해서 내림차순으로 정렬한 사용자의 모든 목록" 을 응답합니다.
 
         """
-
         return self.user_service.get_list(
             paginate_args, sorting_args, user_filtering_args
         )
@@ -81,8 +78,8 @@ class UserDetailAPI(MethodView):
     """사용자 한 명을 다루는 API 입니다."""
 
     @inject
-    def __init__(self, user_service=Provide[UserContainer.user_service]):
-        self.user_service: UserServiceABC = user_service
+    def __init__(self, user_service=Provide["user_service"]):
+        self.user_service = user_service
 
     # @jwt_required()
     @AUTH_MICRO_APP.response(200, UserSchema)
@@ -116,9 +113,7 @@ class UserDetailAPI(MethodView):
 @AUTH_MICRO_APP.post("/login/google/")
 @AUTH_MICRO_APP.arguments(GoogleOauthArgsSchema)
 @inject
-def google_login_api(
-    google_oauth_token_data, user_service=Provide[UserContainer.user_service]
-):
+def google_login_api(google_oauth_token_data, user_service=Provide["user_service"]):
     """Google 소셜 로그인을 진행합니다.
 
     Google 에서 발급된 JWT 가 필요합니다.

@@ -5,12 +5,11 @@ from google.auth.transport import requests  # type: ignore[import]
 from google.oauth2 import id_token  # type: ignore[import]
 
 from core.entities.pagination import PaginationResponseEntity
-from core.services.base import BaseService
 from crescendo.auth.entities import UserEntity
 from crescendo.auth.repositories import SQLAlchemyFullUserRepositoryABC
 
 
-class UserServiceABC(BaseService, ABC):
+class UserServiceABC(ABC):
     @abstractmethod
     def get_list(
         self,
@@ -25,6 +24,9 @@ class UserServiceABC(BaseService, ABC):
 
     @abstractmethod
     def get_one(self, uuid) -> UserEntity:
+        """
+        UUID 로 사용자를 한 명 반환합니다.
+        """
         pass
 
     @abstractmethod
@@ -50,7 +52,9 @@ class UserService(UserServiceABC):
     """회원정보조회, 회원가입, 회원정보수정, 회원탈퇴, 검색"""
 
     def __init__(
-        self, user_repository: SQLAlchemyFullUserRepositoryABC, user_entity: UserEntity
+        self,
+        user_repository: SQLAlchemyFullUserRepositoryABC,
+        user_entity: UserEntity,
     ):
         self.user_repository = user_repository
         self.user_entity = user_entity
@@ -64,7 +68,6 @@ class UserService(UserServiceABC):
         # pagination 기본값 정하기
         page = pagination_request_params.get("page", 1)
         per_page = pagination_request_params.get("per_page", 10)
-        #
         return self.user_repository.read_all(
             page=page, per_page=per_page, filter_by=filter_by, ordering=ordering
         )
