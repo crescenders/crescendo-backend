@@ -1,13 +1,10 @@
 """
 auth 앱의 resources.py (presentation layer) 를 테스트합니다.
 """
-from unittest import mock
 
 import pytest
-from flask import url_for
 
 from app import ApplicationFactory
-from crescendo.auth.services import UserServiceABC
 
 
 @pytest.fixture

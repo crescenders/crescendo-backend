@@ -5,7 +5,10 @@ from marshmallow import fields, utils
 
 
 class SortDict(fields.Field):
-    """Overrides the field to make it easier to parse `fieldname:sortinformation` in the URL."""
+    """
+    Overrides the field to make it easier
+    to parse `fieldname:sortinformation` in the URL.
+    """
 
     default_error_messages = {"invalid": "Not a valid SortDict."}
 

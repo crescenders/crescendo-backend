@@ -1,7 +1,7 @@
 from typing import List, Optional
 
 from flask_marshmallow.sqla import SQLAlchemyAutoSchema  # type: ignore[import]
-from sqlalchemy import insert, inspect, select
+from sqlalchemy import inspect, select
 from sqlalchemy.orm import Query
 
 from core.repositories.crud import CRUDRepositoryABC

@@ -1,9 +1,5 @@
 import importlib
-import inspect
-import pkgutil
-import sys
 
-from dependency_injector import providers
 from dotenv import load_dotenv
 from flask import Flask
 from flask_smorest import Api

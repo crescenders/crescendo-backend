@@ -1,4 +1,3 @@
-from datetime import datetime
 from uuid import uuid4
 
 from core.factory.extensions import db
