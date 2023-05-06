@@ -5,11 +5,12 @@ from flask import Flask
 from flask_smorest import Api
 
 
-class ApplicationFactory:
-    FLASK_APP_NAME = "crescendo-backend"
-    APP_BASE_DIR = "crescendo"
-    CONFIG_FILE = "core.config.dev"
-    EXTENSION_FILE = "core.factory.extensions"
+class BaseApplicationFactory:
+    FLASK_APP_NAME = None
+    APP_BASE_DIR = None
+    CONFIG_FILE = None
+    EXTENSION_FILE = None
+    MICRO_APP_CONFIG = None
     DOTENV_SETTINGS = {
         "stream": None,
         "verbose": False,
@@ -17,9 +18,6 @@ class ApplicationFactory:
         "interpolate": True,
         "encoding": "utf-8",
     }
-    MICRO_APP_CONFIG = [
-        {"crescendo.auth": "/api/v1/auth/"},
-    ]
 
     @classmethod
     def create_app(cls):
@@ -49,12 +47,17 @@ class ApplicationFactory:
     def _create_flask_app(cls) -> Flask:
         """
         create flask app, with `FLASK_APP_NAME`.
+        if cls.__name__ is formatted like "YourCustomAppNameFactory",
+        use "YourAppName" instead.
         """
-        if hasattr(cls, "FLASK_APP_NAME"):
+        if cls.FLASK_APP_NAME is not None:
             return Flask(cls.FLASK_APP_NAME)
+        elif cls.__name__.endswith("Factory"):
+            return Flask(cls.__name__.split("Factory")[0])
         else:
             raise AttributeError(
-                f"`FLASK_APP_NAME` class variable is not set in '{cls.__name__}'"
+                f"`FLASK_APP_NAME` class variable is not set in '{cls.__name__}'."
+                f"set `FLASK_APP_NAME` class variable, or naming the Factory class like '`YourAppName`Factory'."
             )
 
     @classmethod
@@ -103,5 +106,5 @@ class ApplicationFactory:
 
     @classmethod
     def _setup_di_container(cls, micro_app_container):
-        # wiring the DI Container.
+        """wiring the DI Container."""
         micro_app_container.wire(packages=[cls.APP_BASE_DIR])

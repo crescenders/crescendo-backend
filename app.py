@@ -1,6 +1,6 @@
-from core.factory.app_factory import ApplicationFactory
+from core import CrescendoApplicationFactory
 
-app = ApplicationFactory.create_app()
+app = CrescendoApplicationFactory.create_app()
 
 if __name__ == "__main__":
     app.run(
