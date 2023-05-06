@@ -4,15 +4,11 @@ from flask.views import MethodView
 from flask_smorest import Blueprint
 from google.auth.exceptions import GoogleAuthError  # type: ignore[import]
 
-from core.schemas.pagination import PaginateArgsSchema
+from core.schemas.pagination import PaginationArgsSchema
 from core.utils.jwt import jwt_required
-from crescendo.auth.schemas import (
-    GoogleOauthArgsSchema,
-    SortingArgsSchema,
-    UserFilteringArgsSchema,
-    UserListSchema,
-    UserSchema,
-)
+from crescendo.auth.schemas import (GoogleOauthArgsSchema,
+                                    PaginatedUserListSchema, SortingArgsSchema,
+                                    UserFilteringArgsSchema, UserSchema)
 
 #########################
 # Define your Blueprint.#
@@ -24,6 +20,7 @@ AUTH_MICRO_APP = Blueprint(
     url_prefix="/auth",
     description="로그인, 회원가입, 사용자 정보 조회를 위한 API 입니다.",
 )
+
 
 #############################
 # Define your API endpoints.#
@@ -39,15 +36,15 @@ class UserListAPI(MethodView):
         self.user_service = user_service
 
     # @jwt_required()
-    @AUTH_MICRO_APP.arguments(PaginateArgsSchema, location="query")  # 페이지네이션 파라미터
+    @AUTH_MICRO_APP.arguments(PaginationArgsSchema, location="query")  # 페이지네이션 파라미터
     @AUTH_MICRO_APP.arguments(SortingArgsSchema, location="query")  # 정렬 파라미터
     @AUTH_MICRO_APP.arguments(UserFilteringArgsSchema, location="query")  # 필터링 파라미터
-    @AUTH_MICRO_APP.response(200, UserListSchema)
+    @AUTH_MICRO_APP.response(200, PaginatedUserListSchema)
     def get(
         self,
         paginate_args,
         sorting_args,
-        user_filtering_args,
+        filtering_args,
     ):
         """
         사용자 목록을 조회합니다.
@@ -68,9 +65,10 @@ class UserListAPI(MethodView):
         "username 에 대해서 오름차순으로 정렬하고, email에 대해서 내림차순으로 정렬한 사용자의 모든 목록" 을 응답합니다.
 
         """
-        return self.user_service.get_list(
-            paginate_args, sorting_args, user_filtering_args
-        )
+        # {'page': 1, 'per_page': 12}
+        # {'sorting': [{'id': 'asc'}]}
+        # {'email': 'hi', 'username': 'hello'}
+        return self.user_service.get_list(paginate_args, sorting_args, filtering_args)
 
 
 @AUTH_MICRO_APP.route("users/<uuid:user_uuid>/")
