@@ -1,7 +1,7 @@
 from marshmallow import Schema, fields
 
 from core.schemas import fields as fullask_fields
-from core.schemas.pagination import PaginationResultSchema
+from core.schemas.pagination import PaginationResponseSchema
 
 
 class UserSchema(Schema):
@@ -47,7 +47,7 @@ class SortingArgsSchema(Schema):
     )
 
 
-class UserListSchema(PaginationResultSchema):
+class PaginatedUserListSchema(PaginationResponseSchema):
     """사용자 목록에 대한 직렬화 규칙을 정의합니다."""
 
     results = fields.List(
