@@ -1,12 +1,9 @@
-from marshmallow import Schema, fields
+from marshmallow import Schema, fields, validate
 
-from core.schemas import fields as fullask_fields
 from core.schemas.pagination import PaginationResponseSchema
 
 
 class UserSchema(Schema):
-    """사용자 한 명에 대한 직렬화 규칙을 정의합니다."""
-
     uuid = fields.UUID(
         dump_only=True,
         metadata={"description": "사용자 UUID"},
@@ -27,9 +24,13 @@ class UserSchema(Schema):
     )
 
 
-class UserFilteringArgsSchema(Schema):
-    """사용자 목록 조회 시, 필터링 쿼리스트링을 정의합니다."""
+class PaginatedUserListSchema(PaginationResponseSchema):
+    results = fields.List(
+        fields.Nested(UserSchema()), metadata={"description": "사용자 목록"}
+    )
 
+
+class UserFilteringArgsSchema(Schema):
     username = fields.String(
         metadata={"description": "닉네임에 해당 문자열이 포함된 모든 사용자를 찾습니다."},
     )
@@ -39,20 +40,11 @@ class UserFilteringArgsSchema(Schema):
 
 
 class SortingArgsSchema(Schema):
-    """사용자 목록 조회 시, 정렬 쿼리스트링을 정의합니다."""
+    id = fields.String(validate=validate.OneOf(["asc", "desc"]))
+    created_at = fields.String(validate=validate.OneOf(["asc", "desc"]))
 
-    sorting = fields.List(
-        fullask_fields.SortDict(),
-        metadata={"description": "정렬 조건, `찾고자 하는 필드명:(desc 혹은 asc)` 의 형식을 준수해야 합니다."},
-    )
-
-
-class PaginatedUserListSchema(PaginationResponseSchema):
-    """사용자 목록에 대한 직렬화 규칙을 정의합니다."""
-
-    results = fields.List(
-        fields.Nested(UserSchema()), metadata={"description": "사용자 목록"}
-    )
+    class Meta:
+        ordering = True
 
 
 class GoogleOauthArgsSchema(Schema):
