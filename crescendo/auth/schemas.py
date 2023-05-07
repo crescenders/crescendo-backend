@@ -1,4 +1,4 @@
-from marshmallow import Schema, fields, validate
+from marshmallow import Schema, fields
 
 from core.schemas.pagination import PaginationResponseSchema
 
@@ -37,14 +37,6 @@ class UserFilteringArgsSchema(Schema):
     email = fields.String(
         metadata={"description": "이메일에 해당 문자열이 포함된 모든 사용자를 찾습니다."},
     )
-
-
-class SortingArgsSchema(Schema):
-    id = fields.String(validate=validate.OneOf(["asc", "desc"]))
-    created_at = fields.String(validate=validate.OneOf(["asc", "desc"]))
-
-    class Meta:
-        ordering = True
 
 
 class GoogleOauthArgsSchema(Schema):

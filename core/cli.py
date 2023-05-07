@@ -12,7 +12,7 @@ def init_app():
 @cli.with_appcontext
 def createadminuser():
     """사용자를 생성합니다."""
-    from core.extensions import db
+    from core.factory.extensions import db
     from crescendo.auth.models import UserModel
 
     email = click.prompt("email:", type=str)

@@ -1,15 +1,15 @@
 from abc import ABC, abstractmethod
-from typing import Generic, List, Optional
+from typing import Generic, List, Optional, TypeVar
 
+from core.entities.pagination import PaginationResponse
 from core.repositories.base import BaseRepository
-from core.repositories.type import DBEntity
 
 
-class CRUDRepositoryABC(BaseRepository, ABC, Generic[DBEntity]):
+class CRUDRepositoryABC(BaseRepository, ABC):
     """The Base CRUD Repository class."""
 
     @abstractmethod
-    def save(self, entity: DBEntity) -> DBEntity:
+    def save(self, entity):
         """
         Save the given entity.
 
@@ -19,7 +19,7 @@ class CRUDRepositoryABC(BaseRepository, ABC, Generic[DBEntity]):
         pass
 
     @abstractmethod
-    def save_all(self, entities: List[DBEntity]) -> List[DBEntity]:
+    def save_all(self, entities):
         """
         Save all given entities.
 
@@ -29,7 +29,7 @@ class CRUDRepositoryABC(BaseRepository, ABC, Generic[DBEntity]):
         pass
 
     @abstractmethod
-    def read_by_id(self, id) -> Optional[DBEntity]:
+    def read_by_id(self, id: int):
         """
         Read the entity with given id.
 
@@ -47,17 +47,25 @@ class CRUDRepositoryABC(BaseRepository, ABC, Generic[DBEntity]):
         pass
 
     @abstractmethod
-    def read_all(self) -> List[Optional[DBEntity]]:
+    def read_all(self, sorting_request: dict, filtering_request: dict):
         """
         Read all entities.
         if no entities are found, return empty list.
-
-        :return: list of all entities.
         """
         pass
 
     @abstractmethod
-    def read_all_by_ids(self, ids: List[int]) -> List[Optional[DBEntity]]:
+    def read_all_with_pagination(
+        self, pagination_request: dict, sorting_request: dict, filtering_request: dict
+    ) -> PaginationResponse:
+        """
+        Read all entities with pagination.
+        if no entities are found, return empty list.
+        """
+        pass
+
+    @abstractmethod
+    def read_all_by_ids(self, ids: List[int]):
         """
         Read all entities with given ids.
 
@@ -77,7 +85,7 @@ class CRUDRepositoryABC(BaseRepository, ABC, Generic[DBEntity]):
         pass
 
     @abstractmethod
-    def delete(self, entity: DBEntity) -> None:
+    def delete(self, entity) -> None:
         """Delete the given entity."""
         pass
 

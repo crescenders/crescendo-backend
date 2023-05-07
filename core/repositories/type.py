@@ -1,3 +1,8 @@
-from typing import TypeVar
+from typing import Protocol, TypeVar
 
-DBEntity = TypeVar("DBEntity")
+
+class Identifiable(Protocol):
+    id: int
+
+
+BaseEntity = TypeVar("BaseEntity", bound=Identifiable)

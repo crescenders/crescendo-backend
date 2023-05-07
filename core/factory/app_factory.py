@@ -1,4 +1,5 @@
 import importlib
+from typing import Dict, List, Optional
 
 from dotenv import load_dotenv
 from flask import Flask
@@ -6,11 +7,11 @@ from flask_smorest import Api
 
 
 class BaseApplicationFactory:
-    FLASK_APP_NAME = None
-    APP_BASE_DIR = None
-    CONFIG_FILE = None
-    EXTENSION_FILE = None
-    MICRO_APP_CONFIG = None
+    FLASK_APP_NAME: Optional[str] = None
+    APP_BASE_DIR: Optional[str] = None
+    CONFIG_FILE: Optional[str] = None
+    EXTENSION_FILE: Optional[str] = None
+    MICRO_APP_CONFIG: Optional[List[Dict[str, str]]] = None
     DOTENV_SETTINGS = {
         "stream": None,
         "verbose": False,
@@ -57,7 +58,8 @@ class BaseApplicationFactory:
         else:
             raise AttributeError(
                 f"`FLASK_APP_NAME` class variable is not set in '{cls.__name__}'."
-                f"set `FLASK_APP_NAME` class variable, or naming the Factory class like '`YourAppName`Factory'."
+                f"set `FLASK_APP_NAME` class variable, or naming the Factory class,"
+                f" like '`YourAppName`Factory'."
             )
 
     @classmethod

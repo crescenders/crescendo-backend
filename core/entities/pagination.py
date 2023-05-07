@@ -1,12 +1,10 @@
 from dataclasses import dataclass
-from typing import Generic, List, Optional, TypeVar
-
-T = TypeVar("T")
+from typing import List, Optional
 
 
 @dataclass
-class PaginationResponseEntity(Generic[T]):
-    count: int
-    next_page: Optional[str]
-    previous_page: Optional[str]
-    results: List[T]
+class PaginationResponse:
+    count: Optional[int]
+    next_page: Optional[int]
+    previous_page: Optional[int]
+    results: List

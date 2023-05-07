@@ -4,7 +4,7 @@ from typing import Optional
 from google.auth.transport import requests  # type: ignore[import]
 from google.oauth2 import id_token  # type: ignore[import]
 
-from core.entities.pagination import PaginationResponseEntity
+from core.entities.pagination import PaginationResponse
 from crescendo.auth.entities import UserEntity
 from crescendo.auth.repositories import SQLAlchemyFullUserRepositoryABC
 
@@ -13,20 +13,14 @@ class UserServiceABC(ABC):
     @abstractmethod
     def get_list(
         self,
-        pagination_request_params: dict,
-        ordering_params: dict,
-        user_filtering_params: dict,
-    ) -> PaginationResponseEntity[UserEntity]:
-        """
-        페이지네이션, 필터링, 정렬조건을 적용하여 사용자의 목록을 반환합니다.
-        """
+        pagination_request,
+        sorting_request,
+        filtering_request,
+    ) -> PaginationResponse:
         pass
 
     @abstractmethod
-    def get_one(self, uuid) -> UserEntity:
-        """
-        UUID 로 사용자를 한 명 반환합니다.
-        """
+    def get_one(self, uuid) -> Optional[UserEntity]:
         pass
 
     @abstractmethod
@@ -61,15 +55,14 @@ class UserService(UserServiceABC):
 
     def get_list(
         self,
-        pagination_request_params: dict,
-        ordering_params: dict,
-        user_filtering_params: dict,
-    ) -> PaginationResponseEntity[UserEntity]:
-        # pagination 기본값 정하기
-        page = pagination_request_params.get("page", 1)
-        per_page = pagination_request_params.get("per_page", 10)
-        return self.user_repository.read_all(
-            page=page, per_page=per_page, filter_by=filter_by, ordering=ordering
+        pagination_request,
+        sorting_request,
+        filtering_request,
+    ) -> PaginationResponse:
+        return self.user_repository.read_all_with_pagination(
+            pagination_request=pagination_request,
+            sorting_request=sorting_request,
+            filtering_request=filtering_request,
         )
 
     def get_one(self, uuid) -> Optional[UserEntity]:
@@ -108,13 +101,3 @@ class UserService(UserServiceABC):
         id_information = id_token.verify_oauth2_token(data, requests.Request())
         email = id_information["email"]
         username = id_information["given_name"]
-
-    def _check_user_exists(self, email) -> Optional[UserEntity]:
-        """
-        repository 에서 사용자가 존재하는지 체크하고, 존재한다면 UserEntity 객체를, 그렇지 않다면 None을 반환합니다.
-
-        :param email: 사용자의 이메일
-        :return: UserEntity or None
-        """
-        current_user = self.user_repository.read_one_by_email(email=email)
-        return current_user

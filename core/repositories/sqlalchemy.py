@@ -1,11 +1,11 @@
 from typing import List, Optional
 
 from flask_marshmallow.sqla import SQLAlchemyAutoSchema  # type: ignore[import]
-from sqlalchemy import inspect, select
-from sqlalchemy.orm import Query
+from flask_sqlalchemy.query import Query
+from sqlalchemy import inspect, or_, select
 
+from core.entities.pagination import PaginationResponse
 from core.repositories.crud import CRUDRepositoryABC
-from core.repositories.type import DBEntity
 
 
 class SQLAlchemyFullRepository(CRUDRepositoryABC):
@@ -15,7 +15,7 @@ class SQLAlchemyFullRepository(CRUDRepositoryABC):
     this implementation has dependency with flask-sqlalchemy's SQLAlchemy object.
     """
 
-    def __init__(self, entity: type[DBEntity], db, sqlalchemy_model):
+    def __init__(self, entity, db, sqlalchemy_model):
         """
         :param db: flask-sqlalchemy.SQLAlchemy
         :param sqlalchemy_model: the SQLAlchemy model
@@ -32,14 +32,14 @@ class SQLAlchemyFullRepository(CRUDRepositoryABC):
             f"{[column.name for column in self.sqlalchemy_model.__table__.columns]}"
         )
 
-    def save(self, entity: DBEntity) -> DBEntity:
+    def save(self, entity):
         model_instance = self._entity_to_sqlalchemy_model(entity)
         with self.db.session.begin():
             self.db.session.add(model_instance)
         self.db.session.refresh(model_instance)
         return self._sqlalchemy_model_to_entity(model_instance)
 
-    def save_all(self, entities: List[DBEntity]) -> List[DBEntity]:
+    def save_all(self, entities: List) -> List:
         model_instances = [
             self._entity_to_sqlalchemy_model(entity) for entity in entities
         ]
@@ -54,7 +54,7 @@ class SQLAlchemyFullRepository(CRUDRepositoryABC):
             for model_instance in model_instances
         ]
 
-    def read_by_id(self, id) -> Optional[DBEntity]:
+    def read_by_id(self, id: int):
         # TODO : 이 쪽 줄 로직은 필요없는 것 같으니 리팩토링하기
         if id is None:
             raise ValueError("id cannot be None.")
@@ -68,15 +68,52 @@ class SQLAlchemyFullRepository(CRUDRepositoryABC):
             raise ValueError("id cannot be None.")
         return bool(self.db.session.get(self.sqlalchemy_model, id))
 
-    def read_all(self) -> List[Optional[DBEntity]]:
-        return [
-            self._sqlalchemy_model_to_entity(query_result)
-            for query_result in self.db.session.execute(select(self.sqlalchemy_model))
-            .scalars()
-            .all()
-        ]
+    def read_all(
+        self,
+        sorting_request=None,
+        filtering_request=None,
+    ):
+        query = self._get_base_query()
+        if filtering_request:
+            # handle the filtering request first.
+            # TODO : 구현하기
+            query = self._filtering()
+            pass
+        if sorting_request:
+            # handle the sorting request second.
+            # TODO : 구현하기
+            query = self._sorting()
+            pass
+        else:
+            # if no pagination request, return all results without pagination.
+            return [
+                self._sqlalchemy_model_to_entity(query_result)
+                for query_result in self.db.session.execute(
+                    select(self.sqlalchemy_model)
+                )
+                .scalars()
+                .all()
+            ]
 
-    def read_all_by_ids(self, ids: List[int]) -> List[Optional[DBEntity]]:
+    def read_all_with_pagination(
+        self,
+        pagination_request: dict,
+        sorting_request=None,
+        filtering_request=None,
+    ) -> PaginationResponse:
+        # TODO: 테스트 코드 작성, filtering and sorting 처리
+        query = self._get_base_query().paginate(
+            page=pagination_request.get("page"),
+            per_page=pagination_request.get("page_size"),
+        )
+        return PaginationResponse(
+            count=query.total,
+            next_page=query.next_num,
+            previous_page=query.prev_num,
+            results=[self._sqlalchemy_model_to_entity(item) for item in query.items],
+        )
+
+    def read_all_by_ids(self, ids: List[int]) -> List:
         return [self.read_by_id(_id) for _id in ids]
 
     def count(self) -> int:
@@ -90,7 +127,7 @@ class SQLAlchemyFullRepository(CRUDRepositoryABC):
         else:
             raise ValueError(f"{self.sqlalchemy_model} with id {id} not found.")
 
-    def delete(self, entity: DBEntity) -> None:
+    def delete(self, entity) -> None:
         model_instance = self.db.session.get(self.sqlalchemy_model, entity.id)
         if not model_instance:
             raise ValueError(
@@ -111,7 +148,15 @@ class SQLAlchemyFullRepository(CRUDRepositoryABC):
     def _get_base_query(self) -> Query:
         return self.db.session.query(self.sqlalchemy_model)
 
-    def _sqlalchemy_model_to_entity(self, sqlalchemy_instance) -> DBEntity:
+    def _filtering(self) -> Query:
+        # TODO : 구현하기
+        pass
+
+    def _sorting(self) -> Query:
+        # TODO : 구현하기
+        pass
+
+    def _sqlalchemy_model_to_entity(self, sqlalchemy_instance):
         """convert sqlalchemy model to entity."""
         assert isinstance(
             sqlalchemy_instance, self.sqlalchemy_model
