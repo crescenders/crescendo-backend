@@ -1,4 +1,4 @@
-class FilteringRequest(dict):
+class FilteringRequest:
     def __init__(self, **kwargs):
         super().__init__()
         for field, search_word in kwargs.items():

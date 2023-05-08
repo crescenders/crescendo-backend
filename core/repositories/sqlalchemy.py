@@ -150,7 +150,7 @@ class SQLAlchemyFullRepository(CRUDRepositoryABC, Generic[T]):
         return self.db.session.query(self.sqlalchemy_model)
 
     def _filtering(self, query: Query, filtering_request: FilteringRequest) -> Query:
-        for field, word in filtering_request.items():
+        for field, word in vars(filtering_request).items():
             query = query.filter(
                 getattr(self.sqlalchemy_model, field).ilike(f"%{word}%")
             )
