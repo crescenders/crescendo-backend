@@ -16,5 +16,5 @@ class PaginationResponse(Generic[T]):
 
 @dataclass
 class PaginationRequest:
-    page: int = None
-    per_page: int = None
+    page: Optional[int] = None
+    per_page: Optional[int] = None
