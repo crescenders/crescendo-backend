@@ -1,7 +1,7 @@
 from dataclasses import dataclass
+from typing import Optional
 
 
 @dataclass
 class BaseEntity:
-    id: int
-    pass
+    id: Optional[int]
