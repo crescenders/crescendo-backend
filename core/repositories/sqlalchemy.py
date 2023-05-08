@@ -2,10 +2,11 @@ from typing import Generic, List, Optional
 
 from flask_marshmallow.sqla import SQLAlchemyAutoSchema  # type: ignore[import]
 from flask_sqlalchemy.query import Query
-from sqlalchemy import inspect, or_, select
+from sqlalchemy import inspect, select
 
 from core.entities.filtering import FilteringRequest
 from core.entities.pagination import PaginationRequest, PaginationResponse
+from core.entities.sorting import SortingRequest
 from core.repositories.base import T
 from core.repositories.crud import CRUDRepositoryABC
 
@@ -92,8 +93,8 @@ class SQLAlchemyFullRepository(CRUDRepositoryABC, Generic[T]):
     def read_all_with_pagination(
         self,
         pagination_request: PaginationRequest,
-        sorting_request=None,
-        filtering_request=None,
+        sorting_request: SortingRequest,
+        filtering_request: FilteringRequest,
     ) -> PaginationResponse[T]:
         # TODO: 테스트 코드 작성, filtering and sorting 처리
         query = self._get_base_query()
@@ -102,7 +103,7 @@ class SQLAlchemyFullRepository(CRUDRepositoryABC, Generic[T]):
             query = self._filtering(query=query, filtering_request=filtering_request)
         if sorting_request:
             # TODO : 구현하기
-            query = self._sorting(query=query)
+            query = self._sorting(query=query, sorting_request=sorting_request)
         query = self._get_base_query().paginate(
             page=pagination_request.page,
             per_page=pagination_request.per_page,
@@ -156,7 +157,7 @@ class SQLAlchemyFullRepository(CRUDRepositoryABC, Generic[T]):
             )
         return query
 
-    def _sorting(self, query: Query, sorting_request: dict) -> Query:
+    def _sorting(self, query: Query, sorting_request: SortingRequest) -> Query:
         # TODO : 구현하기
         pass
 

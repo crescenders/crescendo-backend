@@ -3,6 +3,7 @@ from typing import Generic, List, Optional
 
 from core.entities.filtering import FilteringRequest
 from core.entities.pagination import PaginationRequest, PaginationResponse
+from core.entities.sorting import SortingRequest
 from core.repositories.base import BaseRepository, T
 
 
@@ -49,7 +50,9 @@ class CRUDRepositoryABC(BaseRepository, ABC, Generic[T]):
 
     @abstractmethod
     def read_all(
-        self, sorting_request: dict, filtering_request: dict
+        self,
+        sorting_request: SortingRequest,
+        filtering_request: FilteringRequest,
     ) -> List[Optional[T]]:
         """
         Read all entities.
@@ -61,7 +64,7 @@ class CRUDRepositoryABC(BaseRepository, ABC, Generic[T]):
     def read_all_with_pagination(
         self,
         pagination_request: PaginationRequest,
-        sorting_request: dict,
+        sorting_request: SortingRequest,
         filtering_request: FilteringRequest,
     ) -> PaginationResponse[T]:
         """
