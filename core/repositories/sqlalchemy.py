@@ -56,9 +56,6 @@ class SQLAlchemyFullRepository(CRUDRepositoryABC, Generic[T]):
         ]
 
     def read_by_id(self, id: int) -> Optional[T]:
-        # TODO : 이 쪽 줄 로직은 필요없는 것 같으니 리팩토링하기
-        if id is None:
-            raise ValueError("id cannot be None.")
         query_result = self.db.session.get(self.sqlalchemy_model, id)
         if query_result:
             return self._sqlalchemy_model_to_entity(query_result)
@@ -75,15 +72,10 @@ class SQLAlchemyFullRepository(CRUDRepositoryABC, Generic[T]):
         filtering_request=None,
     ) -> List[Optional[T]]:
         query = self._get_base_query()
+        # TODO : Add Filtering and Sorting
         if filtering_request:
-            # handle the filtering request first.
-            # TODO : 구현하기
-            query = self._filtering()
             pass
         if sorting_request:
-            # handle the sorting request second.
-            # TODO : 구현하기
-            query = self._sorting()
             pass
         else:
             # if no pagination request, return all results without pagination.
@@ -103,6 +95,13 @@ class SQLAlchemyFullRepository(CRUDRepositoryABC, Generic[T]):
         filtering_request=None,
     ) -> PaginationResponse[T]:
         # TODO: 테스트 코드 작성, filtering and sorting 처리
+        query = self._get_base_query()
+        if filtering_request:
+            # TODO : 구현하기
+            query = self._filtering(query=query, filtering_request=filtering_request)
+        if sorting_request:
+            # TODO : 구현하기
+            query = self._sorting(query=query)
         query = self._get_base_query().paginate(
             page=pagination_request.get("page"),
             per_page=pagination_request.get("page_size"),
@@ -149,13 +148,16 @@ class SQLAlchemyFullRepository(CRUDRepositoryABC, Generic[T]):
     def _get_base_query(self) -> Query:
         return self.db.session.query(self.sqlalchemy_model)
 
-    def _filtering(self) -> Query:
-        # TODO : 구현하기
-        return None
+    def _filtering(self, query: Query, filtering_request: dict) -> Query:
+        for field, word in filtering_request.items():
+            query = query.filter(
+                getattr(self.sqlalchemy_model, field).ilike(f"%{word}%")
+            )
+        return query
 
-    def _sorting(self) -> Query:
+    def _sorting(self, query: Query, sorting_request: dict) -> Query:
         # TODO : 구현하기
-        return None
+        pass
 
     def _sqlalchemy_model_to_entity(self, sqlalchemy_instance) -> T:
         assert isinstance(
