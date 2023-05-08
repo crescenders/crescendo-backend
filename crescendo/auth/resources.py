@@ -4,6 +4,7 @@ from flask.views import MethodView
 from flask_smorest import Blueprint
 from google.auth.exceptions import GoogleAuthError  # type: ignore[import]
 
+from core.entities.pagination import PaginationRequest
 from core.schemas.pagination import PaginationRequestSchema
 from core.schemas.sorting import SortingRequestSchema
 from core.utils.jwt import jwt_required
@@ -46,7 +47,7 @@ class UserListAPI(MethodView):
     @AUTH_MICRO_APP.response(200, PaginatedUserListSchema)
     def get(
         self,
-        pagination_request,
+        pagination_request: PaginationRequest,
         sorting_request,
         filtering_request,
     ):
@@ -54,7 +55,7 @@ class UserListAPI(MethodView):
         사용자 목록을 조회합니다.
         """
         # print(sorting_request)
-        # print(pagination_request)
+        print(pagination_request)
         # print(filtering_request)
         return self.user_service.get_list(
             pagination_request=pagination_request,

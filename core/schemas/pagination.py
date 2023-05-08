@@ -1,5 +1,7 @@
-from marshmallow import Schema, fields
+from marshmallow import Schema, fields, post_load
 from marshmallow.validate import Range
+
+from core.entities.pagination import PaginationRequest
 
 
 class PaginationRequestSchema(Schema):
@@ -11,6 +13,10 @@ class PaginationRequestSchema(Schema):
         validate=Range(min=1),
         metadata={"description": "한 페이지의 아이템 개수입니다."},
     )
+
+    @post_load
+    def to_entity(self, data, **kwargs) -> PaginationRequest:
+        return PaginationRequest(**data)
 
 
 class PaginationResponseSchema(Schema):

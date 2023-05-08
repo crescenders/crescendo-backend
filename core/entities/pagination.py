@@ -12,3 +12,9 @@ class PaginationResponse(Generic[T]):
     next_page: Optional[int]
     previous_page: Optional[int]
     results: List
+
+
+@dataclass
+class PaginationRequest:
+    page: int = None
+    per_page: int = None

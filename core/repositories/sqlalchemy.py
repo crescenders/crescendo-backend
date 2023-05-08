@@ -4,7 +4,7 @@ from flask_marshmallow.sqla import SQLAlchemyAutoSchema  # type: ignore[import]
 from flask_sqlalchemy.query import Query
 from sqlalchemy import inspect, or_, select
 
-from core.entities.pagination import PaginationResponse
+from core.entities.pagination import PaginationRequest, PaginationResponse
 from core.repositories.base import T
 from core.repositories.crud import CRUDRepositoryABC
 
@@ -90,7 +90,7 @@ class SQLAlchemyFullRepository(CRUDRepositoryABC, Generic[T]):
 
     def read_all_with_pagination(
         self,
-        pagination_request: dict,
+        pagination_request: PaginationRequest,
         sorting_request=None,
         filtering_request=None,
     ) -> PaginationResponse[T]:
@@ -103,8 +103,8 @@ class SQLAlchemyFullRepository(CRUDRepositoryABC, Generic[T]):
             # TODO : 구현하기
             query = self._sorting(query=query)
         query = self._get_base_query().paginate(
-            page=pagination_request.get("page"),
-            per_page=pagination_request.get("page_size"),
+            page=pagination_request.page,
+            per_page=pagination_request.per_page,
         )
         return PaginationResponse(
             count=query.total,
