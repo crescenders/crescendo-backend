@@ -16,7 +16,7 @@ class UserServiceABC(ABC):
         pagination_request,
         sorting_request,
         filtering_request,
-    ) -> PaginationResponse:
+    ) -> PaginationResponse[UserEntity]:
         pass
 
     @abstractmethod
@@ -58,7 +58,7 @@ class UserService(UserServiceABC):
         pagination_request,
         sorting_request,
         filtering_request,
-    ) -> PaginationResponse:
+    ) -> PaginationResponse[UserEntity]:
         return self.user_repository.read_all_with_pagination(
             pagination_request=pagination_request,
             sorting_request=sorting_request,
@@ -72,7 +72,7 @@ class UserService(UserServiceABC):
         return None
 
     def withdraw(self, uuid) -> None:
-        pass
+        return None
 
     def oauth2_login(self, oauth2_provider: str, data) -> dict:
         """
@@ -93,6 +93,7 @@ class UserService(UserServiceABC):
             pass
         return {"email": "", "username": ""}
 
+    @staticmethod
     def _google_oauth2_login(self, data):
         # Google JWT 검증
         frontend_google_client_id = (

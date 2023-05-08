@@ -1,15 +1,15 @@
-from typing import List, Optional
+from typing import Generic, List, Optional
 
 from flask_marshmallow.sqla import SQLAlchemyAutoSchema  # type: ignore[import]
 from flask_sqlalchemy.query import Query
 from sqlalchemy import inspect, or_, select
 
-from core.entities.base_entity import BaseEntity
 from core.entities.pagination import PaginationResponse
+from core.repositories.base import T
 from core.repositories.crud import CRUDRepositoryABC
 
 
-class SQLAlchemyFullRepository(CRUDRepositoryABC):
+class SQLAlchemyFullRepository(CRUDRepositoryABC, Generic[T]):
     """
     The implementation of CRUDRepositoryABC, with SQLAlchemy.
 
@@ -33,14 +33,14 @@ class SQLAlchemyFullRepository(CRUDRepositoryABC):
             f"{[column.name for column in self.sqlalchemy_model.__table__.columns]}"
         )
 
-    def save(self, entity: BaseEntity) -> BaseEntity:
+    def save(self, entity: T) -> T:
         model_instance = self._entity_to_sqlalchemy_model(entity)
         with self.db.session.begin():
             self.db.session.add(model_instance)
         self.db.session.refresh(model_instance)
         return self._sqlalchemy_model_to_entity(model_instance)
 
-    def save_all(self, entities: List[BaseEntity]) -> List[BaseEntity]:
+    def save_all(self, entities: List[T]) -> List[T]:
         model_instances = [
             self._entity_to_sqlalchemy_model(entity) for entity in entities
         ]
@@ -55,7 +55,7 @@ class SQLAlchemyFullRepository(CRUDRepositoryABC):
             for model_instance in model_instances
         ]
 
-    def read_by_id(self, id: int) -> Optional[BaseEntity]:
+    def read_by_id(self, id: int) -> Optional[T]:
         # TODO : 이 쪽 줄 로직은 필요없는 것 같으니 리팩토링하기
         if id is None:
             raise ValueError("id cannot be None.")
@@ -73,7 +73,7 @@ class SQLAlchemyFullRepository(CRUDRepositoryABC):
         self,
         sorting_request=None,
         filtering_request=None,
-    ) -> List[Optional[BaseEntity]]:
+    ) -> List[Optional[T]]:
         query = self._get_base_query()
         if filtering_request:
             # handle the filtering request first.
@@ -101,7 +101,7 @@ class SQLAlchemyFullRepository(CRUDRepositoryABC):
         pagination_request: dict,
         sorting_request=None,
         filtering_request=None,
-    ) -> PaginationResponse[BaseEntity]:
+    ) -> PaginationResponse[T]:
         # TODO: 테스트 코드 작성, filtering and sorting 처리
         query = self._get_base_query().paginate(
             page=pagination_request.get("page"),
@@ -114,7 +114,7 @@ class SQLAlchemyFullRepository(CRUDRepositoryABC):
             results=[self._sqlalchemy_model_to_entity(item) for item in query.items],
         )
 
-    def read_all_by_ids(self, ids: List[int]) -> List[Optional[BaseEntity]]:
+    def read_all_by_ids(self, ids: List[int]) -> List[Optional[T]]:
         return [self.read_by_id(_id) for _id in ids]
 
     def count(self) -> int:
@@ -157,7 +157,7 @@ class SQLAlchemyFullRepository(CRUDRepositoryABC):
         # TODO : 구현하기
         return None
 
-    def _sqlalchemy_model_to_entity(self, sqlalchemy_instance) -> BaseEntity:
+    def _sqlalchemy_model_to_entity(self, sqlalchemy_instance) -> T:
         assert isinstance(
             sqlalchemy_instance, self.sqlalchemy_model
         ), f"{sqlalchemy_instance} is not {self.sqlalchemy_model}"
