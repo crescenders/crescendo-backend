@@ -1,6 +1,7 @@
 from marshmallow import Schema, fields, post_load
 
 from core.entities.filtering import FilteringRequest
+from core.schemas.filtering import BaseFilteringSchema
 from core.schemas.pagination import PaginationResponseSchema
 
 
@@ -31,7 +32,7 @@ class PaginatedUserListSchema(PaginationResponseSchema):
     )
 
 
-class UserFilteringArgsSchema(Schema):
+class UserFilteringArgsSchema(BaseFilteringSchema):
     username = fields.String(
         metadata={"description": "닉네임에 해당 문자열이 포함된 모든 사용자를 찾습니다."},
     )
