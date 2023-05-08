@@ -1,6 +1,7 @@
 from abc import ABC, abstractmethod
-from typing import Generic, List, Optional, TypeVar
+from typing import List, Optional, Type
 
+from core.entities.base_entity import BaseEntity
 from core.entities.pagination import PaginationResponse
 from core.repositories.base import BaseRepository
 
@@ -9,7 +10,7 @@ class CRUDRepositoryABC(BaseRepository, ABC):
     """The Base CRUD Repository class."""
 
     @abstractmethod
-    def save(self, entity):
+    def save(self, entity: BaseEntity) -> BaseEntity:
         """
         Save the given entity.
 
@@ -19,7 +20,7 @@ class CRUDRepositoryABC(BaseRepository, ABC):
         pass
 
     @abstractmethod
-    def save_all(self, entities):
+    def save_all(self, entities: List[BaseEntity]) -> List[BaseEntity]:
         """
         Save all given entities.
 
@@ -29,7 +30,7 @@ class CRUDRepositoryABC(BaseRepository, ABC):
         pass
 
     @abstractmethod
-    def read_by_id(self, id: int):
+    def read_by_id(self, id: int) -> Optional[BaseEntity]:
         """
         Read the entity with given id.
 
@@ -47,7 +48,9 @@ class CRUDRepositoryABC(BaseRepository, ABC):
         pass
 
     @abstractmethod
-    def read_all(self, sorting_request: dict, filtering_request: dict):
+    def read_all(
+        self, sorting_request: dict, filtering_request: dict
+    ) -> List[Optional[BaseEntity]]:
         """
         Read all entities.
         if no entities are found, return empty list.
@@ -57,7 +60,7 @@ class CRUDRepositoryABC(BaseRepository, ABC):
     @abstractmethod
     def read_all_with_pagination(
         self, pagination_request: dict, sorting_request: dict, filtering_request: dict
-    ) -> PaginationResponse:
+    ) -> PaginationResponse[BaseEntity]:
         """
         Read all entities with pagination.
         if no entities are found, return empty list.
@@ -65,7 +68,7 @@ class CRUDRepositoryABC(BaseRepository, ABC):
         pass
 
     @abstractmethod
-    def read_all_by_ids(self, ids: List[int]):
+    def read_all_by_ids(self, ids: List[int]) -> List[Optional[BaseEntity]]:
         """
         Read all entities with given ids.
 

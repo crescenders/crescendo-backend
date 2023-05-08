@@ -69,7 +69,7 @@ class UserService(UserServiceABC):
         return self.user_repository.read_by_uuid(uuid=uuid)
 
     def edit_info(self, uuid: str, data) -> UserEntity:
-        pass
+        return None
 
     def withdraw(self, uuid) -> None:
         pass
