@@ -1,5 +1,6 @@
-from marshmallow import Schema, fields
+from marshmallow import Schema, fields, post_load
 
+from core.entities.filtering import FilteringRequest
 from core.schemas.pagination import PaginationResponseSchema
 
 
@@ -37,6 +38,10 @@ class UserFilteringArgsSchema(Schema):
     email = fields.String(
         metadata={"description": "이메일에 해당 문자열이 포함된 모든 사용자를 찾습니다."},
     )
+
+    @post_load
+    def to_entity(self, data, **kwargs) -> FilteringRequest:
+        return FilteringRequest(**data)
 
 
 class GoogleOauthArgsSchema(Schema):

@@ -1,7 +1,8 @@
 from abc import ABC, abstractmethod
 from typing import Generic, List, Optional
 
-from core.entities.pagination import PaginationResponse
+from core.entities.filtering import FilteringRequest
+from core.entities.pagination import PaginationRequest, PaginationResponse
 from core.repositories.base import BaseRepository, T
 
 
@@ -58,7 +59,10 @@ class CRUDRepositoryABC(BaseRepository, ABC, Generic[T]):
 
     @abstractmethod
     def read_all_with_pagination(
-        self, pagination_request: dict, sorting_request: dict, filtering_request: dict
+        self,
+        pagination_request: PaginationRequest,
+        sorting_request: dict,
+        filtering_request: FilteringRequest,
     ) -> PaginationResponse[T]:
         """
         Read all entities with pagination.

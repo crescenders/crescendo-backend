@@ -4,6 +4,7 @@ from flask_marshmallow.sqla import SQLAlchemyAutoSchema  # type: ignore[import]
 from flask_sqlalchemy.query import Query
 from sqlalchemy import inspect, or_, select
 
+from core.entities.filtering import FilteringRequest
 from core.entities.pagination import PaginationRequest, PaginationResponse
 from core.repositories.base import T
 from core.repositories.crud import CRUDRepositoryABC
@@ -148,7 +149,7 @@ class SQLAlchemyFullRepository(CRUDRepositoryABC, Generic[T]):
     def _get_base_query(self) -> Query:
         return self.db.session.query(self.sqlalchemy_model)
 
-    def _filtering(self, query: Query, filtering_request: dict) -> Query:
+    def _filtering(self, query: Query, filtering_request: FilteringRequest) -> Query:
         for field, word in filtering_request.items():
             query = query.filter(
                 getattr(self.sqlalchemy_model, field).ilike(f"%{word}%")
