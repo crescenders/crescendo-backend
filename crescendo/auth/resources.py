@@ -55,7 +55,7 @@ class UserListAPI(MethodView):
         사용자 목록을 조회합니다.
         """
         # print(sorting_request)
-        print(pagination_request)
+        # print(pagination_request)
         # print(filtering_request)
         return self.user_service.get_list(
             pagination_request=pagination_request,
