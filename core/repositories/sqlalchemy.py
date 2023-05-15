@@ -70,15 +70,14 @@ class SQLAlchemyFullRepository(CRUDRepositoryABC, Generic[T]):
 
     def read_all(
         self,
-        sorting_request=None,
-        filtering_request=None,
+        sorting_request: Optional[SortingRequest] = None,
+        filtering_request: Optional[FilteringRequest] = None,
     ) -> List[Optional[T]]:
         query = self._get_base_query()
-        # TODO : Add Filtering and Sorting
         if filtering_request:
-            pass
+            query = self._filtering(query=query, filtering_request=filtering_request)
         if sorting_request:
-            pass
+            query = self._sorting(query=query, sorting_request=sorting_request)
         else:
             # if no pagination request, return all results without pagination.
             return [
@@ -93,20 +92,18 @@ class SQLAlchemyFullRepository(CRUDRepositoryABC, Generic[T]):
     def read_all_with_pagination(
         self,
         pagination_request: PaginationRequest,
-        sorting_request: SortingRequest,
-        filtering_request: FilteringRequest,
+        sorting_request: Optional[SortingRequest] = None,
+        filtering_request: Optional[FilteringRequest] = None,
     ) -> PaginationResponse[T]:
-        # TODO: 테스트 코드 작성, filtering and sorting 처리
         query = self._get_base_query()
         if filtering_request:
-            # TODO : 구현하기
             query = self._filtering(query=query, filtering_request=filtering_request)
         if sorting_request:
-            # TODO : 구현하기
             query = self._sorting(query=query, sorting_request=sorting_request)
-        query = self._get_base_query().paginate(
+        query = query.paginate(
             page=pagination_request.page,
             per_page=pagination_request.per_page,
+            error_out=False,
         )
         return PaginationResponse(
             count=query.total,
@@ -151,6 +148,10 @@ class SQLAlchemyFullRepository(CRUDRepositoryABC, Generic[T]):
         return self.db.session.query(self.sqlalchemy_model)
 
     def _filtering(self, query: Query, filtering_request: FilteringRequest) -> Query:
+        """
+        filter the query with filtering_object.
+        this is implementation of `or` condition.
+        """
         for field, word in vars(filtering_request).items():
             query = query.filter(
                 getattr(self.sqlalchemy_model, field).ilike(f"%{word}%")
@@ -158,8 +159,13 @@ class SQLAlchemyFullRepository(CRUDRepositoryABC, Generic[T]):
         return query
 
     def _sorting(self, query: Query, sorting_request: SortingRequest) -> Query:
-        # TODO : 구현하기
-        pass
+        for field, direction in vars(sorting_request).items():
+            # uuid asc
+            if direction == "asc":
+                query = query.order_by(getattr(self.sqlalchemy_model, field).asc())
+            elif direction == "desc":
+                query = query.order_by(getattr(self.sqlalchemy_model, field).desc())
+        return query
 
     def _sqlalchemy_model_to_entity(self, sqlalchemy_instance) -> T:
         assert isinstance(

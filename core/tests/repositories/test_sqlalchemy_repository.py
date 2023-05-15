@@ -45,9 +45,9 @@ def test_app():
     yield test_app
 
 
-# ###################
+# ##################
 # test code starts #
-# ###################과
+# ##################
 
 
 def test_save_success_and_return_entity(test_app):
@@ -273,6 +273,37 @@ def test_read_all_with_pagination_with_filtering_success(test_app):
         assert len(read_all_result_with_pagination.results) == 2  # per_page is 2.
         assert read_all_result_with_pagination.results[0].name == "mr_japring"
         assert read_all_result_with_pagination.results[1].name == "mr_kopring"
+
+
+def test_read_all_with_pagination_with_filtering_sorting_success(test_app):
+    """
+    read_all_with_pagination() 메서드가 필터링 객체와 정렬 객체가 있을 때 데이터를 잘 읽어오는지 테스트합니다.
+    사용자 5명이 저장되어 있고, 2명씩 페이지네이션 처리한 다음 "이름에 'pring' 이 들어 있는 필터링을 적용 후,
+    id의 역순으로 정렬하고 요청한 후 1페이지를 조회한다면 잘 수행되어야 합니다.
+    """
+    with test_app.test_request_context():
+        db.session.add(UserModel(name="mr_fullask"))
+        db.session.add(UserModel(name="mr_japring"))
+        db.session.add(UserModel(name="mr_kopring"))
+        db.session.add(UserModel(name="mr_fastapi"))
+        db.session.commit()
+        read_all_result_with_pagination = SQLAlchemyFullRepository(
+            UserEntity, db=db, sqlalchemy_model=UserModel
+        ).read_all_with_pagination(
+            pagination_request=PaginationRequest(page=1, per_page=2),
+            sorting_request=SortingRequest({"id": "desc"}),
+            filtering_request=FilteringRequest(name="pring"),
+        )
+
+        assert isinstance(read_all_result_with_pagination, PaginationResponse)
+        assert (
+            read_all_result_with_pagination.count == 2
+        )  # filtering result should be 2.
+        assert read_all_result_with_pagination.previous_page is None
+        assert read_all_result_with_pagination.next_page is None
+        assert len(read_all_result_with_pagination.results) == 2  # per_page is 2.
+        assert read_all_result_with_pagination.results[0].name == "mr_kopring"
+        assert read_all_result_with_pagination.results[1].name == "mr_japring"
 
 
 def test_read_all_by_ids(test_app):
