@@ -8,11 +8,11 @@ from core.entities.base_entity import BaseEntity
 
 @dataclass
 class UserEntity(BaseEntity):
-    id: Optional[int]
-    uuid: Optional[str]
     email: str
     role: Enum
     username: str
-    created_at: datetime
-    updated_at: datetime
+    id: Optional[int] = None
+    uuid: Optional[str] = None
+    created_at: Optional[datetime] = None
+    updated_at: Optional[datetime] = None
     study_id: Optional[int] = None  # foreign key
