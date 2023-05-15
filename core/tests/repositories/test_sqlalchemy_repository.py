@@ -5,6 +5,9 @@ import pytest
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 
+from core.entities.filtering import FilteringRequest
+from core.entities.pagination import PaginationRequest, PaginationResponse
+from core.entities.sorting import SortingRequest
 from core.repositories.sqlalchemy import SQLAlchemyFullRepository
 
 ###################
@@ -149,9 +152,13 @@ def test_is_exists_by_id_should_return_true(test_app):
         )
 
 
+###################
+# read_all() TEST #
+###################
+
+
 def test_read_all_return_empty_list(test_app):
     """
-    read_all() 메서드가 데이터를 잘 읽어오는지 테스트합니다.
     데이터베이스에 아무런 사용자도 저장되어있지 않다면, read_all() 은 비어있는 리스트를 반환해야 합니다.
     """
     with test_app.test_request_context():
@@ -162,10 +169,11 @@ def test_read_all_return_empty_list(test_app):
         assert len(read_all_result) == 0
 
 
-def test_read_all_return_filled_list(test_app):
+def test_read_all_without_sorting_and_filtering_success(test_app):
     """
-    read_all() 메서드가 데이터를 잘 읽어오는지 테스트합니다.
+    정렬과 필터링 요청 객체가 없을 때, read_all() 메서드가 데이터를 잘 읽어오는지 테스트합니다.
     데이터베이스에 두 명의 사용자가 저장되어 있다면, read_list() 는 길이가 2인 리스트여야 합니다.
+    아무런 정렬 요청 객체, 필터링 객체가 전달되지 않았다면 id의 오름차순, 모든 데이터가 페이지네이션 없이 반환되어야 합니다.
     그리고, 각각의 요소는 Entity 객체여야 합니다.
     """
     with test_app.test_request_context():
@@ -183,6 +191,88 @@ def test_read_all_return_filled_list(test_app):
         assert read_all_result[1].name == "mr_django" and isinstance(
             read_all_result[1], UserEntity
         )
+
+
+def test_read_all_with_pagination_return_paginated_list(test_app):
+    """
+    read_all_with_pagination() 메서드가 데이터를 잘 읽어오는지 테스트합니다.
+    사용자 5명이 저장되어 있고, 2명씩 페이지네이션 처리한 다음 2페이지를 조회한다면 잘 수행되어야 합니다.
+    """
+    with test_app.test_request_context():
+        db.session.add(UserModel(name="mr_fullask"))
+        db.session.add(UserModel(name="mr_django"))
+        db.session.add(UserModel(name="mr_spring"))
+        db.session.add(UserModel(name="mr_react"))
+        db.session.add(UserModel(name="mr_fastapi"))
+        db.session.commit()
+        read_all_result_with_pagination = SQLAlchemyFullRepository(
+            UserEntity, db=db, sqlalchemy_model=UserModel
+        ).read_all_with_pagination(PaginationRequest(page=2, per_page=2))
+        assert isinstance(read_all_result_with_pagination, PaginationResponse)
+        assert read_all_result_with_pagination.count == 5
+        assert read_all_result_with_pagination.previous_page == 1
+        assert read_all_result_with_pagination.next_page == 3
+        assert len(read_all_result_with_pagination.results) == 2
+        assert read_all_result_with_pagination.results[0].name == "mr_spring"
+        assert read_all_result_with_pagination.results[1].name == "mr_react"
+
+
+def test_read_all_with_pagination_with_sorting_success(test_app):
+    """
+    read_all_with_pagination() 메서드가 정렬 객체가 있을 때 데이터를 잘 읽어오는지 테스트합니다.
+    사용자 5명이 저장되어 있고, 2명씩 페이지네이션 처리한 다음 id의 내림차순으로 정렬 후 2페이지를 조회한다면 잘 수행되어야 합니다.
+    """
+    with test_app.test_request_context():
+        db.session.add(UserModel(name="mr_fullask"))
+        db.session.add(UserModel(name="mr_django"))
+        db.session.add(UserModel(name="mr_spring"))
+        db.session.add(UserModel(name="mr_react"))
+        db.session.add(UserModel(name="mr_fastapi"))
+        db.session.commit()
+        read_all_result_with_pagination = SQLAlchemyFullRepository(
+            UserEntity, db=db, sqlalchemy_model=UserModel
+        ).read_all_with_pagination(
+            PaginationRequest(page=2, per_page=2),
+            SortingRequest({"id": "desc"}),
+        )
+
+        assert isinstance(read_all_result_with_pagination, PaginationResponse)
+        assert read_all_result_with_pagination.count == 5
+        assert read_all_result_with_pagination.previous_page == 1
+        assert read_all_result_with_pagination.next_page == 3
+        assert len(read_all_result_with_pagination.results) == 2
+        assert read_all_result_with_pagination.results[0].name == "mr_spring"
+        assert read_all_result_with_pagination.results[1].name == "mr_django"
+
+
+def test_read_all_with_pagination_with_filtering_success(test_app):
+    """
+    read_all_with_pagination() 메서드가 필터링 객체가 있을 때 데이터를 잘 읽어오는지 테스트합니다.
+    사용자 5명이 저장되어 있고, 2명씩 페이지네이션 처리한 다음 "이름에 'pring' 이 들어 있는 필터링을 적용 후,
+    1페이지를 조회한다면 잘 수행되어야 합니다.
+    """
+    with test_app.test_request_context():
+        db.session.add(UserModel(name="mr_fullask"))
+        db.session.add(UserModel(name="mr_japring"))
+        db.session.add(UserModel(name="mr_kopring"))
+        db.session.add(UserModel(name="mr_fastapi"))
+        db.session.commit()
+        read_all_result_with_pagination = SQLAlchemyFullRepository(
+            UserEntity, db=db, sqlalchemy_model=UserModel
+        ).read_all_with_pagination(
+            pagination_request=PaginationRequest(page=1, per_page=2),
+            filtering_request=FilteringRequest(name="pring"),
+        )
+
+        assert isinstance(read_all_result_with_pagination, PaginationResponse)
+        assert (
+            read_all_result_with_pagination.count == 2
+        )  # filtering result should be 2.
+        assert read_all_result_with_pagination.previous_page is None
+        assert read_all_result_with_pagination.next_page is None
+        assert len(read_all_result_with_pagination.results) == 2  # per_page is 2.
+        assert read_all_result_with_pagination.results[0].name == "mr_japring"
+        assert read_all_result_with_pagination.results[1].name == "mr_kopring"
 
 
 def test_read_all_by_ids(test_app):
