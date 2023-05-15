@@ -12,4 +12,7 @@ class SortingRequestSchema(Schema):
 
     @post_load
     def to_entity(self, data, **kwargs) -> SortingRequest:
-        return SortingRequest(*data.get("sort_by"))
+        data = data.get("sort_by")
+        if data:
+            return SortingRequest(*data)
+        return SortingRequest()
