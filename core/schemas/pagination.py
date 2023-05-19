@@ -1,7 +1,7 @@
 from marshmallow import Schema, fields, post_load
 from marshmallow.validate import Range
 
-from core.entities.pagination import PaginationRequest
+from core.entities.pagination import PaginationRequest, PaginationResponse
 
 
 class PaginationRequestSchema(Schema):
@@ -21,5 +21,9 @@ class PaginationRequestSchema(Schema):
 
 class PaginationResponseSchema(Schema):
     count = fields.Integer(metadata={"description": "전체 아이템 개수"})
-    next_page = fields.URL(metadata={"description": "다음 페이지 URL"})
-    previous_page = fields.URL(metadata={"description": "이전 페이지 URL"})
+    next_page = fields.Integer(metadata={"description": "다음 페이지 숫자"})
+    previous_page = fields.Integer(metadata={"description": "이전 페이지 숫자"})
+
+    @post_load
+    def to_entity(self, data, **kwargs) -> PaginationResponse:
+        return PaginationResponse(**data)
