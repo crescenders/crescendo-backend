@@ -72,7 +72,8 @@ class UserService(UserServiceABC):
         return None
 
     def withdraw(self, uuid) -> None:
-        return None
+        user = self.user_repository.read_by_uuid(uuid=uuid)
+        return self.user_repository.delete(user)
 
     def oauth2_login(self, oauth2_provider: str, data) -> dict:
         """
