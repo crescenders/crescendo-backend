@@ -13,6 +13,7 @@ class UserSchema(Schema):
         metadata={"description": "사용자 닉네임"},
     )
     email = fields.Email(
+        dump_only=True,
         metadata={"description": "사용자 이메일"},
     )
     created_at = fields.DateTime(
