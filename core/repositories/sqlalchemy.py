@@ -14,7 +14,6 @@ from core.repositories.crud import CRUDRepositoryABC
 class SQLAlchemyFullRepository(CRUDRepositoryABC, Generic[T]):
     """
     The implementation of CRUDRepositoryABC, with SQLAlchemy.
-
     this implementation has dependency with flask-sqlalchemy's SQLAlchemy object.
     """
 
@@ -157,7 +156,6 @@ class SQLAlchemyFullRepository(CRUDRepositoryABC, Generic[T]):
 
     def _sorting(self, query: Query, sorting_request: SortingRequest) -> Query:
         for field, direction in vars(sorting_request).items():
-            # uuid asc
             if direction == "asc":
                 query = query.order_by(getattr(self.sqlalchemy_model, field).asc())
             elif direction == "desc":
@@ -177,7 +175,6 @@ class SQLAlchemyFullRepository(CRUDRepositoryABC, Generic[T]):
             return self.entity(**instance_dict)
         else:
             raise ValueError("multi-pk case is not supported in current version.")
-            # TODO : handle multi-pk case
 
     def _entity_to_sqlalchemy_model(self, entity):
         assert isinstance(
