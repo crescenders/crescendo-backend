@@ -1,6 +1,5 @@
 from abc import ABC, abstractmethod
 from typing import Optional
-from uuid import UUID
 
 from core.repositories.sqlalchemy import SQLAlchemyFullRepository
 from crescendo.auth.entities import UserEntity
@@ -8,7 +7,7 @@ from crescendo.auth.entities import UserEntity
 
 class SQLAlchemyFullUserRepositoryABC(SQLAlchemyFullRepository, ABC):
     @abstractmethod
-    def read_by_uuid(self, uuid: UUID) -> Optional[UserEntity]:
+    def read_by_uuid(self, uuid: str) -> Optional[UserEntity]:
         pass
 
     @abstractmethod
@@ -17,8 +16,12 @@ class SQLAlchemyFullUserRepositoryABC(SQLAlchemyFullRepository, ABC):
 
 
 class SQLAlchemyFullUserRepository(SQLAlchemyFullUserRepositoryABC):
-    def read_by_uuid(self, uuid: UUID) -> Optional[UserEntity]:
-        return self.sqlalchemy_model.query.filter_by(uuid=str(uuid)).first()
+    def read_by_uuid(self, uuid: str) -> Optional[UserEntity]:
+        return self._sqlalchemy_model_to_entity(
+            self.sqlalchemy_model.query.filter_by(uuid=str(uuid)).first()
+        )
 
     def read_by_email(self, email: str) -> Optional[UserEntity]:
-        return self.sqlalchemy_model.query.filter_by(email=str(email)).first()
+        return self._sqlalchemy_model_to_entity(
+            self.sqlalchemy_model.query.filter_by(email=str(email)).first()
+        )
