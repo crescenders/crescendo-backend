@@ -64,6 +64,24 @@ def test_save_success_and_return_entity(test_app):
         assert user_entity.name == "mr_fullask"
 
 
+def test_get_id_and_save_success(test_app):
+    """
+    read_by_id 메서드로 엔티티를 가져온 다음, 수정을 진행한 후
+    save() 메서드가 저장을 잘 수행하는지를 테스트합니다.
+    """
+
+    with test_app.test_request_context():
+        db.session.add(UserModel(name="mr_fullask"))
+        user_fullask = SQLAlchemyFullRepository(
+            UserEntity, db=db, sqlalchemy_model=UserModel
+        ).read_by_id(1)
+        user_fullask.name = "mr_django"
+        SQLAlchemyFullRepository(UserEntity, db=db, sqlalchemy_model=UserModel).save(
+            user_fullask
+        )
+        print(user_fullask)
+
+
 def test_save_all_success_and_return_entities(test_app):
     """
     save_all() 메서드가 저장을 잘 수행하는지를 테스트합니다.
