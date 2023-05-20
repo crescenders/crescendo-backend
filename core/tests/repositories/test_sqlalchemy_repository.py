@@ -79,7 +79,6 @@ def test_get_id_and_save_success(test_app):
         SQLAlchemyFullRepository(UserEntity, db=db, sqlalchemy_model=UserModel).save(
             user_fullask
         )
-        print(user_fullask)
 
 
 def test_save_all_success_and_return_entities(test_app):

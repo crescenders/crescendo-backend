@@ -36,26 +36,23 @@ class SQLAlchemyFullRepository(CRUDRepositoryABC, Generic[T]):
         )
 
     def save(self, entity: T) -> T:
-        model_instance = self._entity_to_sqlalchemy_model(entity)
-        with self.db.session.begin():
+        if hasattr(entity, "id") and entity.id:
+            model_instance = self.db.session.get(self.sqlalchemy_model, entity.id)
+            if model_instance:
+                self._update_model_with_entity(model_instance, entity)
+        else:
+            model_instance = self._entity_to_sqlalchemy_model(entity)
             self.db.session.add(model_instance)
+        self.db.session.commit()
         self.db.session.refresh(model_instance)
         return self._sqlalchemy_model_to_entity(model_instance)
 
     def save_all(self, entities: List[T]) -> List[T]:
-        model_instances = [
-            self._entity_to_sqlalchemy_model(entity) for entity in entities
-        ]
-        with self.db.session.begin():
-            for model_instance in model_instances:
-                self.db.session.add(model_instance)
-            self.db.session.commit()
-        for model_instance in model_instances:
-            self.db.session.refresh(model_instance)
-        return [
-            self._sqlalchemy_model_to_entity(model_instance)
-            for model_instance in model_instances
-        ]
+        saved_entities = []
+        for entity in entities:
+            saved_entity = self.save(entity)
+            saved_entities.append(saved_entity)
+        return saved_entities
 
     def read_by_id(self, id: int) -> Optional[T]:
         query_result = self.db.session.get(self.sqlalchemy_model, id)
@@ -194,3 +191,9 @@ class SQLAlchemyFullRepository(CRUDRepositoryABC, Generic[T]):
                 model = self.sqlalchemy_model
 
         return SQLAlchemyModelSchema()
+
+    def _update_model_with_entity(self, model_instance, entity):
+        # Iterate over the fields of the entity object
+        for field_name, field_value in entity.__dict__.items():
+            if field_name != "id":
+                setattr(model_instance, field_name, field_value)
