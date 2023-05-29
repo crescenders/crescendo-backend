@@ -20,15 +20,15 @@ class UserServiceABC(ABC):
         pass
 
     @abstractmethod
-    def get_one(self, user_id) -> Optional[UserEntity]:
+    def get_one(self, user_uuid) -> Optional[UserEntity]:
         pass
 
     @abstractmethod
-    def edit_info(self, user_id: str, data) -> UserEntity:
+    def edit_info(self, user_uuid: str, data) -> UserEntity:
         pass
 
     @abstractmethod
-    def withdraw(self, user_id) -> None:
+    def withdraw(self, user_uuid) -> None:
         pass
 
     @abstractmethod
@@ -65,14 +65,14 @@ class UserService(UserServiceABC):
             filtering_request=filtering_request,
         )
 
-    def get_one(self, user_id) -> Optional[UserEntity]:
-        return self.user_repository.read_by_id(id=user_id)
+    def get_one(self, user_uuid) -> Optional[UserEntity]:
+        return self.user_repository.read_by_uuid(uuid=user_uuid)
 
-    def edit_info(self, user_id: str, data) -> UserEntity:
+    def edit_info(self, user_uuid: str, data) -> UserEntity:
         return None
 
-    def withdraw(self, user_id) -> None:
-        user = self.user_repository.read_by_id(id=user_id)
+    def withdraw(self, user_uuid) -> None:
+        user = self.user_repository.read_by_id(id=user_uuid)
         return self.user_repository.delete(user)
 
     def oauth2_login(self, oauth2_provider: str, data) -> dict:

@@ -5,10 +5,6 @@ from core.schemas.pagination import PaginationResponseSchema
 
 
 class UserSchema(Schema):
-    id = fields.Integer(
-        dump_only=True,
-        metadata={"description": "사용자 ID"},
-    )
     uuid = fields.UUID(
         dump_only=True,
         metadata={"description": "사용자 UUID"},

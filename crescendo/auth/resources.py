@@ -7,9 +7,12 @@ from core.entities.pagination import PaginationRequest
 from core.schemas.pagination import PaginationRequestSchema
 from core.schemas.sorting import SortingRequestSchema
 from core.utils.jwt import jwt_required
-from crescendo.auth.schemas import (GoogleOauthArgsSchema,
-                                    PaginatedUserListSchema,
-                                    UserFilteringArgsSchema, UserSchema)
+from crescendo.auth.schemas import (
+    GoogleOauthArgsSchema,
+    PaginatedUserListSchema,
+    UserFilteringArgsSchema,
+    UserSchema,
+)
 
 #########################
 # Define your Blueprint.#
@@ -60,7 +63,7 @@ class UserListAPI(MethodView):
         )
 
 
-@AUTH_MICRO_APP.route("users/<int:user_id>/")
+@AUTH_MICRO_APP.route("users/<string:user_uuid>/")
 class UserDetailAPI(MethodView):
     """사용자 한 명을 다루는 API 입니다."""
 
@@ -70,18 +73,18 @@ class UserDetailAPI(MethodView):
 
     # @jwt_required()
     @AUTH_MICRO_APP.response(200, UserSchema)
-    def get(self, user_id):
+    def get(self, user_uuid):
         """ID 로 특정되는 사용자 한 명의 정보를 조회합니다.
 
         본인, 혹은 STAFF, ADMIN 권한을 가진 사람만 회원정보를 조회할 수 있습니다.
         Crescendo 서비스에서 발급된 JWT가 필요합니다."""
-        return self.user_service.get_one(user_id)
+        return self.user_service.get_one(user_uuid)
 
     # @jwt_required()
 
     @AUTH_MICRO_APP.arguments(UserSchema)
     @AUTH_MICRO_APP.response(200, UserSchema)
-    def put(self, data, user_id):
+    def put(self, data, user_uuid):
         """ID로 특정되는 사용자 한 명의 정보를 수정합니다.
 
         닉네임만 수정할 수 있습니다.
@@ -89,16 +92,16 @@ class UserDetailAPI(MethodView):
         Crescendo 서비스에서 발급된 JWT가 필요합니다.
         """
 
-        return self.user_service.edit_info(user_id=user_id, data=data)
+        return self.user_service.edit_info(user_uuid=user_uuid, data=data)
 
     # @jwt_required()
     @AUTH_MICRO_APP.response(204)
-    def delete(self, user_id):
+    def delete(self, user_uuid):
         """ID로 특정되는 사용자 한 명을 삭제합니다.
 
         본인, 혹은 STAFF, ADMIN 권한을 가진 사람만 회원탈퇴를 진행할 수 있습니다.
         Crescendo 서비스에서 발급된 JWT가 필요합니다."""
-        return self.user_service.withdraw(user_id)
+        return self.user_service.withdraw(user_uuid)
 
 
 @AUTH_MICRO_APP.post("/login/google/")
