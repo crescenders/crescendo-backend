@@ -29,3 +29,9 @@ class UserEntity(BaseEntity):
         return create_refresh_token(
             identity=self.uuid, additional_claims={"role": self.role}
         )
+
+
+@dataclass
+class JWTResponse(BaseEntity):
+    access_token: str
+    refresh_token: str
