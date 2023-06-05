@@ -1,3 +1,4 @@
+from functools import wraps
 from typing import Generic, List, Optional
 
 from flask_marshmallow.sqla import SQLAlchemyAutoSchema  # type: ignore[import]
@@ -195,3 +196,17 @@ class SQLAlchemyFullRepository(CRUDRepositoryABC, Generic[T]):
         for field_name, field_value in entity.__dict__.items():
             if field_name != "id":
                 setattr(model_instance, field_name, field_value)
+
+
+def read_by_fields(func):
+    @wraps(func)
+    def wrapper(self, *args, **kwargs):
+        field_name = func.__name__[len("read_by_") :]
+        query_result = self.sqlalchemy_model.query.filter_by(
+            **{field_name: kwargs[field_name]}
+        ).first()
+        if query_result:
+            return self._sqlalchemy_model_to_entity(query_result)
+        return None
+
+    return wrapper
