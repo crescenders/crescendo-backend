@@ -32,12 +32,11 @@ class UserServiceABC(ABC):
         pass
 
     @abstractmethod
-    def oauth2_login(self, oauth2_provider: str, data) -> dict:
+    def google_login(self, data) -> dict:
         """
-        외부 인증 서버(Google, Kakao, Github 등) 을 이용한 Oauth2 로그인을 진행합니다.
-
-        :param oauth2_provider: 외부 인증 서버의 종류
-        :param data: jwt, 인가 토큰 등 외부 서버에서 발급받은 토큰
+        Google 인증 서버를 이용해 회원가입 및 로그인을 진행합니다.
+        이미 가입되어 있는 회원의 경우 토큽 발급만,
+        신규 회원인 경우 회원가입 후 토큰 발급을 처리합니다.
         """
         pass
 
@@ -74,33 +73,22 @@ class UserService(UserServiceABC):
         return self.user_repository.save(user)
 
     def withdraw(self, user_uuid) -> None:
-        user = self.user_repository.read_by_id(id=user_uuid)
+        user = self.user_repository.read_by_uuid(uuid=user_uuid)
         return self.user_repository.delete(user)
 
-    def oauth2_login(self, oauth2_provider: str, data) -> dict:
-        """
-        외부 인증 서버(Google, Kakao, Github 등) 을 이용한 Oauth2 로그인을 진행합니다.
-        가입되어 있지 않은 회원일 경우 회원가입을 진행하고 JWT 를 발급하고,
-        이미 가입된 회원이라면 JWT만 발급합니다.
-
-        사용자를 저장하기 위해서는 필히 아래의 정보들이 필요합니다.
-
-        - email
-        - username
-
-        :param oauth2_provider: 외부 인증 서버의 종류
-        :param data: jwt, 인가 토큰 등 외부 서버에서 발급받은 토큰
-        """
-        if oauth2_provider == "google":
-            pass
-        return {"email": "", "username": ""}
-
-    @staticmethod
-    def _google_oauth2_login(self, data):
-        # Google JWT 검증
-        frontend_google_client_id = (
-            "560831292125-jnlpjp0chs024i3p8hn7ifr7uidigqok.apps.googleusercontent.com"
-        )
+    def google_login(self, data) -> dict:
         id_information = id_token.verify_oauth2_token(data, requests.Request())
         email = id_information["email"]
         username = id_information["given_name"]
+
+        user = (
+            self.user_repository.read_by_email(email)
+            if self.user_repository.read_by_email(email)
+            else self._register(email, username)
+        )
+
+        return {"access_token": user.access_token, "refresh_token": user.refresh_token}
+
+    def _register(self, email, username, role="USER"):
+        user = UserEntity(email=email, username=username, role=role)
+        return self.user_repository.save(user)

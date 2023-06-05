@@ -43,3 +43,8 @@ class UserFilteringArgsSchema(BaseFilteringSchema):
 
 class GoogleOauthArgsSchema(Schema):
     google_jwt = fields.String()
+
+
+class JWTSchema(Schema):
+    access_token = fields.String()
+    refresh_token = fields.String()

@@ -9,6 +9,7 @@ from core.schemas.sorting import SortingRequestSchema
 from core.utils.jwt import jwt_required
 from crescendo.auth.schemas import (
     GoogleOauthArgsSchema,
+    JWTSchema,
     PaginatedUserListSchema,
     UserFilteringArgsSchema,
     UserSchema,
@@ -106,15 +107,12 @@ class UserDetailAPI(MethodView):
 
 @AUTH_MICRO_APP.post("/login/google/")
 @AUTH_MICRO_APP.arguments(GoogleOauthArgsSchema)
+@AUTH_MICRO_APP.response(200, JWTSchema)
 @inject
-def google_login_api(google_oauth_token_data, user_service=Provide["user_service"]):
+def google_login_api(google_oauth_token, user_service=Provide["user_service"]):
     """Google 소셜 로그인을 진행합니다.
 
     Google 에서 발급된 JWT 가 필요합니다.
     해당 JWT가 검증이 완료되면, 서버는 서비스 전용 JWT를 발급합니다.
     만약 새로운 사용자라면, 회원가입 또한 진행합니다."""
-
-    google_oauth2_token = google_oauth_token_data.get("google_jwt")
-
-    res = user_service.oauth2_login(oauth2_provider="google", data=google_oauth2_token)
-    return res
+    return user_service.google_login(data=google_oauth_token["google_jwt"])

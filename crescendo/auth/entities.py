@@ -2,6 +2,8 @@ from dataclasses import dataclass
 from datetime import datetime
 from typing import Optional
 
+from flask_jwt_extended import create_access_token, create_refresh_token
+
 from core.entities.base_entity import BaseEntity
 
 
@@ -15,3 +17,15 @@ class UserEntity(BaseEntity):
     created_at: Optional[datetime] = None
     updated_at: Optional[datetime] = None
     study_id: Optional[int] = None  # foreign key
+
+    @property
+    def access_token(self):
+        return create_access_token(
+            identity=self.uuid, additional_claims={"role": self.role}
+        )
+
+    @property
+    def refresh_token(self):
+        return create_refresh_token(
+            identity=self.uuid, additional_claims={"role": self.role}
+        )
