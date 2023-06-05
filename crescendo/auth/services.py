@@ -69,7 +69,9 @@ class UserService(UserServiceABC):
         return self.user_repository.read_by_uuid(uuid=user_uuid)
 
     def edit_info(self, user_uuid: str, data) -> UserEntity:
-        return None
+        user = self.user_repository.read_by_uuid(uuid=user_uuid)
+        user.username = data["username"]
+        return self.user_repository.save(user)
 
     def withdraw(self, user_uuid) -> None:
         user = self.user_repository.read_by_id(id=user_uuid)
@@ -78,6 +80,8 @@ class UserService(UserServiceABC):
     def oauth2_login(self, oauth2_provider: str, data) -> dict:
         """
         외부 인증 서버(Google, Kakao, Github 등) 을 이용한 Oauth2 로그인을 진행합니다.
+        가입되어 있지 않은 회원일 경우 회원가입을 진행하고 JWT 를 발급하고,
+        이미 가입된 회원이라면 JWT만 발급합니다.
 
         사용자를 저장하기 위해서는 필히 아래의 정보들이 필요합니다.
 
@@ -88,9 +92,6 @@ class UserService(UserServiceABC):
         :param data: jwt, 인가 토큰 등 외부 서버에서 발급받은 토큰
         """
         if oauth2_provider == "google":
-            pass
-
-        elif oauth2_provider == "kakao":
             pass
         return {"email": "", "username": ""}
 
