@@ -25,6 +25,7 @@ sqlalchemy = "~=2.0.5.post1"
 dependency_injector = "*"
 google-auth = "*"
 requests = "*"
+fullask-rest-framework = "*"
 
 [dev-packages]
 ipython = "*"
