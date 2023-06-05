@@ -1,8 +1,7 @@
 from abc import ABC, abstractmethod
 from typing import Optional
 
-from core.repositories.sqlalchemy import (SQLAlchemyFullRepository,
-                                          read_by_fields)
+from core.repositories.sqlalchemy import SQLAlchemyFullRepository, read_by_fields
 from crescendo.auth.entities import UserEntity
 
 
