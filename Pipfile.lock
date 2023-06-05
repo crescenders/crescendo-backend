@@ -290,11 +290,11 @@
         },
         "fullask-rest-framework": {
             "hashes": [
-                "sha256:1a2a320579656eb70b0514950f1ceb045813a3d261256433f9fe26ae17b53111",
-                "sha256:9cc12a4b27876fb55a4c8883baaecc8f7161f17916b8ed6c2e78c16aa8991864"
+                "sha256:1f0d6af1eedae54fb34d3796a8a621972c23a614cd4ef4fa82419f04500e2fd8",
+                "sha256:58402fe122f76894cf155af07e050872f8b0de03f7296ae1dfaeaa3898ad1402"
             ],
             "index": "pypi",
-            "version": "==0.1.0"
+            "version": "==0.1.1"
         },
         "google-auth": {
             "hashes": [
