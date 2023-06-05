@@ -1,5 +1,3 @@
-from enum import Enum
-
 from sqlalchemy.orm import validates
 
 from core.factory.extensions import db
