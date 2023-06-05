@@ -3,8 +3,7 @@ from datetime import datetime
 from typing import Optional
 
 from flask_jwt_extended import create_access_token, create_refresh_token
-
-from core.entities.base_entity import BaseEntity
+from fullask_rest_framework.entities.base_entity import BaseEntity
 
 
 @dataclass

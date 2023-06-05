@@ -1,4 +1,4 @@
-from core.factory.app_factory import BaseApplicationFactory
+from fullask_rest_framework.factory.app_factory import BaseApplicationFactory
 
 
 class CrescendoApplicationFactory(BaseApplicationFactory):

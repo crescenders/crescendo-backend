@@ -1,7 +1,6 @@
+from fullask_rest_framework.schemas.filtering import BaseFilteringSchema
+from fullask_rest_framework.schemas.pagination import PaginationResponseSchema
 from marshmallow import Schema, fields
-
-from core.schemas.filtering import BaseFilteringSchema
-from core.schemas.pagination import PaginationResponseSchema
 
 
 class UserSchema(Schema):

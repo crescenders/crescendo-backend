@@ -1,10 +1,10 @@
 from abc import ABC, abstractmethod
 from typing import Optional
 
+from fullask_rest_framework.entities.pagination import PaginationResponse
 from google.auth.transport import requests  # type: ignore[import]
 from google.oauth2 import id_token  # type: ignore[import]
 
-from core.entities.pagination import PaginationResponse
 from crescendo.auth.entities import JWTResponse, UserEntity
 from crescendo.auth.repositories import SQLAlchemyFullUserRepositoryABC
 

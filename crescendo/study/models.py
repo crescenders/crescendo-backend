@@ -1,6 +1,6 @@
-from core.factory.extensions import db
-from core.models.base_model import BaseModel
-from core.models.mixins import TimeStampedMixin, UUIDMixin
+from fullask_rest_framework.factory.extensions import db
+from fullask_rest_framework.orm.sqlalchemy.base_model import BaseModel
+from fullask_rest_framework.orm.sqlalchemy.mixins import TimeStampedMixin, UUIDMixin
 
 
 class StudyModel(BaseModel, TimeStampedMixin, UUIDMixin):

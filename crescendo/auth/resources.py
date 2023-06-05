@@ -2,12 +2,12 @@ from dependency_injector.wiring import Provide, inject
 from flask.views import MethodView
 from flask_jwt_extended import get_jwt
 from flask_smorest import Blueprint
+from fullask_rest_framework.entities.pagination import PaginationRequest
+from fullask_rest_framework.schemas.pagination import PaginationRequestSchema
+from fullask_rest_framework.schemas.sorting import SortingRequestSchema
+from fullask_rest_framework.utils.jwt import jwt_required
 from google.auth.exceptions import GoogleAuthError  # type: ignore[import]
 
-from core.entities.pagination import PaginationRequest
-from core.schemas.pagination import PaginationRequestSchema
-from core.schemas.sorting import SortingRequestSchema
-from core.utils.jwt import jwt_required
 from crescendo.auth.schemas import (
     GoogleOauthArgsSchema,
     JWTSchema,
