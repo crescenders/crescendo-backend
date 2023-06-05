@@ -190,7 +190,7 @@ class SQLAlchemyFullRepository(CRUDRepositoryABC, Generic[T]):
         return SQLAlchemyModelSchema()
 
     @staticmethod
-    def _update_model_with_entity(self, model_instance, entity):
+    def _update_model_with_entity(model_instance, entity):
         # Iterate over the fields of the entity object
         for field_name, field_value in entity.__dict__.items():
             if field_name != "id":
