@@ -17,11 +17,13 @@ class SQLAlchemyFullUserRepositoryABC(SQLAlchemyFullRepository, ABC):
 
 class SQLAlchemyFullUserRepository(SQLAlchemyFullUserRepositoryABC):
     def read_by_uuid(self, uuid: str) -> Optional[UserEntity]:
-        return self._sqlalchemy_model_to_entity(
-            self.sqlalchemy_model.query.filter_by(uuid=uuid).first()
-        )
+        query_result = self.sqlalchemy_model.query.filter_by(uuid=uuid).first()
+        if query_result:
+            return self._sqlalchemy_model_to_entity(query_result)
+        return None
 
     def read_by_email(self, email: str) -> Optional[UserEntity]:
-        return self._sqlalchemy_model_to_entity(
-            self.sqlalchemy_model.query.filter_by(email=email).first()
-        )
+        query_result = self.sqlalchemy_model.query.filter_by(email=email).first()
+        if query_result:
+            return self._sqlalchemy_model_to_entity(query_result)
+        return None
