@@ -1,6 +1,5 @@
 from dataclasses import dataclass
 from datetime import datetime
-from enum import Enum
 from typing import Optional
 
 from core.entities.base_entity import BaseEntity
@@ -9,7 +8,7 @@ from core.entities.base_entity import BaseEntity
 @dataclass
 class UserEntity(BaseEntity):
     email: str
-    role: Enum
+    role: str
     username: str
     id: Optional[int] = None
     uuid: Optional[str] = None
