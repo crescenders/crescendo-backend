@@ -8,4 +8,5 @@ class CrescendoApplicationFactory(BaseApplicationFactory):
     EXTENSION_FILE = "fullask_rest_framework.factory.extensions"
     MICRO_APP_CONFIG = [
         {"crescendo.auth": "/api/v1/auth/"},
+        {"crescendo.study": "/api/v1/"},
     ]
