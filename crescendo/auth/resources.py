@@ -2,7 +2,9 @@ from dependency_injector.wiring import Provide, inject
 from flask.views import MethodView
 from flask_jwt_extended import get_jwt
 from flask_smorest import Blueprint
+from fullask_rest_framework.entities.filtering import FilteringRequest
 from fullask_rest_framework.entities.pagination import PaginationRequest
+from fullask_rest_framework.entities.sorting import SortingRequest
 from fullask_rest_framework.schemas.pagination import PaginationRequestSchema
 from fullask_rest_framework.schemas.sorting import SortingRequestSchema
 from fullask_rest_framework.utils.jwt import jwt_required
@@ -50,8 +52,8 @@ class UserListAPI(MethodView):
     def get(
         self,
         pagination_request: PaginationRequest,
-        sorting_request,
-        filtering_request,
+        sorting_request: SortingRequest,
+        filtering_request: FilteringRequest,
     ):
         """사용자 목록을 조회합니다."""
         return self.user_service.get_list(
