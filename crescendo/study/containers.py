@@ -1,9 +1,9 @@
 from dependency_injector import containers, providers
 from fullask_rest_framework.factory.extensions import db
 
-from crescendo.auth.repositories import SQLAlchemyFullUserRepositoryABC
 from crescendo.study.entities import CategoryEntity
 from crescendo.study.models import CategoryModel
+from crescendo.study.repositories import SQLAlchemyFullCategoryRepositoryABC
 from crescendo.study.services import CategoryServiceABC
 
 
@@ -13,7 +13,7 @@ class StudyContainer(containers.DeclarativeContainer):
     )  # type: ignore[type-abstract]
 
     category_repository_abc = providers.Dependency(
-        instance_of=SQLAlchemyFullUserRepositoryABC
+        instance_of=SQLAlchemyFullCategoryRepositoryABC
     )  # type: ignore[type-abstract]
 
     category_repository = providers.Singleton(
