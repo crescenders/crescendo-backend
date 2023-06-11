@@ -3,7 +3,7 @@ from fullask_rest_framework.factory.extensions import db
 
 from crescendo.auth.entities import UserEntity
 from crescendo.auth.models import UserModel
-from crescendo.auth.repositories import SQLAlchemyFullUserRepositoryABC
+from crescendo.auth.repositories import FullUserRepositoryABC
 from crescendo.auth.services import UserServiceABC
 
 
@@ -14,7 +14,7 @@ class UserContainer(containers.DeclarativeContainer):
     )
     # CRUDRepositoryABC 추상 클래스에 의존하도록 처리
     user_repository_abc = providers.Dependency(
-        instance_of=SQLAlchemyFullUserRepositoryABC  # type: ignore[type-abstract]
+        instance_of=FullUserRepositoryABC  # type: ignore[type-abstract]
     )
     user_repository = providers.Singleton(  # UserRepository 에 필요한 종속성 주입
         user_repository_abc,

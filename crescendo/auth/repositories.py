@@ -9,7 +9,7 @@ from fullask_rest_framework.repositories.sqlalchemy import (
 from crescendo.auth.entities import UserEntity
 
 
-class SQLAlchemyFullUserRepositoryABC(SQLAlchemyFullRepository, ABC):
+class FullUserRepositoryABC(SQLAlchemyFullRepository, ABC):
     @abstractmethod
     def read_by_uuid(self, uuid: str) -> Optional[UserEntity]:
         pass
@@ -19,7 +19,7 @@ class SQLAlchemyFullUserRepositoryABC(SQLAlchemyFullRepository, ABC):
         pass
 
 
-class SQLAlchemyFullUserRepository(SQLAlchemyFullUserRepositoryABC):
+class FullUserRepository(FullUserRepositoryABC):
     @read_by_fields
     def read_by_uuid(self, uuid: str) -> Optional[UserEntity]:
         pass

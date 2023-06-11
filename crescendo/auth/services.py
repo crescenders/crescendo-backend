@@ -6,7 +6,7 @@ from google.auth.transport import requests  # type: ignore[import]
 from google.oauth2 import id_token  # type: ignore[import]
 
 from crescendo.auth.entities import JWTResponse, UserEntity
-from crescendo.auth.repositories import SQLAlchemyFullUserRepositoryABC
+from crescendo.auth.repositories import FullUserRepositoryABC
 
 
 class UserServiceABC(ABC):
@@ -50,7 +50,7 @@ class UserService(UserServiceABC):
 
     def __init__(
         self,
-        user_repository: SQLAlchemyFullUserRepositoryABC,
+        user_repository: FullUserRepositoryABC,
         user_entity: UserEntity,
     ):
         self.user_repository = user_repository
