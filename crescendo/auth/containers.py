@@ -23,5 +23,4 @@ class UserContainer(containers.DeclarativeContainer):
     user_service = providers.Singleton(  # UserService 는 Singleton 으로 주입
         user_service_abc,
         user_repository=user_repository,
-        user_entity=providers.Factory(UserEntity).provider,
     )

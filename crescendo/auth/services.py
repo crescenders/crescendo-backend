@@ -48,13 +48,8 @@ class UserServiceABC(ABC):
 class UserService(UserServiceABC):
     """회원정보조회, 회원가입, 회원정보수정, 회원탈퇴, 검색"""
 
-    def __init__(
-        self,
-        user_repository: FullUserRepositoryABC,
-        user_entity: UserEntity,
-    ):
+    def __init__(self, user_repository: FullUserRepositoryABC):
         self.user_repository = user_repository
-        self.user_entity = user_entity
 
     def get_list(
         self,
