@@ -20,6 +20,8 @@ class FullUserRepositoryABC(SQLAlchemyFullRepository, ABC):
 
 
 class FullUserRepository(FullUserRepositoryABC):
+    ENTITY_CLS = UserEntity
+
     @read_by_fields
     def read_by_uuid(self, uuid: str) -> Optional[UserEntity]:
         pass

@@ -19,8 +19,6 @@ class UserContainer(containers.DeclarativeContainer):
     user_repository = providers.Singleton(  # UserRepository 에 필요한 종속성 주입
         user_repository_abc,
         db=providers.Object(db),
-        entity=providers.Object(UserEntity),
-        sqlalchemy_model=providers.Object(UserModel),
     )
     user_service = providers.Singleton(  # UserService 는 Singleton 으로 주입
         user_service_abc,
