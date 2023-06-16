@@ -95,6 +95,7 @@ class UserDetailAPI(MethodView):
 
     @AUTH_MICRO_APP.arguments(UserSchema)
     @AUTH_MICRO_APP.response(200, UserSchema)
+    @AUTH_MICRO_APP.alt_response(404, description="UUID 로 사용자를 특정할 수 없을 때 발생합니다.")
     def put(self, data, user_uuid: UUID):
         """
         UUID로 특정되는 사용자 한 명의 정보를 수정합니다.
@@ -103,12 +104,17 @@ class UserDetailAPI(MethodView):
         본인, 혹은 STAFF, ADMIN 권한을 가진 사람만 회원정보를 수정할 수 있습니다.
         Crescendo 서비스에서 발급된 JWT가 필요합니다.
         """
-
-        return self.user_service.edit_info(user_uuid=user_uuid, data=data)
+        if not data:
+            abort(400)
+        try:
+            return self.user_service.edit_info(user_uuid=str(user_uuid), data=data)
+        except DataNotFound:
+            abort(404)
 
     # @jwt_required()
     @AUTH_MICRO_APP.response(204)
-    def delete(self, user_uuid):
+    @AUTH_MICRO_APP.alt_response(404, description="UUID 로 사용자를 특정할 수 없을 때 발생합니다.")
+    def delete(self, user_uuid: UUID):
         """
         UUID로 특정되는 사용자 한 명을 삭제합니다.
 
@@ -116,7 +122,7 @@ class UserDetailAPI(MethodView):
         Crescendo 서비스에서 발급된 JWT가 필요합니다.
         """
         try:
-            return self.user_service.withdraw(user_uuid)
+            return self.user_service.withdraw(user_uuid=str(user_uuid))
         except DataNotFound:
             abort(404)
 

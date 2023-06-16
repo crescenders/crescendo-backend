@@ -90,6 +90,35 @@ def test_user_detail_put_api_return_404(test_app):
         assert response.status_code == 404
 
 
+def test_user_detail_put_api_return_400(test_app):
+    """
+    PUT request 를 아무런 body 없이 수행한다면,
+    API 는 상태 코드 400을 응답해야 합니다.
+    """
+    with test_app.test_request_context():
+        uuid = UserModel.query.first().uuid
+        response = test_app.test_client().put(
+            url_for("AuthAPI.UserDetailAPI", user_uuid=uuid)
+        )
+        assert response.status_code == 400
+
+
+def test_user_detail_put_api_return_200(test_app):
+    """
+    데이터베이스에 존재하는 사용자 UUID와 적절한 정보로 사용자 정보를 수정하려고 한다면,
+    정상적으로 수정이 되어야 합니다.
+    """
+    json = {"username": "수정된_사용자명"}
+    with test_app.test_request_context():
+        uuid = UserModel.query.first().uuid
+        response = test_app.test_client().put(
+            url_for("AuthAPI.UserDetailAPI", user_uuid=uuid), json=json
+        )
+        assert response.json["username"] == json["username"]
+        assert UserModel.query.filter_by(uuid=uuid).first().username == json["username"]
+        assert response.status_code == 200
+
+
 def test_user_detail_delete_api_return_404(test_app):
     """
     데이터베이스에 존재하지 않는 사용자 UUID 로 사용자 정보를 삭제하려고 한다면,
@@ -100,3 +129,17 @@ def test_user_detail_delete_api_return_404(test_app):
             url_for("AuthAPI.UserDetailAPI", user_uuid="invalid_uuid")
         )
         assert response.status_code == 404
+
+
+def test_user_detail_delete_api_return_204(test_app):
+    """
+    데이터베이스에 존재하지 않는 사용자 UUID 로 사용자 정보를 삭제하려고 한다면,
+    API 는 상태 코드 404를 응답해야 합니다.
+    """
+    with test_app.test_request_context():
+        uuid = UserModel.query.first().uuid
+        response = test_app.test_client().delete(
+            url_for("AuthAPI.UserDetailAPI", user_uuid=uuid)
+        )
+        assert response.status_code == 204
+        assert len(UserModel.query.all()) == 3
