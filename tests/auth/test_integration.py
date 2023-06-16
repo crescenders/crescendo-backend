@@ -6,7 +6,7 @@ import os
 import pytest
 from flask import url_for
 
-from core import CrescendoApplicationFactory
+from factory import CrescendoApplicationFactory
 
 
 @pytest.fixture

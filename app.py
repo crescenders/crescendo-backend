@@ -1,4 +1,4 @@
-from core import CrescendoApplicationFactory
+from factory import CrescendoApplicationFactory
 
 app = CrescendoApplicationFactory.create_app("dev")
 

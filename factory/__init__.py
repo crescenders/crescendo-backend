@@ -7,10 +7,10 @@ class CrescendoApplicationFactory(BaseApplicationFactory):
     DOTENV_SETTINGS = {"dotenv_path": ".env"}
     CONFIG_MAPPING = {
         "dev": {
-            "from_object": {"obj": "core.config.dev"},
+            "from_object": {"obj": "factory.config.dev"},
         },
         "test": {
-            "from_object": {"obj": "core.config.test"},
+            "from_object": {"obj": "factory.config.test"},
         },
     }
     EXTENSION_MODULE = "fullask_rest_framework.factory.extensions"
