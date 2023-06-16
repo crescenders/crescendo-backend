@@ -6,32 +6,97 @@ import os
 import pytest
 from flask import url_for
 
+from crescendo.auth.models import UserModel
 from factory import CrescendoApplicationFactory
 
 
 @pytest.fixture
-def test_app():
+def test_app_factory():
     os.environ["SECRET_KEY"] = ""
-    test_app_factory = CrescendoApplicationFactory
+    yield CrescendoApplicationFactory
+
+
+@pytest.fixture
+def test_app(test_app_factory):
     test_app = test_app_factory.create_app("test")
     with test_app.app_context():
-        from crescendo.auth.models import UserModel
-
-        test_app_factory.get_extensions().db.create_all()
+        UserModel
+        db = test_app_factory.get_extensions().db
+        db.create_all()
+        db.session.add(
+            UserModel(username="react", email="user_react@react.com")
+        )  # id == 1
+        db.session.add(
+            UserModel(username="django", email="user_django@django.com")
+        )  # id == 2
+        db.session.add(
+            UserModel(username="flask", email="user_flask@flask.com")
+        )  # id == 3
+        db.session.add(
+            UserModel(username="fastapi", email="user_fastapi@fastapi.com")
+        )  # id == 4
+        db.session.commit()
     yield test_app
+    with test_app.app_context():
+        db = test_app_factory.get_extensions().db
+        db.drop_all()
 
 
 def test_user_list_api(test_app):
+    """
+    쿼리 파라미터가 없는 사용자 목록 조회 API 를 테스트합니다.
+    """
     with test_app.test_request_context():
         response = test_app.test_client().get(url_for("AuthAPI.UserListAPI"))
         assert response.status_code == 200
+        assert len(response.json) == 4
 
 
-def test_user_detail_api(test_app):
+def test_user_detail_get_api_return_404(test_app):
+    """
+    데이터베이스에 존재하지 않는 사용자 UUID 로 사용자 조회를 하려고 한다면,
+    API 는 상태 코드 404를 응답해야 합니다.
+    """
     with test_app.test_request_context():
-        # 데이터베이스에 존재하지 않는 사용자 UUID 로 사용자 조회를 하려고 한다면,
-        # API 는 상태 코드 404를 응답해야 합니다.
         response = test_app.test_client().get(
-            url_for("AuthAPI.UserDetailAPI", user_uuid="afsd")
+            url_for("AuthAPI.UserDetailAPI", user_uuid="aaa")
+        )
+        assert response.status_code == 404
+
+
+def test_user_detail_get_api_return_200(test_app):
+    """
+    데이터베이스에 존재하는 사용자 UUID 로 사용자 조회를 하려고 한다면,
+    정상적으로 조회가 되어야 합니다.
+    """
+    with test_app.test_request_context():
+        uuid = UserModel.query.first().uuid
+        response = test_app.test_client().get(
+            url_for("AuthAPI.UserDetailAPI", user_uuid=uuid)
+        )
+        assert response.json.get("username") == "react"
+        assert response.status_code == 200
+
+
+def test_user_detail_put_api_return_404(test_app):
+    """
+    데이터베이스에 존재하지 않는 사용자 UUID 로 사용자 정보를 수정하려고 한다면,
+    API 는 상태 코드 404를 응답해야 합니다.
+    """
+    with test_app.test_request_context():
+        response = test_app.test_client().put(
+            url_for("AuthAPI.UserDetailAPI", user_uuid="invalid_uuid")
+        )
+        assert response.status_code == 404
+
+
+def test_user_detail_delete_api_return_404(test_app):
+    """
+    데이터베이스에 존재하지 않는 사용자 UUID 로 사용자 정보를 삭제하려고 한다면,
+    API 는 상태 코드 404를 응답해야 합니다.
+    """
+    with test_app.test_request_context():
+        response = test_app.test_client().delete(
+            url_for("AuthAPI.UserDetailAPI", user_uuid="invalid_uuid")
         )
         assert response.status_code == 404
