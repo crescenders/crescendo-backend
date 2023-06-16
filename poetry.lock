@@ -631,14 +631,14 @@ SQLAlchemy = ">=1.4.18"
 
 [[package]]
 name = "fullask-rest-framework"
-version = "0.1.12"
+version = "0.1.15"
 description = "A fully-supported flask extension to build REST API."
 category = "main"
 optional = false
 python-versions = ">=3.8"
 files = [
-    {file = "fullask-rest-framework-0.1.12.tar.gz", hash = "sha256:166539a6c1943851ef64878cf0bbba6eb4019aad51b7c4244bc25ccd77b6cfac"},
-    {file = "fullask_rest_framework-0.1.12-py2.py3-none-any.whl", hash = "sha256:dd530d08fdf5365f6077a211b481591ef746fd4a2b8c04ebd20893176d0cb7ff"},
+    {file = "fullask-rest-framework-0.1.15.tar.gz", hash = "sha256:48737f68f060e6611d09f7c52a4be472b049acd41a06863baa6e857768cf51dd"},
+    {file = "fullask_rest_framework-0.1.15-py2.py3-none-any.whl", hash = "sha256:d444371c3b57009b3a093839ccd87b39d5a8d3a1b801a48e4c1cd4ac14c6a169"},
 ]
 
 [package.dependencies]
