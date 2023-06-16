@@ -1,7 +1,9 @@
+from uuid import UUID
+
 from dependency_injector.wiring import Provide, inject
 from flask.views import MethodView
 from flask_jwt_extended import get_jwt
-from flask_smorest import Blueprint
+from flask_smorest import Blueprint, abort
 from fullask_rest_framework.schemas.pagination import PaginationRequestSchema
 from fullask_rest_framework.schemas.sorting import SortingRequestSchema
 from fullask_rest_framework.utils.jwt import jwt_required
@@ -18,6 +20,7 @@ from crescendo.auth.schemas import (
     UserSchema,
 )
 from crescendo.auth.services import UserServiceABC
+from crescendo.exceptions.service_exceptions import DataNotFound
 
 #########################
 # Define your Blueprint.#
@@ -63,7 +66,7 @@ class UserListAPI(MethodView):
         )
 
 
-@AUTH_MICRO_APP.route("users/<string:user_uuid>/")
+@AUTH_MICRO_APP.route("users/<uuid:user_uuid>/")
 class UserDetailAPI(MethodView):
     """사용자 한 명을 다루는 API 입니다."""
 
@@ -73,20 +76,26 @@ class UserDetailAPI(MethodView):
 
     # @jwt_required()
     @AUTH_MICRO_APP.response(200, UserSchema)
-    def get(self, user_uuid):
+    @AUTH_MICRO_APP.alt_response(404, description="UUID 로 사용자를 특정할 수 없을 때 발생합니다.")
+    def get(self, user_uuid: UUID):
         """
         UUID 로 특정되는 사용자 한 명의 정보를 조회합니다.
 
-        본인, 혹은 STAFF, ADMIN 권한을 가진 사람만 회원정보를 조회할 수 있습니다.
-        Crescendo 서비스에서 발급된 JWT가 필요합니다.
+        데이터베이스에 없는 UUID 로 사용자를 조회하고자 시도한다면, 404 NOT FOUND 를 응답합니다. <br/>
+        (권한 부분 구현 X)<br/>
+        본인, 혹은 STAFF, ADMIN 권한을 가진 사람만 회원정보를 조회할 수 있습니다.<br/>
+        Crescendo 서비스에서 발급된 JWT가 필요합니다.<br/>
         """
-        return self.user_service.get_one(user_uuid)
+        try:
+            return self.user_service.get_one(str(user_uuid))
+        except DataNotFound:
+            abort(404)
 
     # @jwt_required()
 
     @AUTH_MICRO_APP.arguments(UserSchema)
     @AUTH_MICRO_APP.response(200, UserSchema)
-    def put(self, data, user_uuid):
+    def put(self, data, user_uuid: UUID):
         """
         UUID로 특정되는 사용자 한 명의 정보를 수정합니다.
 
@@ -106,7 +115,10 @@ class UserDetailAPI(MethodView):
         본인, 혹은 STAFF, ADMIN 권한을 가진 사람만 회원탈퇴를 진행할 수 있습니다.
         Crescendo 서비스에서 발급된 JWT가 필요합니다.
         """
-        return self.user_service.withdraw(user_uuid)
+        try:
+            return self.user_service.withdraw(user_uuid)
+        except DataNotFound:
+            abort(404)
 
 
 @AUTH_MICRO_APP.post("/login/google/")

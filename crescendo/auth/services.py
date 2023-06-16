@@ -7,6 +7,7 @@ from google.oauth2 import id_token  # type: ignore[import]
 
 from crescendo.auth.entities import JWTResponse, UserEntity
 from crescendo.auth.repositories import FullUserRepositoryABC
+from crescendo.exceptions.service_exceptions import DataNotFound
 
 
 class UserServiceABC(ABC):
@@ -64,15 +65,22 @@ class UserService(UserServiceABC):
         )
 
     def get_one(self, user_uuid) -> Optional[UserEntity]:
-        return self.user_repository.read_by_uuid(uuid=user_uuid)
+        user = self.user_repository.read_by_uuid(uuid=user_uuid)
+        if user is None:
+            raise DataNotFound()
+        return user
 
     def edit_info(self, user_uuid: str, data) -> UserEntity:
         user = self.user_repository.read_by_uuid(uuid=user_uuid)
+        if user is None:
+            raise DataNotFound()
         user.username = data["username"]
         return self.user_repository.save(user)
 
     def withdraw(self, user_uuid) -> None:
         user = self.user_repository.read_by_uuid(uuid=user_uuid)
+        if user is None:
+            raise DataNotFound()
         return self.user_repository.delete(user)
 
     def google_login(self, data) -> JWTResponse:
