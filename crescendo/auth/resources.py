@@ -146,6 +146,8 @@ def google_login_api(
 
 @AUTH_MICRO_APP.post("/login/refresh/")
 @AUTH_MICRO_APP.response(200, JWTSchema)
+@AUTH_MICRO_APP.response(401, description="헤더에 토큰 정보가 포함되어 있지 않을 때에 발생합니다.")
+@AUTH_MICRO_APP.response(400, description="헤더에 토큰 정보가 포함되었으나, 잘못된 토큰일 경우 발생합니다.")
 @inject
 @jwt_required(refresh=True)
 def refresh_token_api(user_service: UserServiceABC = Provide["user_service"]):
