@@ -70,5 +70,3 @@ venv/
 .mypy_cache/
 .idea
 .vscode
-.pyre/
-.pyre_configuration
