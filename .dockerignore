@@ -9,3 +9,4 @@ db.sqlite3
 mypy.ini
 .mypy_cache
 .flake8
+db.sqlite3

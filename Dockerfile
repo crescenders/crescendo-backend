@@ -1,11 +1,30 @@
-FROM python:3.11-slim
+FROM python:3.11
 
-COPY ./ app
+ENV PYTHONDONTWRITEBYTECODE 1
+ENV PYTHONUNBUFFERED 1
+
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends \
+    build-essential \
+    libpq-dev
+
+RUN pip install poetry
 
 WORKDIR /app
 
-RUN pip install pipenv
+COPY pyproject.toml poetry.lock /app/
 
-RUN pipenv install --system --deploy --ignore-pipfile
+RUN poetry config virtualenvs.create false && \
+    poetry install --no-interaction --no-ansi --no-root
 
-CMD ["python3", "-m", "flask", "run", "--host=0.0.0.0"]
+COPY . /app/
+
+RUN flask db stamp head
+
+RUN flask db migrate
+
+RUN flask db upgrade
+
+EXPOSE 5000
+
+CMD ["gunicorn", "--bind", "0.0.0.0:5000", "app:app"]
