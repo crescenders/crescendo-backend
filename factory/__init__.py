@@ -6,6 +6,9 @@ class CrescendoApplicationFactory(BaseApplicationFactory):
     APP_BASE_DIR = "crescendo"
     DOTENV_SETTINGS = {"dotenv_path": ".env"}
     CONFIG_MAPPING = {
+        "prod": {
+            "from_object": {"obj": "factory.config.prod"},
+        },
         "dev": {
             "from_object": {"obj": "factory.config.dev"},
         },
