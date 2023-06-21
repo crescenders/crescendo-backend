@@ -11,3 +11,4 @@ mypy.ini
 .flake8
 db.sqlite3
 tests
+.flaskenv
