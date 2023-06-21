@@ -10,3 +10,4 @@ mypy.ini
 .mypy_cache
 .flake8
 db.sqlite3
+tests
