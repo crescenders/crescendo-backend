@@ -1,4 +1,4 @@
-FROM python:3.11
+FROM python:3.11-slim
 
 ENV PYTHONDONTWRITEBYTECODE 1
 ENV PYTHONUNBUFFERED 1
@@ -19,12 +19,12 @@ RUN poetry config virtualenvs.create false && \
 
 COPY . /app/
 
-RUN flask db stamp head
+RUN flask --app app:prod_app db stamp head
 
-RUN flask db migrate
+RUN flask --app app:prod_app db migrate
 
-RUN flask db upgrade
+RUN flask --app app:prod_app db upgrade
 
 EXPOSE 5000
 
-CMD ["gunicorn", "--bind", "0.0.0.0:5000", "app:app"]
+CMD ["gunicorn", "--bind", "0.0.0.0:5000", "app:prod_app", "--access-logfile", "logs/access.log", "--error-logfile", "logs/error.log", "--log-level", "warning"]
