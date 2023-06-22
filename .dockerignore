@@ -12,3 +12,4 @@ mypy.ini
 db.sqlite3
 tests
 .flaskenv
+.env
