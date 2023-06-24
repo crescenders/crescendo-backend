@@ -26,7 +26,7 @@ from crescendo.exceptions.service_exceptions import DataNotFound
 # Define your Blueprint.#
 #########################
 
-AUTH_MICRO_APP = Blueprint(
+auth_bp = Blueprint(
     name="AuthAPI",
     import_name=__name__,
     url_prefix="/auth",
@@ -39,7 +39,7 @@ AUTH_MICRO_APP = Blueprint(
 #############################
 
 
-@AUTH_MICRO_APP.route("/users/")
+@auth_bp.route("/users/")
 class UserListAPI(MethodView):
     """사용자 목록을 다루는 API 입니다."""
 
@@ -48,10 +48,10 @@ class UserListAPI(MethodView):
         self.user_service = user_service
 
     # @jwt_required()
-    @AUTH_MICRO_APP.arguments(PaginationRequestSchema, location="query")  # 페이지네이션 파라미터
-    @AUTH_MICRO_APP.arguments(SortingRequestSchema, location="query")  # 정렬 파라미터
-    @AUTH_MICRO_APP.arguments(UserFilteringArgsSchema, location="query")  # 필터링 파라미터
-    @AUTH_MICRO_APP.response(200, PaginatedUserListSchema)
+    @auth_bp.arguments(PaginationRequestSchema, location="query")  # 페이지네이션 파라미터
+    @auth_bp.arguments(SortingRequestSchema, location="query")  # 정렬 파라미터
+    @auth_bp.arguments(UserFilteringArgsSchema, location="query")  # 필터링 파라미터
+    @auth_bp.response(200, PaginatedUserListSchema)
     def get(
         self,
         pagination_request: PaginationRequest,
@@ -66,7 +66,7 @@ class UserListAPI(MethodView):
         )
 
 
-@AUTH_MICRO_APP.route("users/<uuid:user_uuid>/")
+@auth_bp.route("users/<uuid:user_uuid>/")
 class UserDetailAPI(MethodView):
     """사용자 한 명을 다루는 API 입니다."""
 
@@ -75,8 +75,8 @@ class UserDetailAPI(MethodView):
         self.user_service = user_service
 
     # @jwt_required()
-    @AUTH_MICRO_APP.response(200, UserSchema)
-    @AUTH_MICRO_APP.alt_response(404, description="UUID 로 사용자를 특정할 수 없을 때 발생합니다.")
+    @auth_bp.response(200, UserSchema)
+    @auth_bp.alt_response(404, description="UUID 로 사용자를 특정할 수 없을 때 발생합니다.")
     def get(self, user_uuid: UUID):
         """
         UUID 로 특정되는 사용자 한 명의 정보를 조회합니다.
@@ -93,9 +93,9 @@ class UserDetailAPI(MethodView):
 
     # @jwt_required()
 
-    @AUTH_MICRO_APP.arguments(UserSchema)
-    @AUTH_MICRO_APP.response(200, UserSchema)
-    @AUTH_MICRO_APP.alt_response(404, description="UUID 로 사용자를 특정할 수 없을 때 발생합니다.")
+    @auth_bp.arguments(UserSchema)
+    @auth_bp.response(200, UserSchema)
+    @auth_bp.alt_response(404, description="UUID 로 사용자를 특정할 수 없을 때 발생합니다.")
     def put(self, data, user_uuid: UUID):
         """
         UUID로 특정되는 사용자 한 명의 정보를 수정합니다.
@@ -112,8 +112,8 @@ class UserDetailAPI(MethodView):
             abort(404)
 
     # @jwt_required()
-    @AUTH_MICRO_APP.response(204)
-    @AUTH_MICRO_APP.alt_response(404, description="UUID 로 사용자를 특정할 수 없을 때 발생합니다.")
+    @auth_bp.response(204)
+    @auth_bp.alt_response(404, description="UUID 로 사용자를 특정할 수 없을 때 발생합니다.")
     def delete(self, user_uuid: UUID):
         """
         UUID로 특정되는 사용자 한 명을 삭제합니다.
@@ -127,9 +127,9 @@ class UserDetailAPI(MethodView):
             abort(404)
 
 
-@AUTH_MICRO_APP.post("/login/google/")
-@AUTH_MICRO_APP.arguments(GoogleOauthArgsSchema)
-@AUTH_MICRO_APP.response(200, JWTSchema)
+@auth_bp.post("/login/google/")
+@auth_bp.arguments(GoogleOauthArgsSchema)
+@auth_bp.response(200, JWTSchema)
 @inject
 def google_login_api(
     google_oauth_token, user_service: UserServiceABC = Provide["user_service"]
@@ -144,10 +144,10 @@ def google_login_api(
     return user_service.google_login(data=google_oauth_token["google_jwt"])
 
 
-@AUTH_MICRO_APP.post("/login/refresh/")
-@AUTH_MICRO_APP.response(200, JWTSchema)
-@AUTH_MICRO_APP.response(401, description="헤더에 토큰 정보가 포함되어 있지 않을 때에 발생합니다.")
-@AUTH_MICRO_APP.response(400, description="헤더에 토큰 정보가 포함되었으나, 잘못된 토큰일 경우 발생합니다.")
+@auth_bp.post("/login/refresh/")
+@auth_bp.response(200, JWTSchema)
+@auth_bp.response(401, description="헤더에 토큰 정보가 포함되어 있지 않을 때에 발생합니다.")
+@auth_bp.response(400, description="헤더에 토큰 정보가 포함되었으나, 잘못된 토큰일 경우 발생합니다.")
 @inject
 @jwt_required(refresh=True)
 def refresh_token_api(user_service: UserServiceABC = Provide["user_service"]):
