@@ -25,10 +25,9 @@ jobs:
           file: ./Dockerfile
           push: true
           tags: ${{ secrets.DOCKER_USERNAME }}/crescendo-image
-          with:
-            platforms: |
-              linux/arm64
-              linux/amd64
+          platforms: |
+            linux/arm64
+            linux/amd64
   Deploy_to_Oracle_Cloud_Infrastructure:
     runs-on: ubuntu-latest
     steps:
