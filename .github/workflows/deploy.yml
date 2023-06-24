@@ -27,7 +27,6 @@ jobs:
           tags: ${{ secrets.DOCKER_USERNAME }}/crescendo-image
           platforms: |
             linux/arm64
-            linux/amd64
   Deploy_to_Oracle_Cloud_Infrastructure:
     needs: Deploy_Docker_image_to_DockerHub
     runs-on: ubuntu-latest
