@@ -45,4 +45,4 @@ jobs:
             docker-compose rm -f
             docker-compose pull   
             docker-compose up -d
-            docker-compose exec was flask db upgrade
+            docker-compose exec -T was flask db upgrade
