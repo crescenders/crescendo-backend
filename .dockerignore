@@ -14,3 +14,4 @@ tests
 .flaskenv
 .env
 wallet
+docker-compose.yml

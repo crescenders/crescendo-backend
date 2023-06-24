@@ -71,3 +71,4 @@ venv/
 .idea
 .vscode
 wallet
+docker-compose.yml
