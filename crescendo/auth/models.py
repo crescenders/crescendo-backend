@@ -5,7 +5,7 @@ from sqlalchemy.orm import validates
 
 
 class UserModel(BaseModel, TimeStampedMixin, UUIDMixin):
-    __tablename__ = "user"
+    __tablename__ = "auth_user"
 
     email = db.Column(db.String(80), unique=True, nullable=False)
     username = db.Column(db.String(10), unique=False, nullable=False)
