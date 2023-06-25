@@ -8,7 +8,7 @@ packages = [{include = "crescendo_backend"}]
 
 [tool.poetry.dependencies]
 python = "^3.11"
-fullask-rest-framework = "^0.1.9"
+fullask-rest-framework = "*"
 google-auth = "^2.19.1"
 requests = "^2.31.0"
 gunicorn = "^20.1.0"
