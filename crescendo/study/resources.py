@@ -6,7 +6,7 @@ from flask_smorest import Blueprint
 
 from crescendo.study.schemas import CategoryListSchema
 
-STUDY_MICRO_APP = Blueprint(
+study_bp = Blueprint(
     name="StudyAPI",
     import_name=__name__,
     url_prefix="",
@@ -14,20 +14,20 @@ STUDY_MICRO_APP = Blueprint(
 )
 
 
-@STUDY_MICRO_APP.route("/categories/", tags=["CategoryAPI"])
+@study_bp.route("/categories/", tags=["CategoryAPI"])
 class CategoryListAPI(MethodView):
-    @STUDY_MICRO_APP.response(200, CategoryListSchema(many=True))
+    @study_bp.response(200, CategoryListSchema(many=True))
     def get(self):
         """카테고리 목록을 조회합니다."""
         pass
 
-    @STUDY_MICRO_APP.response(201, CategoryListSchema())
+    @study_bp.response(201, CategoryListSchema())
     def post(self):
         """새로운 카테고리를 생성합니다."""
         pass
 
 
-@STUDY_MICRO_APP.route("/categories/<int:category_id>", tags=["CategoryAPI"])
+@study_bp.route("/categories/<int:category_id>", tags=["CategoryAPI"])
 class CategoryDetailAPI(MethodView):
     def put(self):
         """ID 로 특정되는 카테고리 정보를 수정합니다."""
@@ -38,7 +38,7 @@ class CategoryDetailAPI(MethodView):
         pass
 
 
-@STUDY_MICRO_APP.route("/studies/posts/", tags=["StudyAPI"])
+@study_bp.route("/studies/posts/", tags=["StudyAPI"])
 class StudyListAPI(MethodView):
     def get(self):
         pass
