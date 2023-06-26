@@ -600,19 +600,18 @@ dotenv = ["python-dotenv"]
 
 [[package]]
 name = "flask-cors"
-version = "3.0.10"
+version = "4.0.0"
 description = "A Flask extension adding a decorator for CORS support"
 category = "main"
 optional = false
 python-versions = "*"
 files = [
-    {file = "Flask-Cors-3.0.10.tar.gz", hash = "sha256:b60839393f3b84a0f3746f6cdca56c1ad7426aa738b70d6c61375857823181de"},
-    {file = "Flask_Cors-3.0.10-py2.py3-none-any.whl", hash = "sha256:74efc975af1194fc7891ff5cd85b0f7478be4f7f59fe158102e91abb72bb4438"},
+    {file = "Flask-Cors-4.0.0.tar.gz", hash = "sha256:f268522fcb2f73e2ecdde1ef45e2fd5c71cc48fe03cffb4b441c6d1b40684eb0"},
+    {file = "Flask_Cors-4.0.0-py2.py3-none-any.whl", hash = "sha256:bc3492bfd6368d27cfe79c7821df5a8a319e1a6d5eab277a3794be19bdc51783"},
 ]
 
 [package.dependencies]
 Flask = ">=0.9"
-Six = "*"
 
 [[package]]
 name = "flask-jwt-extended"
@@ -730,14 +729,14 @@ sqlalchemy = ">=1.4.18"
 
 [[package]]
 name = "fullask-rest-framework"
-version = "0.1.17"
+version = "0.1.18"
 description = "A fully-supported flask extension to build REST API."
 category = "main"
 optional = false
 python-versions = ">=3.8"
 files = [
-    {file = "fullask-rest-framework-0.1.17.tar.gz", hash = "sha256:586e5ec3cf5fb90033d6bb8412a0352c8c7685e8a9deead6fc244bc23169786d"},
-    {file = "fullask_rest_framework-0.1.17-py2.py3-none-any.whl", hash = "sha256:5c15ee5b97de646bf1042a640f56ac1fd612ad8ba93124f03f31708c87bc33fc"},
+    {file = "fullask-rest-framework-0.1.18.tar.gz", hash = "sha256:178bd6fe34280fb7a0626c627d043cc2b67fe5fbb26e6ea140dbe0daa6eede97"},
+    {file = "fullask_rest_framework-0.1.18-py2.py3-none-any.whl", hash = "sha256:e5cf82346f4853c36b7eddce0826d0386d2921cc57ac74af6aaed7fdec508cd0"},
 ]
 
 [package.dependencies]
