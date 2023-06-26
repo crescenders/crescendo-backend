@@ -19,11 +19,8 @@ class StudyContainer(containers.DeclarativeContainer):
     category_repository = providers.Singleton(
         category_repository_abc,
         db=providers.Object(db),
-        entity=providers.Object(CategoryEntity),
-        sqlalchemy_model=providers.Object(CategoryModel),
     )
     category_service = providers.Singleton(
         category_service_abc,
         category_repository=category_repository,
-        category_entity=providers.Factory(CategoryEntity).provider,
     )
