@@ -1,5 +1,7 @@
 from abc import ABC, abstractmethod
 
+from crescendo.study.repositories import SQLAlchemyFullCategoryRepositoryABC
+
 
 class CategoryServiceABC(ABC):
     @abstractmethod
@@ -20,6 +22,9 @@ class CategoryServiceABC(ABC):
 
 
 class CategoryService(CategoryServiceABC):
+    def __init__(self, category_repository: SQLAlchemyFullCategoryRepositoryABC):
+        self.category_repository = category_repository
+
     def create(self):
         pass
 
