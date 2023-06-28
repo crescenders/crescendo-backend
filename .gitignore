@@ -46,6 +46,7 @@ cover/
 *.log
 local_settings.py
 db.sqlite3
+test_db.sqlite3
 db.sqlite3-journal
 instance/
 .scrapy
@@ -69,3 +70,5 @@ venv/
 .mypy_cache/
 .idea
 .vscode
+wallet
+docker-compose.yml

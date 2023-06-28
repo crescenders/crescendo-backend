@@ -1,6 +1,6 @@
 from factory import CrescendoApplicationFactory
 
-app = CrescendoApplicationFactory.create_app("prod")
+app = CrescendoApplicationFactory.create_app("dev")
 
 if __name__ == "__main__":
     app.run(
