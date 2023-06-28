@@ -9,6 +9,7 @@ class UserSchema(Schema):
         metadata={"description": "사용자 UUID"},
     )
     username = fields.String(
+        required=True,
         metadata={"description": "사용자 닉네임"},
     )
     email = fields.Email(

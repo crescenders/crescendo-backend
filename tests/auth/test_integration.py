@@ -90,17 +90,17 @@ def test_user_detail_put_api_return_404(test_app):
         assert response.status_code == 404
 
 
-def test_user_detail_put_api_return_400(test_app):
+def test_user_detail_put_api_return_422(test_app):
     """
     PUT request 를 아무런 body 없이 수행한다면,
-    API 는 상태 코드 400을 응답해야 합니다.
+    API 는 상태 코드 422를 응답해야 합니다.
     """
     with test_app.test_request_context():
         uuid = UserModel.query.first().uuid
         response = test_app.test_client().put(
             url_for("AuthAPI.UserDetailAPI", user_uuid=uuid)
         )
-        assert response.status_code == 400
+        assert response.status_code == 422
 
 
 def test_user_detail_put_api_return_200(test_app):
