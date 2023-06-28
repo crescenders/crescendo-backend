@@ -1,11 +1,13 @@
 from abc import ABC, abstractmethod
 
+from crescendo.exceptions.service_exceptions import DataNotFound
+from crescendo.study.entities import CategoryEntity
 from crescendo.study.repositories import SQLAlchemyFullCategoryRepositoryABC
 
 
 class CategoryServiceABC(ABC):
     @abstractmethod
-    def create(self):
+    def create(self, category_category_data):
         pass
 
     @abstractmethod
@@ -13,11 +15,11 @@ class CategoryServiceABC(ABC):
         pass
 
     @abstractmethod
-    def edit(self):
+    def edit(self, category_id, category_data):
         pass
 
     @abstractmethod
-    def delete(self):
+    def delete(self, category_id):
         pass
 
 
@@ -25,14 +27,23 @@ class CategoryService(CategoryServiceABC):
     def __init__(self, category_repository: SQLAlchemyFullCategoryRepositoryABC):
         self.category_repository = category_repository
 
-    def create(self):
-        pass
+    def create(self, category_data):
+        new_category = self.category_repository.save(CategoryEntity(**category_data))
+        return new_category
 
     def get_all(self):
-        pass
+        return self.category_repository.read_all()
 
-    def edit(self):
-        pass
+    def edit(self, category_id, category_data):
+        category = self.category_repository.read_by_id(category_id)
+        if category is None:
+            raise DataNotFound
+        category.name = category_data["name"]
+        category.description = category_data["description"]
+        return self.category_repository.save(category)
 
-    def delete(self):
-        pass
+    def delete(self, category_id):
+        category = self.category_repository.read_by_id(category_id)
+        if category is None:
+            raise DataNotFound
+        return self.category_repository.delete(category)
