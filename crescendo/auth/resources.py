@@ -94,7 +94,7 @@ class UserDetailAPI(MethodView):
     # @jwt_required()
 
     @auth_bp.arguments(UserSchema)
-    @auth_bp.response(200, UserSchema)
+    @auth_bp.response(200, UserSchema())
     @auth_bp.alt_response(404, description="UUID 로 사용자를 특정할 수 없을 때 발생합니다.")
     def put(self, data, user_uuid: UUID):
         """
@@ -104,8 +104,6 @@ class UserDetailAPI(MethodView):
         본인, 혹은 STAFF, ADMIN 권한을 가진 사람만 회원정보를 수정할 수 있습니다.
         Crescendo 서비스에서 발급된 JWT가 필요합니다.
         """
-        if not data:
-            abort(400)
         try:
             return self.user_service.edit_info(user_uuid=str(user_uuid), data=data)
         except DataNotFound:
