@@ -8,7 +8,7 @@ from crescendo.auth.services import UserService
 
 
 class AuthMicroApp(MicroApp):
-    blueprint = auth_bp
+    blueprints = (auth_bp,)
     microapp_container = UserContainer(
         user_service_abc=providers.Factory(UserService),
         user_repository_abc=providers.Factory(FullUserRepository),

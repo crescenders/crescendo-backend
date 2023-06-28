@@ -8,7 +8,7 @@ from crescendo.study.services import CategoryService
 
 
 class StudyMicroApp(MicroApp):
-    blueprint = study_bp
+    blueprints = (study_bp,)
     microapp_container = StudyContainer(
         category_service_abc=providers.Factory(CategoryService),
         category_repository_abc=providers.Factory(SQLAlchemyFullCategoryRepository),
