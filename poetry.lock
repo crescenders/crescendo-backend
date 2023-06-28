@@ -729,14 +729,14 @@ sqlalchemy = ">=1.4.18"
 
 [[package]]
 name = "fullask-rest-framework"
-version = "0.1.18"
+version = "0.3.1"
 description = "A fully-supported flask extension to build REST API."
 category = "main"
 optional = false
-python-versions = ">=3.8"
+python-versions = ">=3.9"
 files = [
-    {file = "fullask-rest-framework-0.1.18.tar.gz", hash = "sha256:178bd6fe34280fb7a0626c627d043cc2b67fe5fbb26e6ea140dbe0daa6eede97"},
-    {file = "fullask_rest_framework-0.1.18-py2.py3-none-any.whl", hash = "sha256:e5cf82346f4853c36b7eddce0826d0386d2921cc57ac74af6aaed7fdec508cd0"},
+    {file = "fullask_rest_framework-0.3.1-py3-none-any.whl", hash = "sha256:a9fd24b054764f28e631c287c707d3633dc77b0e7739db73ce888a0c6f6f5d81"},
+    {file = "fullask_rest_framework-0.3.1.tar.gz", hash = "sha256:14ba425eae612218a966e5cf1de81bb4dddb73c65b48855b0c2bb60cfc8d3c9c"},
 ]
 
 [package.dependencies]
@@ -754,14 +754,14 @@ python-dotenv = "*"
 
 [[package]]
 name = "google-auth"
-version = "2.20.0"
+version = "2.21.0"
 description = "Google Authentication Library"
 category = "main"
 optional = false
 python-versions = ">=3.6"
 files = [
-    {file = "google-auth-2.20.0.tar.gz", hash = "sha256:030af34138909ccde0fbce611afc178f1d65d32fbff281f25738b1fe1c6f3eaa"},
-    {file = "google_auth-2.20.0-py2.py3-none-any.whl", hash = "sha256:23b7b0950fcda519bfb6692bf0d5289d2ea49fc143717cc7188458ec620e63fa"},
+    {file = "google-auth-2.21.0.tar.gz", hash = "sha256:b28e8048e57727e7cf0e5bd8e7276b212aef476654a09511354aa82753b45c66"},
+    {file = "google_auth-2.21.0-py2.py3-none-any.whl", hash = "sha256:da3f18d074fa0f5a7061d99b9af8cee3aa6189c987af7c1b07d94566b6b11268"},
 ]
 
 [package.dependencies]
