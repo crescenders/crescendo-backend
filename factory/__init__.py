@@ -3,7 +3,6 @@ from fullask_rest_framework.factory.app_factory import BaseApplicationFactory
 
 class CrescendoApplicationFactory(BaseApplicationFactory):
     FLASK_APP_NAME = "crescendo-backend"
-    APP_BASE_DIR = "crescendo"
     DOTENV_SETTINGS = {"dotenv_path": ".env"}
     CONFIG_MAPPING = {
         "prod": {

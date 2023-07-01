@@ -7,11 +7,11 @@ from crescendo.study.services import CategoryServiceABC
 
 class StudyContainer(containers.DeclarativeContainer):
     category_service_abc = providers.Dependency(
-        instance_of=CategoryServiceABC
-    )  # type: ignore[type-abstract]
+        instance_of=CategoryServiceABC  # type: ignore[type-abstract]
+    )
     category_repository_abc = providers.Dependency(
-        instance_of=SQLAlchemyFullCategoryRepositoryABC
-    )  # type: ignore[type-abstract]
+        instance_of=SQLAlchemyFullCategoryRepositoryABC  # type: ignore[type-abstract]
+    )
     category_repository = providers.Singleton(
         category_repository_abc,
         db=providers.Object(db),
