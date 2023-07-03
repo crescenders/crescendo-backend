@@ -729,14 +729,14 @@ sqlalchemy = ">=1.4.18"
 
 [[package]]
 name = "fullask-rest-framework"
-version = "0.5.1"
+version = "0.6.1"
 description = "A fully-supported flask extension to build REST API."
 category = "main"
 optional = false
 python-versions = ">=3.9"
 files = [
-    {file = "fullask_rest_framework-0.5.1-py3-none-any.whl", hash = "sha256:a7791e8305820f430a3fff360dc9609c383bf9b19df49533d73feb0948187dc1"},
-    {file = "fullask_rest_framework-0.5.1.tar.gz", hash = "sha256:e2e3fea4ea006cb15696dc9854a6ef3c4a9c9d7a7d2f3e46719008ad5919f7f5"},
+    {file = "fullask_rest_framework-0.6.1-py3-none-any.whl", hash = "sha256:19b482e1c36128664f719f621b25f67a330b79e5f13d8e595536061feffdbd26"},
+    {file = "fullask_rest_framework-0.6.1.tar.gz", hash = "sha256:423bfa0d3d75e42d76b92c8f5c5482f3ca2d3121c48b4d6ec70886dafba7139d"},
 ]
 
 [package.dependencies]
@@ -1821,14 +1821,14 @@ files = [
 
 [[package]]
 name = "typing-extensions"
-version = "4.7.0"
+version = "4.7.1"
 description = "Backported and Experimental Type Hints for Python 3.7+"
 category = "main"
 optional = false
 python-versions = ">=3.7"
 files = [
-    {file = "typing_extensions-4.7.0-py3-none-any.whl", hash = "sha256:5d8c9dac95c27d20df12fb1d97b9793ab8b2af8a3a525e68c80e21060c161771"},
-    {file = "typing_extensions-4.7.0.tar.gz", hash = "sha256:935ccf31549830cda708b42289d44b6f74084d616a00be651601a4f968e77c82"},
+    {file = "typing_extensions-4.7.1-py3-none-any.whl", hash = "sha256:440d5dd3af93b060174bf433bccd69b0babc3b15b1a8dca43789fd7f61514b36"},
+    {file = "typing_extensions-4.7.1.tar.gz", hash = "sha256:b75ddc264f0ba5615db7ba217daeb99701ad295353c45f9e95963337ceeeffb2"},
 ]
 
 [[package]]
