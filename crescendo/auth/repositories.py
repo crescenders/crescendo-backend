@@ -6,26 +6,27 @@ from fullask_rest_framework.repositories.sqlalchemy import (
     read_by_fields,
 )
 
-from crescendo.auth.entities import UserEntity
+from crescendo.auth.models import UserModel
 
 
 class FullUserRepositoryABC(SQLAlchemyFullRepository, ABC):
     @abstractmethod
-    def read_by_uuid(self, uuid: str) -> Optional[UserEntity]:
+    def read_by_uuid(self, uuid: str) -> Optional[UserModel]:
         pass
 
     @abstractmethod
-    def read_by_email(self, email: str) -> Optional[UserEntity]:
+    def read_by_email(self, email: str) -> Optional[UserModel]:
         pass
 
 
 class FullUserRepository(FullUserRepositoryABC):
-    ENTITY_CLS = UserEntity
+    def get_model(self):
+        return UserModel
 
     @read_by_fields
-    def read_by_uuid(self, uuid: str) -> Optional[UserEntity]:
+    def read_by_uuid(self, uuid: str) -> Optional[UserModel]:
         pass
 
     @read_by_fields
-    def read_by_email(self, email: str) -> Optional[UserEntity]:
+    def read_by_email(self, email: str) -> Optional[UserModel]:
         pass

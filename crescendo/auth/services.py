@@ -1,13 +1,20 @@
 from abc import ABC, abstractmethod
+from dataclasses import dataclass
 from typing import Optional
 
 from fullask_rest_framework.vo.pagination import PaginationResponse
 from google.auth.transport import requests  # type: ignore[import]
 from google.oauth2 import id_token  # type: ignore[import]
 
-from crescendo.auth.entities import JWTResponse, UserEntity
+from crescendo.auth.models import UserModel
 from crescendo.auth.repositories import FullUserRepositoryABC
 from crescendo.exceptions.service_exceptions import DataNotFound
+
+
+@dataclass
+class JWTResponse:
+    access_token: str
+    refresh_token: str
 
 
 class UserServiceABC(ABC):
@@ -17,15 +24,15 @@ class UserServiceABC(ABC):
         pagination_request,
         sorting_request,
         filtering_request,
-    ) -> PaginationResponse[UserEntity]:
+    ) -> PaginationResponse[UserModel]:
         pass
 
     @abstractmethod
-    def get_one(self, user_uuid) -> Optional[UserEntity]:
+    def get_one(self, user_uuid) -> Optional[UserModel]:
         pass
 
     @abstractmethod
-    def edit_info(self, user_uuid: str, data) -> UserEntity:
+    def edit_info(self, user_uuid: str, data) -> UserModel:
         pass
 
     @abstractmethod
@@ -57,20 +64,20 @@ class UserService(UserServiceABC):
         pagination_request,
         sorting_request,
         filtering_request,
-    ) -> PaginationResponse[UserEntity]:
+    ) -> PaginationResponse[UserModel]:
         return self.user_repository.read_all_with_pagination(
             pagination_request=pagination_request,
             sorting_request=sorting_request,
             filtering_request=filtering_request,
         )
 
-    def get_one(self, user_uuid) -> Optional[UserEntity]:
+    def get_one(self, user_uuid) -> Optional[UserModel]:
         user = self.user_repository.read_by_uuid(uuid=user_uuid)
         if user is None:
             raise DataNotFound()
         return user
 
-    def edit_info(self, user_uuid: str, data) -> UserEntity:
+    def edit_info(self, user_uuid: str, data) -> UserModel:
         user = self.user_repository.read_by_uuid(uuid=user_uuid)
         if user is None:
             raise DataNotFound()
@@ -104,6 +111,6 @@ class UserService(UserServiceABC):
             access_token=user.access_token, refresh_token=user.refresh_token
         )
 
-    def _register(self, email, username, role="USER") -> UserEntity:
-        user = UserEntity(email=email, username=username, role=role)
+    def _register(self, email, username, role="USER") -> UserModel:
+        user = UserModel(email=email, username=username, role=role)
         return self.user_repository.save(user)

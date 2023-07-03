@@ -1,9 +1,8 @@
-from abc import ABC, abstractmethod
-from typing import Optional
+from abc import ABC
 
 from fullask_rest_framework.repositories.sqlalchemy import SQLAlchemyFullRepository
 
-from crescendo.study.entities import CategoryEntity
+from crescendo.study.models import CategoryModel
 
 
 class SQLAlchemyFullCategoryRepositoryABC(SQLAlchemyFullRepository, ABC):
@@ -11,4 +10,5 @@ class SQLAlchemyFullCategoryRepositoryABC(SQLAlchemyFullRepository, ABC):
 
 
 class SQLAlchemyFullCategoryRepository(SQLAlchemyFullCategoryRepositoryABC):
-    ENTITY_CLS = CategoryEntity
+    def get_model(self):
+        return CategoryModel
