@@ -1,6 +1,6 @@
+from fullask_rest_framework.db.sqlalchemy.base_model import BaseModel
+from fullask_rest_framework.db.sqlalchemy.mixins import TimeStampedMixin, UUIDMixin
 from fullask_rest_framework.factory.extensions import db
-from fullask_rest_framework.orm.sqlalchemy.base_model import BaseModel
-from fullask_rest_framework.orm.sqlalchemy.mixins import TimeStampedMixin, UUIDMixin
 from sqlalchemy.orm import validates
 
 
