@@ -1,8 +1,6 @@
 from dependency_injector import containers, providers
 from fullask_rest_framework.factory.extensions import db
 
-from crescendo.auth.entities import UserEntity
-from crescendo.auth.models import UserModel
 from crescendo.auth.repositories import FullUserRepositoryABC
 from crescendo.auth.services import UserServiceABC
 
