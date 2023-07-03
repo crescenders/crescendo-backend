@@ -2,6 +2,7 @@ from abc import ABC, abstractmethod
 from dataclasses import dataclass
 from typing import Optional
 
+from flask_jwt_extended import create_access_token, create_refresh_token
 from fullask_rest_framework.vo.pagination import PaginationResponse
 from google.auth.transport import requests  # type: ignore[import]
 from google.oauth2 import id_token  # type: ignore[import]
@@ -94,23 +95,23 @@ class UserService(UserServiceABC):
         id_information = id_token.verify_oauth2_token(data, requests.Request())
         email = id_information["email"]
         username = id_information["given_name"]
-
         user = (
             self.user_repository.read_by_email(email)
             if self.user_repository.read_by_email(email)
             else self._register(email, username)
         )
-
-        return JWTResponse(
-            access_token=user.access_token, refresh_token=user.refresh_token
-        )
+        return self._get_token_set(user)
 
     def refresh_login(self, decoded_refresh_token) -> JWTResponse:
         user = self.user_repository.read_by_uuid(decoded_refresh_token["sub"])
-        return JWTResponse(
-            access_token=user.access_token, refresh_token=user.refresh_token
-        )
+        return self._get_token_set(user)
 
     def _register(self, email, username, role="USER") -> UserModel:
         user = UserModel(email=email, username=username, role=role)
         return self.user_repository.save(user)
+
+    @staticmethod
+    def _get_token_set(user: UserModel) -> JWTResponse:
+        access_token = create_access_token(identity=user.uuid)
+        refresh_token = create_refresh_token(identity=user.uuid)
+        return JWTResponse(access_token=access_token, refresh_token=refresh_token)
