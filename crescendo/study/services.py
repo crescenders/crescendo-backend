@@ -59,7 +59,7 @@ class CategoryService(CategoryServiceABC):
 
 class StudyGroupServiceABC(ABC):
     @abstractmethod
-    def create_studygroup(self):
+    def create_studygroup(self, author_uuid, **studygroup_data):
         """스터디그룹 홍보 게시물을 작성하고, 그에 맞는 정보로 새로운 스터디를 개설합니다."""
         pass
 
