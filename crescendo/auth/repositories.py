@@ -6,7 +6,7 @@ from fullask_rest_framework.repositories import SQLAlchemyFullRepository, read_b
 from crescendo.auth.models import UserModel
 
 
-class FullUserRepositoryABC(SQLAlchemyFullRepository, ABC):
+class UserRepositoryABC(SQLAlchemyFullRepository, ABC):
     @abstractmethod
     def read_by_uuid(self, uuid: str) -> Optional[UserModel]:
         pass
@@ -16,7 +16,7 @@ class FullUserRepositoryABC(SQLAlchemyFullRepository, ABC):
         pass
 
 
-class FullUserRepository(FullUserRepositoryABC):
+class UserRepository(UserRepositoryABC):
     def get_model(self):
         return UserModel
 

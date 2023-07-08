@@ -8,7 +8,7 @@ from google.auth.transport import requests  # type: ignore[import]
 from google.oauth2 import id_token  # type: ignore[import]
 
 from crescendo.auth.models import UserModel
-from crescendo.auth.repositories import FullUserRepositoryABC
+from crescendo.auth.repositories import UserRepositoryABC
 from crescendo.exceptions.service_exceptions import DataNotFound
 
 
@@ -57,7 +57,7 @@ class UserServiceABC(ABC):
 class UserService(UserServiceABC):
     """회원정보조회, 회원가입, 회원정보수정, 회원탈퇴, 검색"""
 
-    def __init__(self, user_repository: FullUserRepositoryABC):
+    def __init__(self, user_repository: UserRepositoryABC):
         self.user_repository = user_repository
 
     def get_list(
