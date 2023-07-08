@@ -13,9 +13,13 @@ class RoleModel(BaseModel):
 class UserModel(BaseModel, TimeStampedMixin, UUIDMixin):
     __tablename__ = "AUTH_USER"
 
+    # Foreign keys
+    role_id = db.Column(db.Integer, db.ForeignKey("AUTH_ROLE.id"))
     email = db.Column(db.String(80), unique=True, nullable=False)
     username = db.Column(db.String(10), unique=False, nullable=False)
-    role_id = db.Column(db.Integer, db.ForeignKey("AUTH_ROLE.id"))
+
+    # Relationships
+    role = db.relationship("RoleModel", backref="user_set")
 
     def __repr__(self) -> str:
         return f"UserModel object <id:{self.id}, username:{self.username}>"
