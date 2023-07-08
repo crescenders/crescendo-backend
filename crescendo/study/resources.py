@@ -3,12 +3,15 @@
 #########################
 from dependency_injector.wiring import Provide, inject
 from flask.views import MethodView
+from flask_jwt_extended import get_jwt_identity
 from flask_smorest import Blueprint, abort
+from fullask_rest_framework.utils import jwt_required
 
 from crescendo.exceptions.service_exceptions import DataNotFound
 from crescendo.study.schemas import (
     CategoryCreateSchema,
     CategorySchema,
+    RecruitmentPostReadSchema,
     StudyGroupCreateSchema,
 )
 from crescendo.study.services import CategoryServiceABC, StudyGroupServiceABC
@@ -87,7 +90,12 @@ class StudyListAPI(MethodView):
         """스터디그룹 홍보 게시물들을 조회합니다."""
         return self.studygroup_service.get_study_list()
 
+    @jwt_required()
     @study_bp.arguments(StudyGroupCreateSchema)
+    @study_bp.response(201, RecruitmentPostReadSchema)
     def post(self, studygroup_data):
         """스터디그룹을 개설하고, 스터디그룹 홍보 게시물을 생성합니다."""
-        return self.studygroup_service.create_studygroup(**studygroup_data)
+        author_uuid = get_jwt_identity()
+        return self.studygroup_service.create_studygroup(
+            **studygroup_data, author_uuid=author_uuid
+        )
