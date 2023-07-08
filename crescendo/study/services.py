@@ -2,7 +2,7 @@ from abc import ABC, abstractmethod
 
 from crescendo.exceptions.service_exceptions import DataNotFound
 from crescendo.study.models import CategoryModel
-from crescendo.study.repositories import SQLAlchemyFullCategoryRepositoryABC
+from crescendo.study.repositories import CategoryRepositoryABC
 
 
 class CategoryServiceABC(ABC):
@@ -24,7 +24,7 @@ class CategoryServiceABC(ABC):
 
 
 class CategoryService(CategoryServiceABC):
-    def __init__(self, category_repository: SQLAlchemyFullCategoryRepositoryABC):
+    def __init__(self, category_repository: CategoryRepositoryABC):
         self.category_repository = category_repository
 
     def create(self, category_data):

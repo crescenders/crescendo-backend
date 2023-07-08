@@ -5,10 +5,10 @@ from fullask_rest_framework.repositories import SQLAlchemyFullRepository
 from crescendo.study.models import CategoryModel
 
 
-class SQLAlchemyFullCategoryRepositoryABC(SQLAlchemyFullRepository, ABC):
+class CategoryRepositoryABC(SQLAlchemyFullRepository, ABC):
     pass
 
 
-class SQLAlchemyFullCategoryRepository(SQLAlchemyFullCategoryRepositoryABC):
+class CategoryRepository(CategoryRepositoryABC):
     def get_model(self):
         return CategoryModel
