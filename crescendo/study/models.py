@@ -1,5 +1,4 @@
-from fullask_rest_framework.db.sqlalchemy.base_model import BaseModel
-from fullask_rest_framework.db.sqlalchemy.mixins import TimeStampedMixin, UUIDMixin
+from fullask_rest_framework.db import BaseModel, TimeStampedMixin, UUIDMixin
 from fullask_rest_framework.factory.extensions import db
 
 

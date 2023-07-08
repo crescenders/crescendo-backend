@@ -1,6 +1,6 @@
 from abc import ABC
 
-from fullask_rest_framework.repositories.sqlalchemy import SQLAlchemyFullRepository
+from fullask_rest_framework.repositories import SQLAlchemyFullRepository
 
 from crescendo.study.models import CategoryModel
 

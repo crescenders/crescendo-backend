@@ -1,10 +1,7 @@
 from abc import ABC, abstractmethod
 from typing import Optional
 
-from fullask_rest_framework.repositories.sqlalchemy import (
-    SQLAlchemyFullRepository,
-    read_by_fields,
-)
+from fullask_rest_framework.repositories import SQLAlchemyFullRepository, read_by_fields
 
 from crescendo.auth.models import UserModel
 

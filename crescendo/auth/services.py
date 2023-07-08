@@ -3,7 +3,7 @@ from dataclasses import dataclass
 from typing import Optional
 
 from flask_jwt_extended import create_access_token, create_refresh_token
-from fullask_rest_framework.vo.pagination import PaginationResponse
+from fullask_rest_framework.httptypes import PaginationResponse
 from google.auth.transport import requests  # type: ignore[import]
 from google.oauth2 import id_token  # type: ignore[import]
 
@@ -66,7 +66,7 @@ class UserService(UserServiceABC):
         sorting_request,
         filtering_request,
     ) -> PaginationResponse[UserModel]:
-        return self.user_repository.read_all_with_pagination(
+        return self.user_repository.read_all(
             pagination_request=pagination_request,
             sorting_request=sorting_request,
             filtering_request=filtering_request,

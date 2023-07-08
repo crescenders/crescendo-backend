@@ -1,5 +1,4 @@
-from fullask_rest_framework.schemas.filtering import BaseFilteringSchema
-from fullask_rest_framework.schemas.pagination import PaginationResponseSchema
+from fullask_rest_framework.schemas import BaseFilteringSchema, PaginationResponseSchema
 from marshmallow import Schema, fields
 
 
