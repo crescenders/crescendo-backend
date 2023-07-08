@@ -1,6 +1,7 @@
 from abc import ABC, abstractmethod
 
 from fullask_rest_framework.db import make_transaction
+from fullask_rest_framework.httptypes import PaginationResponse
 
 from crescendo.auth.repositories import UserRepositoryABC
 from crescendo.exceptions.service_exceptions import DataNotFound
@@ -63,7 +64,11 @@ class StudyGroupServiceABC(ABC):
         pass
 
     @abstractmethod
-    def get_post_list(self):
+    def get_post_list(
+        self,
+        pagination_request,
+        sorting_request,
+    ) -> PaginationResponse:
         pass
 
     @abstractmethod
@@ -109,8 +114,15 @@ class StudyGroupService(StudyGroupServiceABC):
         self.recruitmentpost_repository.save(new_recruitmentpost)
         return new_recruitmentpost
 
-    def get_post_list(self):
-        pass
+    def get_post_list(
+        self,
+        pagination_request,
+        sorting_request,
+    ) -> PaginationResponse:
+        return self.recruitmentpost_repository.read_all(
+            pagination_request=pagination_request,
+            sorting_request=sorting_request,
+        )
 
     def get_study_list(self):
         pass

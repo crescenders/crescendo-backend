@@ -5,12 +5,15 @@ from dependency_injector.wiring import Provide, inject
 from flask.views import MethodView
 from flask_jwt_extended import get_jwt_identity
 from flask_smorest import Blueprint, abort
+from fullask_rest_framework.httptypes import PaginationRequest, SortingRequest
+from fullask_rest_framework.schemas import PaginationRequestSchema, SortingRequestSchema
 from fullask_rest_framework.utils import jwt_required
 
 from crescendo.exceptions.service_exceptions import DataNotFound
 from crescendo.study.schemas import (
     CategoryCreateSchema,
     CategorySchema,
+    PaginatedRecruitmentPostListSchema,
     RecruitmentPostReadSchema,
     StudyGroupCreateSchema,
 )
@@ -89,6 +92,20 @@ class StudyListAPI(MethodView):
     def get(self):
         """스터디그룹 홍보 게시물들을 조회합니다."""
         return self.studygroup_service.get_study_list()
+
+    @study_bp.arguments(PaginationRequestSchema, location="query")  # 페이지네이션 파라미터
+    @study_bp.arguments(SortingRequestSchema, location="query")  # 정렬 파라미터
+    @study_bp.response(200, PaginatedRecruitmentPostListSchema)
+    def get(
+        self,
+        pagination_request: PaginationRequest,
+        sorting_request: SortingRequest,
+    ):
+        """개설된 스터디 목록을 조회합니다."""
+        return self.studygroup_service.get_post_list(
+            pagination_request=pagination_request,
+            sorting_request=sorting_request,
+        )
 
     @jwt_required()
     @study_bp.arguments(StudyGroupCreateSchema)

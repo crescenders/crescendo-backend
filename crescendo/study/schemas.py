@@ -1,3 +1,4 @@
+from fullask_rest_framework.schemas import PaginationResponseSchema
 from marshmallow import Schema, fields
 
 
@@ -46,6 +47,13 @@ class RecruitmentPostReadSchema(Schema):
     title = fields.Str(required=True)
     deadline = fields.Date(required=True)
     content = fields.Str(required=True)
+
+
+class PaginatedRecruitmentPostListSchema(PaginationResponseSchema):
+    results = fields.List(
+        fields.Nested(RecruitmentPostReadSchema()),
+        metadata={"description": "스터디 목록"},
+    )
 
 
 # {
