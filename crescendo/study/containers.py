@@ -36,12 +36,6 @@ class StudyContainer(containers.DeclarativeContainer):
         user_repository_abc,
         db=providers.Object(db),
     )
-    studygroup_service = providers.Singleton(
-        studygroup_service_abc,
-        studygroup_repository=studygroup_repository,
-        recruitmentpost_repository=recruitmentpost_repository,
-        user_repository=user_repository,
-    )
     # 카테고리
     category_service_abc = providers.Dependency(
         instance_of=CategoryServiceABC  # type: ignore[type-abstract]
@@ -55,5 +49,12 @@ class StudyContainer(containers.DeclarativeContainer):
     )
     category_service = providers.Singleton(
         category_service_abc,
+        category_repository=category_repository,
+    )
+    studygroup_service = providers.Singleton(
+        studygroup_service_abc,
+        studygroup_repository=studygroup_repository,
+        recruitmentpost_repository=recruitmentpost_repository,
+        user_repository=user_repository,
         category_repository=category_repository,
     )

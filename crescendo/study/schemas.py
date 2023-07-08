@@ -25,7 +25,7 @@ class StudyGroupCreateSchema(Schema):
     deadline = fields.Date(required=True)
     title = fields.Str(required=True)
     content = fields.Str(required=True)
-    category_id = fields.Int(required=True)
+    category_ids = fields.List(fields.Int(required=True))
 
 
 class AuthorSchema(Schema):
@@ -35,6 +35,7 @@ class AuthorSchema(Schema):
 
 
 class StudyGroupReadSchema(Schema):
+    category_set = fields.Nested(CategorySchema(many=True))
     leader = fields.Nested(AuthorSchema())
     start_date = fields.Date()
     end_date = fields.Date()
@@ -54,15 +55,3 @@ class PaginatedRecruitmentPostListSchema(PaginationResponseSchema):
         fields.Nested(RecruitmentPostReadSchema()),
         metadata={"description": "스터디 목록"},
     )
-
-
-# {
-#   "title": "안녕하세요",
-#   "user_limit": 10,
-#   "name": "django 스터디",
-#   "end_date": "2023-07-08",
-#   "category_id": 0,
-#   "deadline": "2023-07-08",
-#   "start_date": "2023-07-08",
-#   "content": "어쩌구 저쩌구"
-# }

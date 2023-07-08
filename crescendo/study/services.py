@@ -90,15 +90,24 @@ class StudyGroupService(StudyGroupServiceABC):
         studygroup_repository: StudyGroupRepositoryABC,
         recruitmentpost_repository: RecruitmentPostRepositoryABC,
         user_repository: UserRepositoryABC,
+        category_repository: CategoryRepositoryABC,
     ):
         self.studygroup_repository = studygroup_repository
         self.recruitmentpost_repository = recruitmentpost_repository
         self.user_repository = user_repository
+        self.category_repository = category_repository
 
     @make_transaction
     def create_studygroup(self, author_uuid, **studygroup_data):
+        categories = self.category_repository.read_all_by_ids(
+            studygroup_data["category_ids"]
+        )
+        # TODO: 에러 처리하기
+        if None in categories:
+            raise Exception("카테고리가 존재하지 않습니다.")
         new_studygroup = StudyGroupModel(
             leader_id=self.user_repository.read_by_uuid(author_uuid).id,
+            category_set=categories,
             name=studygroup_data["name"],
             user_limit=studygroup_data["user_limit"],
             start_date=studygroup_data["start_date"],

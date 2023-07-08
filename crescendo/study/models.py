@@ -1,6 +1,45 @@
 from fullask_rest_framework.db import BaseModel, TimeStampedMixin, UUIDMixin
 from fullask_rest_framework.factory.extensions import db
 
+############################
+# 다대다 관계를 위한 연관 테이블 #
+############################
+
+
+class CategoryToStudyGroup(db.Model):
+    __tablename__ = "STUDY_CATEGORY_TO_STUDYGROUP"
+
+    category_id = db.Column(
+        db.Integer,
+        db.ForeignKey("STUDY_CATEGORY.id", ondelete="CASCADE"),
+        primary_key=True,
+    )
+    studygroup_id = db.Column(
+        db.Integer,
+        db.ForeignKey("STUDY_STUDYGROUP.id", ondelete="CASCADE"),
+        primary_key=True,
+    )
+
+
+class StudyGroupToUser(db.Model):
+    __tablename__ = "STUDY_CATEGORY_TO_USER"
+
+    studygroup_id = db.Column(
+        db.Integer,
+        db.ForeignKey("STUDY_STUDYGROUP.id", ondelete="CASCADE"),
+        primary_key=True,
+    )
+    user_id = db.Column(
+        db.Integer,
+        db.ForeignKey("AUTH_USER.id", ondelete="CASCADE"),
+        primary_key=True,
+    )
+
+
+#############
+# 일반 테이블 #
+#############
+
 
 class CategoryModel(BaseModel):
     __tablename__ = "STUDY_CATEGORY"
@@ -32,6 +71,12 @@ class StudyGroupModel(BaseModel, TimeStampedMixin, UUIDMixin):
     )
     # relationships
     leader = db.relationship("UserModel", backref="study_set")
+    category_set = db.relationship(
+        "CategoryModel",
+        secondary=CategoryToStudyGroup.__table__,
+        backref="studygroup_set",
+        lazy="dynamic",
+    )
 
     name = db.Column(db.String(80), nullable=False)
     user_limit = db.Column(db.Integer)
@@ -53,6 +98,7 @@ class RecruitmentPostModel(BaseModel, TimeStampedMixin, UUIDMixin):
     )
     # relationships
     studygroup = db.relationship("StudyGroupModel", backref="recruitment_post")
+
     title = db.Column(db.String(64), nullable=False)
     content = db.Column(db.String(3000), nullable=False)
     deadline = db.Column(db.Date)
@@ -96,35 +142,5 @@ class TagToStudyGroup(db.Model):
     studygroup_id = db.Column(
         db.Integer,
         db.ForeignKey("STUDY_STUDYGROUP.id", ondelete="CASCADE"),
-        primary_key=True,
-    )
-
-
-class CategoryToStudyGroup(db.Model):
-    __tablename__ = "STUDY_CATEGORY_TO_STUDYGROUP"
-
-    category_id = db.Column(
-        db.Integer,
-        db.ForeignKey("STUDY_CATEGORY.id", ondelete="CASCADE"),
-        primary_key=True,
-    )
-    studygroup_id = db.Column(
-        db.Integer,
-        db.ForeignKey("STUDY_STUDYGROUP.id", ondelete="CASCADE"),
-        primary_key=True,
-    )
-
-
-class StudyGroupToUser(db.Model):
-    __tablename__ = "STUDY_CATEGORY_TO_USER"
-
-    studygroup_id = db.Column(
-        db.Integer,
-        db.ForeignKey("STUDY_STUDYGROUP.id", ondelete="CASCADE"),
-        primary_key=True,
-    )
-    user_id = db.Column(
-        db.Integer,
-        db.ForeignKey("AUTH_USER.id", ondelete="CASCADE"),
         primary_key=True,
     )
