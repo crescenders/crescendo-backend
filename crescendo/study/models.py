@@ -30,6 +30,8 @@ class StudyGroupModel(BaseModel, TimeStampedMixin, UUIDMixin):
         db.ForeignKey("AUTH_USER.id", ondelete="CASCADE"),
         nullable=False,
     )
+    # relationships
+    leader = db.relationship("UserModel", backref="study_set")
 
     name = db.Column(db.String(80), nullable=False)
     user_limit = db.Column(db.Integer)
@@ -49,6 +51,8 @@ class RecruitmentPostModel(BaseModel, TimeStampedMixin, UUIDMixin):
         db.ForeignKey("STUDY_STUDYGROUP.id", ondelete="CASCADE"),
         nullable=False,
     )
+    # relationships
+    studygroup = db.relationship("StudyGroupModel", backref="recruitment_post")
     title = db.Column(db.String(64), nullable=False)
     content = db.Column(db.String(3000), nullable=False)
     deadline = db.Column(db.Date)
