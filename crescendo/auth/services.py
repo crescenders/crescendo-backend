@@ -3,12 +3,13 @@ from dataclasses import dataclass
 from typing import Optional
 
 from flask_jwt_extended import create_access_token, create_refresh_token
+from fullask_rest_framework.db import make_transaction
 from fullask_rest_framework.httptypes import PaginationResponse
 from google.auth.transport import requests  # type: ignore[import]
 from google.oauth2 import id_token  # type: ignore[import]
 
 from crescendo.auth.models import UserModel
-from crescendo.auth.repositories import UserRepositoryABC
+from crescendo.auth.repositories import RoleRepositoryABC, UserRepositoryABC
 from crescendo.exceptions.service_exceptions import DataNotFound
 
 
@@ -57,8 +58,13 @@ class UserServiceABC(ABC):
 class UserService(UserServiceABC):
     """회원정보조회, 회원가입, 회원정보수정, 회원탈퇴, 검색"""
 
-    def __init__(self, user_repository: UserRepositoryABC):
+    def __init__(
+        self,
+        user_repository: UserRepositoryABC,
+        rolemodel_repository: RoleRepositoryABC,
+    ):
         self.user_repository = user_repository
+        self.role_repository = rolemodel_repository
 
     def get_list(
         self,
@@ -91,6 +97,7 @@ class UserService(UserServiceABC):
             raise DataNotFound()
         return self.user_repository.delete(user)
 
+    @make_transaction
     def google_login(self, data) -> JWTResponse:
         id_information = id_token.verify_oauth2_token(data, requests.Request())
         email = id_information["email"]
@@ -106,8 +113,9 @@ class UserService(UserServiceABC):
         user = self.user_repository.read_by_uuid(decoded_refresh_token["sub"])
         return self._get_token_set(user)
 
-    def _register(self, email, username, role="USER") -> UserModel:
-        user = UserModel(email=email, username=username, role=role)
+    def _register(self, email, username) -> UserModel:
+        default_role = self.role_repository.read_by_name("USER")
+        user = UserModel(email=email, username=username, role=default_role)
         return self.user_repository.save(user)
 
     @staticmethod
