@@ -35,6 +35,7 @@ class CategoryService(CategoryServiceABC):
     def __init__(self, category_repository: CategoryRepositoryABC):
         self.category_repository = category_repository
 
+    @make_transaction
     def create(self, category_data):
         new_category = self.category_repository.save(CategoryModel(**category_data))
         return new_category
@@ -42,6 +43,7 @@ class CategoryService(CategoryServiceABC):
     def get_all(self):
         return self.category_repository.read_all()
 
+    @make_transaction
     def edit(self, category_id, category_data):
         category = self.category_repository.read_by_id(category_id)
         if category is None:
@@ -50,6 +52,7 @@ class CategoryService(CategoryServiceABC):
         category.description = category_data["description"]
         return self.category_repository.save(category)
 
+    @make_transaction
     def delete(self, category_id):
         category = self.category_repository.read_by_id(category_id)
         if category is None:
