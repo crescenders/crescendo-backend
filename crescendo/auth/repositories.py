@@ -1,15 +1,12 @@
 from abc import ABC, abstractmethod
 from typing import Optional
 
-from fullask_rest_framework.repositories.sqlalchemy import (
-    SQLAlchemyFullRepository,
-    read_by_fields,
-)
+from fullask_rest_framework.repositories import SQLAlchemyFullRepository, read_by_fields
 
-from crescendo.auth.models import UserModel
+from crescendo.auth.models import RoleModel, UserModel
 
 
-class FullUserRepositoryABC(SQLAlchemyFullRepository, ABC):
+class UserRepositoryABC(SQLAlchemyFullRepository, ABC):
     @abstractmethod
     def read_by_uuid(self, uuid: str) -> Optional[UserModel]:
         pass
@@ -19,7 +16,7 @@ class FullUserRepositoryABC(SQLAlchemyFullRepository, ABC):
         pass
 
 
-class FullUserRepository(FullUserRepositoryABC):
+class UserRepository(UserRepositoryABC):
     def get_model(self):
         return UserModel
 
@@ -29,4 +26,18 @@ class FullUserRepository(FullUserRepositoryABC):
 
     @read_by_fields
     def read_by_email(self, email: str) -> Optional[UserModel]:
+        pass
+
+
+class RoleRepositoryABC(SQLAlchemyFullRepository, ABC):
+    def read_by_name(self, name):
+        pass
+
+
+class RoleRepository(RoleRepositoryABC):
+    def get_model(self):
+        return RoleModel
+
+    @read_by_fields
+    def read_by_name(self, name):
         pass

@@ -1,26 +1,25 @@
-from fullask_rest_framework.db.sqlalchemy.base_model import BaseModel
-from fullask_rest_framework.db.sqlalchemy.mixins import TimeStampedMixin, UUIDMixin
+from fullask_rest_framework.db import BaseModel, TimeStampedMixin, UUIDMixin
 from fullask_rest_framework.factory.extensions import db
-from sqlalchemy.orm import validates
+
+
+class RoleModel(BaseModel):
+    __tablename__ = "AUTH_ROLE"
+    name = db.Column(db.String(15))
+
+    def __repr__(self) -> str:
+        return f"RoleModel object <id:{self.id}, name:{self.name}>"
 
 
 class UserModel(BaseModel, TimeStampedMixin, UUIDMixin):
-    __tablename__ = "auth_user"
+    __tablename__ = "AUTH_USER"
 
+    # Foreign keys
+    role_id = db.Column(db.Integer, db.ForeignKey("AUTH_ROLE.id"))
     email = db.Column(db.String(80), unique=True, nullable=False)
     username = db.Column(db.String(10), unique=False, nullable=False)
-    role = db.Column(db.String(10), nullable=False, server_default="USER")
-    study_id = db.Column(db.Integer, db.ForeignKey("study_study.id"))
+
+    # Relationships
+    role = db.relationship("RoleModel", backref="user_set")
 
     def __repr__(self) -> str:
-        return f"<id:{self.id}, username:{self.username}>"
-
-    @validates("role")
-    def validate_role(self, key, value):
-        """role 컬럼에 대한 유효성 검사를 수행합니다."""
-        valid_roles = ["USER", "STAFF", "ADMIN"]
-        if value not in valid_roles:
-            raise ValueError(
-                f"{value} is not a valid role, valid roles are {valid_roles}"
-            )
-        return value
+        return f"UserModel object <id:{self.id}, username:{self.username}>"
