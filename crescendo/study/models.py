@@ -51,6 +51,7 @@ class RecruitmentPostModel(BaseModel, TimeStampedMixin, UUIDMixin):
     )
     title = db.Column(db.String(64), nullable=False)
     content = db.Column(db.String(3000), nullable=False)
+    deadline = db.Column(db.Date)
 
     def __repr__(self) -> str:
         return f"RecruitmentPostModel object <id:{self.id}, name:{self.title}>"

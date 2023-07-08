@@ -6,8 +6,12 @@ from flask.views import MethodView
 from flask_smorest import Blueprint, abort
 
 from crescendo.exceptions.service_exceptions import DataNotFound
-from crescendo.study.schemas import CategoryCreateSchema, CategorySchema
-from crescendo.study.services import CategoryServiceABC
+from crescendo.study.schemas import (
+    CategoryCreateSchema,
+    CategorySchema,
+    StudyGroupCreateSchema,
+)
+from crescendo.study.services import CategoryServiceABC, StudyGroupServiceABC
 
 category_bp = Blueprint(
     name="CategoryAPI",
@@ -73,8 +77,17 @@ study_bp = Blueprint(
 
 @study_bp.route("/studies/posts/")
 class StudyListAPI(MethodView):
-    def get(self):
-        pass
+    @inject
+    def __init__(
+        self, studygroup_service: StudyGroupServiceABC = Provide["studygroup_service"]
+    ):
+        self.studygroup_service = studygroup_service
 
-    def post(self):
-        pass
+    def get(self):
+        """스터디그룹 홍보 게시물들을 조회합니다."""
+        return self.studygroup_service.get_study_list()
+
+    @study_bp.arguments(StudyGroupCreateSchema)
+    def post(self, studygroup_data):
+        """스터디그룹을 개설하고, 스터디그룹 홍보 게시물을 생성합니다."""
+        return self.studygroup_service.create_studygroup(**studygroup_data)
