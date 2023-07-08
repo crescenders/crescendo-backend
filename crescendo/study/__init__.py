@@ -1,6 +1,7 @@
 from dependency_injector import providers
 from fullask_rest_framework.factory.microapp import MicroApp
 
+from crescendo.auth import UserRepository
 from crescendo.study.containers import StudyContainer
 from crescendo.study.repositories import (
     CategoryRepository,
@@ -17,6 +18,7 @@ class StudyMicroApp(MicroApp):
         studygroup_service_abc=providers.Singleton(StudyGroupService),
         studygroup_repository_abc=providers.Singleton(StudyGroupRepository),
         recruitmentpost_repository_abc=providers.Singleton(RecruitmentPostRepository),
+        user_repository_abc=providers.Singleton(UserRepository),
         category_service_abc=providers.Singleton(CategoryService),
         category_repository_abc=providers.Singleton(CategoryRepository),
     )
