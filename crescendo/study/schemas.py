@@ -75,8 +75,18 @@ class StudyGroupCreateSchema(Schema):
             "example": "DRF 는 Django 사용 시 거의 표준이 되었다고 해도 무방한 프레임워크가 되었습니다.. 같이 스터디 해요!",
         },
     )
-
-    category_ids = fields.List(fields.Int(required=True))
+    category_ids = fields.List(
+        fields.Int(required=True),
+        metadata={
+            "description": "붙이고자 하는 카테고리 ID",
+        },
+    )
+    tag_strings = fields.List(
+        fields.Str(required=True),
+        metadata={
+            "description": "신설하거나 붙이고자 하는 카테고리 ID",
+        },
+    )
 
 
 class StudyGroupReadSchema(Schema):
