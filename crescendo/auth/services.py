@@ -84,6 +84,7 @@ class UserService(UserServiceABC):
             raise DataNotFound()
         return user
 
+    @make_transaction
     def edit_info(self, user_uuid: str, data) -> UserModel:
         user = self.user_repository.read_by_uuid(uuid=user_uuid)
         if user is None:
@@ -91,6 +92,7 @@ class UserService(UserServiceABC):
         user.username = data["username"]
         return self.user_repository.save(user)
 
+    @make_transaction
     def withdraw(self, user_uuid) -> None:
         user = self.user_repository.read_by_uuid(uuid=user_uuid)
         if user is None:
