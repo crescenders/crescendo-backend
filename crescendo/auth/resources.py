@@ -2,7 +2,7 @@ from uuid import UUID
 
 from dependency_injector.wiring import Provide, inject
 from flask.views import MethodView
-from flask_jwt_extended import get_jwt
+from flask_jwt_extended import get_jwt, get_jwt_identity
 from flask_smorest import Blueprint, abort
 from fullask_rest_framework.httptypes import (
     FilteringRequest,
@@ -67,7 +67,7 @@ class UserListAPI(MethodView):
         )
 
 
-@auth_bp.route("users/<uuid:user_uuid>/")
+@auth_bp.route("users/<uuid:user_uuid>/profile/")
 class UserDetailAPI(MethodView):
     """사용자 한 명을 다루는 API 입니다."""
 
@@ -75,44 +75,49 @@ class UserDetailAPI(MethodView):
     def __init__(self, user_service: UserServiceABC = Provide["user_service"]):
         self.user_service = user_service
 
-    # @jwt_required()
+    @jwt_required()
     @auth_bp.response(200, UserSchema)
     @auth_bp.alt_response(404, description="UUID 로 사용자를 특정할 수 없을 때 발생합니다.")
+    @auth_bp.alt_response(403, description="본인이 아니거나, ADMIN 권한이 없을 때 발생합니다.")
     def get(self, user_uuid: UUID):
         """
         UUID 로 특정되는 사용자 한 명의 정보를 조회합니다.
 
-        데이터베이스에 없는 UUID 로 사용자를 조회하고자 시도한다면, 404 NOT FOUND 를 응답합니다. <br/>
-        (권한 부분 구현 X)<br/>
+        데이터베이스에 없는 UUID 로 사용자를 조회하고자 시도한다면, 404 NOT FOUND 를 응답합니다.<br/>
         본인, 혹은 STAFF, ADMIN 권한을 가진 사람만 회원정보를 조회할 수 있습니다.<br/>
         Crescendo 서비스에서 발급된 JWT가 필요합니다.<br/>
         """
+        if str(user_uuid) != get_jwt_identity():
+            return abort(403, message="본인만 회원정보를 조회할 수 있습니다.")
         try:
             return self.user_service.get_one(str(user_uuid))
         except DataNotFound:
             abort(404)
 
-    # @jwt_required()
-
+    @jwt_required()
     @auth_bp.arguments(UserSchema)
     @auth_bp.response(200, UserSchema())
     @auth_bp.alt_response(404, description="UUID 로 사용자를 특정할 수 없을 때 발생합니다.")
+    @auth_bp.alt_response(403, description="본인이 아니거나, ADMIN 권한이 없을 때 발생합니다.")
     def put(self, data, user_uuid: UUID):
         """
         UUID로 특정되는 사용자 한 명의 정보를 수정합니다.
 
-        닉네임만 수정할 수 있습니다.
-        본인, 혹은 STAFF, ADMIN 권한을 가진 사람만 회원정보를 수정할 수 있습니다.
-        Crescendo 서비스에서 발급된 JWT가 필요합니다.
+        닉네임만 수정할 수 있습니다.<br/>
+        본인, 혹은 STAFF, ADMIN 권한을 가진 사람만 회원정보를 수정할 수 있습니다.<br/>
+        Crescendo 서비스에서 발급된 JWT가 필요합니다.<br/>
         """
+        if str(user_uuid) != get_jwt_identity():
+            return abort(403, message="본인만 회원정보를 수정할 수 있습니다.")
         try:
             return self.user_service.edit_info(user_uuid=str(user_uuid), data=data)
         except DataNotFound:
             abort(404)
 
-    # @jwt_required()
+    @jwt_required()
     @auth_bp.response(204)
     @auth_bp.alt_response(404, description="UUID 로 사용자를 특정할 수 없을 때 발생합니다.")
+    @auth_bp.alt_response(403, description="본인이 아니거나, ADMIN 권한이 없을 때 발생합니다.")
     def delete(self, user_uuid: UUID):
         """
         UUID로 특정되는 사용자 한 명을 삭제합니다.
@@ -120,6 +125,8 @@ class UserDetailAPI(MethodView):
         본인, 혹은 STAFF, ADMIN 권한을 가진 사람만 회원탈퇴를 진행할 수 있습니다.
         Crescendo 서비스에서 발급된 JWT가 필요합니다.
         """
+        if str(user_uuid) != get_jwt_identity():
+            return abort(403, message="본인만 회원탈퇴를 할 수 있습니다.")
         try:
             return self.user_service.withdraw(user_uuid=str(user_uuid))
         except DataNotFound:
