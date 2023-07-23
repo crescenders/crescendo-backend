@@ -62,9 +62,9 @@ jobs:
           password: ${{ secrets.SSH_PASSPHRASE }}
           port: ${{ secrets.SSH_PORT }}
           script: |
-#            cd was
-#            docker-compose stop
-#            docker-compose rm -f
-#            docker-compose pull
-#            docker-compose up -d
-#            docker-compose exec -T was flask db upgrade
+            cd was
+            docker-compose stop
+            docker-compose rm -f
+            docker-compose pull   
+            docker-compose up -d
+            docker-compose exec -T was flask db upgrade
