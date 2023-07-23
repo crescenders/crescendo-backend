@@ -1,16 +1,11 @@
-### Django ###
-*.log
-*.pot
-*.pyc
+instance/*
+!instance/.gitignore
+.webassets-cache
+.env
 __pycache__/
-local_settings.py
-db.sqlite3
-db.sqlite3-journal
-media
-
-# Byte-compiled / optimized / DLL files
 *.py[cod]
 *$py.class
+*.so
 .Python
 build/
 develop-eggs/
@@ -29,8 +24,10 @@ share/python-wheels/
 .installed.cfg
 *.egg
 MANIFEST
-
-# Unit test / coverage reports
+*.manifest
+*.spec
+pip-log.txt
+pip-delete-this-directory.txt
 htmlcov/
 .tox/
 .nox/
@@ -44,42 +41,34 @@ coverage.xml
 .hypothesis/
 .pytest_cache/
 cover/
-
-# Jupyter Notebook
+*.mo
+*.pot
+*.log
+local_settings.py
+db.sqlite3
+test_db.sqlite3
+db.sqlite3-journal
+instance/
+.scrapy
+docs/_build/
+.pybuilder/
+target/
 .ipynb_checkpoints
-
-# IPython
 profile_default/
 ipython_config.py
-
-# poetry
-poetry.lock
-
-# PEP 582; used by e.g. github.com/David-OConnor/pyflow and github.com/pdm-project/pdm
+.pdm.toml
 __pypackages__/
-
-# Environments
-.env
+celerybeat-schedule
+celerybeat.pid
+*.sage.py
 .venv
 env/
 venv/
-ENV/
-env.bak/
-venv.bak/
-
-# mkdocs documentation
-/site
-
-# mypy
+.spyderproject
+.spyproject
+.ropeproject
 .mypy_cache/
-.dmypy.json
-dmypy.json
-
-# Pyre type checker
-.pyre/
-
-# pytype static type analyzer
-.pytype/
-
-# PyCharm
-.idea/
+.idea
+.vscode
+wallet
+docker-compose.yml

@@ -1,1 +1,0 @@
-# Crescendo Backend Repository.
