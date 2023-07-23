@@ -1,0 +1,127 @@
+from abc import ABC, abstractmethod
+from dataclasses import dataclass
+from typing import Optional
+
+from flask_jwt_extended import create_access_token, create_refresh_token
+from fullask_rest_framework.db import make_transaction
+from fullask_rest_framework.httptypes import PaginationResponse
+from google.auth.transport import requests  # type: ignore[import]
+from google.oauth2 import id_token  # type: ignore[import]
+
+from crescendo.auth.models import UserModel
+from crescendo.auth.repositories import RoleRepositoryABC, UserRepositoryABC
+from crescendo.exceptions.service_exceptions import DataNotFound
+
+
+@dataclass
+class JWTResponse:
+    access_token: str
+    refresh_token: str
+
+
+class UserServiceABC(ABC):
+    @abstractmethod
+    def get_list(
+        self,
+        pagination_request,
+        sorting_request,
+        filtering_request,
+    ) -> PaginationResponse[UserModel]:
+        pass
+
+    @abstractmethod
+    def get_one(self, user_uuid) -> Optional[UserModel]:
+        pass
+
+    @abstractmethod
+    def edit_info(self, user_uuid: str, data) -> UserModel:
+        pass
+
+    @abstractmethod
+    def withdraw(self, user_uuid) -> None:
+        pass
+
+    @abstractmethod
+    def google_login(self, data) -> JWTResponse:
+        """
+        Google 인증 서버를 이용해 회원가입 및 로그인을 진행합니다.
+        이미 가입되어 있는 회원의 경우 토큽 발급만,
+        신규 회원인 경우 회원가입 후 토큰 발급을 처리합니다.
+        """
+        pass
+
+    @abstractmethod
+    def refresh_login(self, decoded_refresh_token) -> JWTResponse:
+        pass
+
+
+class UserService(UserServiceABC):
+    """회원정보조회, 회원가입, 회원정보수정, 회원탈퇴, 검색"""
+
+    def __init__(
+        self,
+        user_repository: UserRepositoryABC,
+        rolemodel_repository: RoleRepositoryABC,
+    ):
+        self.user_repository = user_repository
+        self.role_repository = rolemodel_repository
+
+    def get_list(
+        self,
+        pagination_request,
+        sorting_request,
+        filtering_request,
+    ) -> PaginationResponse[UserModel]:
+        return self.user_repository.read_all(
+            pagination_request=pagination_request,
+            sorting_request=sorting_request,
+            filtering_request=filtering_request,
+        )
+
+    def get_one(self, user_uuid) -> Optional[UserModel]:
+        user = self.user_repository.read_by_uuid(uuid=user_uuid)
+        if user is None:
+            raise DataNotFound()
+        return user
+
+    @make_transaction
+    def edit_info(self, user_uuid: str, data) -> UserModel:
+        user = self.user_repository.read_by_uuid(uuid=user_uuid)
+        if user is None:
+            raise DataNotFound()
+        user.username = data["username"]
+        return self.user_repository.save(user)
+
+    @make_transaction
+    def withdraw(self, user_uuid) -> None:
+        user = self.user_repository.read_by_uuid(uuid=user_uuid)
+        if user is None:
+            raise DataNotFound()
+        return self.user_repository.delete(user)
+
+    @make_transaction
+    def google_login(self, data) -> JWTResponse:
+        id_information = id_token.verify_oauth2_token(data, requests.Request())
+        email = id_information["email"]
+        username = id_information["given_name"]
+        user = (
+            self.user_repository.read_by_email(email)
+            if self.user_repository.read_by_email(email)
+            else self._register(email, username)
+        )
+        return self._get_token_set(user)
+
+    def refresh_login(self, decoded_refresh_token) -> JWTResponse:
+        user = self.user_repository.read_by_uuid(decoded_refresh_token["sub"])
+        return self._get_token_set(user)
+
+    def _register(self, email, username) -> UserModel:
+        default_role = self.role_repository.read_by_name("USER")
+        user = UserModel(email=email, username=username, role=default_role)
+        return self.user_repository.save(user)
+
+    @staticmethod
+    def _get_token_set(user: UserModel) -> JWTResponse:
+        access_token = create_access_token(identity=user.uuid)
+        refresh_token = create_refresh_token(identity=user.uuid)
+        return JWTResponse(access_token=access_token, refresh_token=refresh_token)
