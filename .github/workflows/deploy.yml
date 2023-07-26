@@ -40,6 +40,7 @@ jobs:
           password: ${{ secrets.SSH_PASSPHRASE }}
           port: ${{ secrets.SSH_PORT }}
   setup-build-deploy:
+    needs: Deploy_to_Oracle_Cloud_Infrastructure
     name: Setup, Build, and Deploy
     runs-on: ubuntu-latest
     permissions:
