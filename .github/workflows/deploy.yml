@@ -39,6 +39,12 @@ jobs:
           username: ${{ secrets.SSH_USERNAME }}
           password: ${{ secrets.SSH_PASSPHRASE }}
           port: ${{ secrets.SSH_PORT }}
+          script: |
+            cd was
+            docker-compose stop
+            docker-compose rm -f
+            docker-compose pull   
+            docker-compose up -d
   setup-build-deploy:
     needs: Deploy_to_Oracle_Cloud_Infrastructure
     name: Setup, Build, and Deploy
@@ -47,14 +53,12 @@ jobs:
       packages: write
       contents: write
       id-token: write
-
     steps:
       - name: Bump version and push tag
         id: tag_version
         uses: mathieudutour/github-tag-action@v6.1
         with:
           github_token: ${{ secrets.ACTION_TOKEN }}
-
       - name: Create a GitHub release
         uses: ncipollo/release-action@v1
         with:
