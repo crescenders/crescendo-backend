@@ -83,3 +83,6 @@ dmypy.json
 
 # PyCharm
 .idea/
+
+# Oracle DB client
+instantclient_21_11/
