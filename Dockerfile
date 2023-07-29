@@ -5,9 +5,7 @@ LABEL authors="goddessana"
 ENV PYTHONDONTWRITEBYTECODE 1
 ENV PYTHONUNBUFFERED 1
 
-WORKDIR    /opt/oracle
-
-RUN apt-get update && apt-get install -y libaio1
+WORKDIR /opt/oracle
 
 COPY instantclient_21_11 /opt/oracle/instantclient_21_11
 
@@ -19,11 +17,7 @@ RUN cd /opt/oracle/instantclient* \
 RUN apt-get update && \
     apt-get install -y --no-install-recommends \
     build-essential \
-    libpq-dev
-
-RUN pip install -U pip
-
-RUN pip install poetry
+    pip install -U pip poetry
 
 WORKDIR /app
 
