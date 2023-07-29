@@ -7,7 +7,6 @@ on:
       - closed
 jobs:
   Deploy_to_Oracle_Cloud_Infrastructure:
-    needs: Deploy_Docker_image_to_DockerHub
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3.3.0
