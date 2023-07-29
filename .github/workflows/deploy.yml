@@ -45,6 +45,7 @@ jobs:
             docker-compose rm -f
             docker-compose pull   
             docker-compose up -d
+            python manage.py collectstatic --noinput
   setup-build-deploy:
     needs: Deploy_to_Oracle_Cloud_Infrastructure
     name: Setup, Build, and Deploy

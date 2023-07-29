@@ -1,0 +1,29 @@
+version: "2"
+services:
+  nginx:
+    image: nginx:latest
+    container_name: nginx
+    ports:
+      - "80:80/tcp"
+    volumes:
+      - .:/etc/nginx/conf.d
+      - ./static:/static
+      - ./logs/nginx:/var/log/nginx
+    depends_on:
+      - django
+  django:
+    env_file:
+      .env
+    build:
+      context: .
+      dockerfile: Dockerfile
+    command:
+      - sh
+      - -c
+      - gunicorn --bind 0.0.0.0:8000 core.wsgi:application
+    container_name: django
+    volumes:
+      - ./static:/app/static
+      - ./logs/django:/app/logs/django
+    expose:
+      - "8000"
