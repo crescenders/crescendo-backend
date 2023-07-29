@@ -5,6 +5,17 @@ LABEL authors="goddessana"
 ENV PYTHONDONTWRITEBYTECODE 1
 ENV PYTHONUNBUFFERED 1
 
+WORKDIR    /opt/oracle
+
+RUN apt-get update && apt-get install -y libaio1
+
+COPY instantclient_21_11 /opt/oracle/instantclient_21_11
+
+RUN cd /opt/oracle/instantclient* \
+    && rm -f *jdbc* *occi* *mysql* *README *jar uidrvci genezi adrci \
+    && echo /opt/oracle/instantclient* > /etc/ld.so.conf.d/oracle-instantclient.conf \
+    && ldconfig
+
 RUN apt-get update && \
     apt-get install -y --no-install-recommends \
     build-essential \
@@ -24,5 +35,3 @@ RUN poetry config virtualenvs.create false && \
 COPY . /app/
 
 EXPOSE 8000
-
-CMD ["gunicorn", "--bind", "0.0.0.0:8000", "core.wsgi:application"]
