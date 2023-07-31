@@ -1,4 +1,8 @@
 .github
 .gitignore
 .env
+.git
+nginx.conf
+.pre-commit-config.yaml
+instantclient_21_10
 README.md

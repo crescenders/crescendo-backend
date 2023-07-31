@@ -40,12 +40,8 @@ jobs:
           password: ${{ secrets.SSH_PASSPHRASE }}
           port: ${{ secrets.SSH_PORT }}
           script: |
-            cd server
-            docker-compose stop
-            docker-compose rm -f
-            docker-compose pull   
-            docker-compose up -d
-            python manage.py collectstatic --noinput
+            cd app
+            ./deploy.sh
   setup-build-deploy:
     needs: Deploy_to_Oracle_Cloud_Infrastructure
     name: Setup, Build, and Deploy

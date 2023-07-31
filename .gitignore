@@ -81,8 +81,8 @@ dmypy.json
 # PyCharm
 .idea/
 
-# Oracle DB client
-instantclient_21_11/
-
 # Django static files, from command `python manage.py collectstatic`
 static/
+
+# Oracle instant client
+/instantclient_21_10
