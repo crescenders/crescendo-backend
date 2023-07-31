@@ -10,12 +10,12 @@ python = "^3.11"
 django = "^4.2.3"
 djangorestframework = "^3.14.0"
 djangorestframework-simplejwt = "^5.2.2"
-cx-oracle = "^8.3.0"
 gunicorn = "^21.2.0"
 python-dotenv = "^1.0.0"
 django-storages = "^1.13.2"
 pillow = "^10.0.0"
 boto3 = "^1.28.12"
+cx-oracle = "^8.3.0"
 
 [tool.poetry.group.dev.dependencies]
 black = "^23.7.0"

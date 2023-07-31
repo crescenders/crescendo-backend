@@ -83,3 +83,6 @@ dmypy.json
 
 # Django static files, from command `python manage.py collectstatic`
 static/
+
+# Oracle instant client
+/instantclient_21_10
