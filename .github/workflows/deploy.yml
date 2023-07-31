@@ -41,7 +41,7 @@ jobs:
           port: ${{ secrets.SSH_PORT }}
           script: |
             cd app
-            ./deploy.sh
+            ./redeploy.sh
   setup-build-deploy:
     needs: Deploy_to_Oracle_Cloud_Infrastructure
     name: Setup, Build, and Deploy
