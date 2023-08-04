@@ -1,6 +1,10 @@
 import os
-import sys
+from datetime import timedelta
 from pathlib import Path
+
+###################
+# Django settings #
+###################
 
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
 
@@ -14,9 +18,18 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+    "django.contrib.sites",
     # Third-party Apps.
     "rest_framework",
+    "rest_framework.authtoken",
+    "allauth",
+    "allauth.account",
+    "allauth.socialaccount",
+    "dj_rest_auth.registration",
+    "allauth.socialaccount.providers.google",
+    "allauth.socialaccount.providers.kakao",
     # Local Apps.
+    "accounts",
 ]
 
 MIDDLEWARE = [
@@ -147,4 +160,36 @@ LOGGING = {
             "propagate": False,
         },
     },
+}
+
+AUTH_USER_MODEL = "accounts.User"
+
+SITE_ID = 1
+
+################
+# DRF settings #
+################
+
+REST_FRAMEWORK = {
+    "DEFAULT_AUTHENTICATION_CLASSES": (
+        "rest_framework.authentication.SessionAuthentication",
+        "rest_framework.authentication.BasicAuthentication",
+        "rest_framework_simplejwt.authentication.JWTAuthentication",
+    )
+}
+
+REST_AUTH = {
+    "USE_JWT": True,
+    "JWT_AUTH_HTTPONLY": False,
+    "USER_DETAILS_SERIALIZER": "accounts.serializers.UserSerializer",
+}
+
+SIMPLE_JWT = {
+    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=30),
+    "REFRESH_TOKEN_LIFETIME": timedelta(days=7),
+    "ROTATE_REFRESH_TOKENS": True,
+    "BLACKLIST_AFTER_ROTATION": True,
+    "UPDATE_LAST_LOGIN": True,
+    "USER_ID_FIELD": "uuid",
+    "USER_ID_CLAIM": "user_uuid",
 }
