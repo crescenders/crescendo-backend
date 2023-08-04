@@ -28,6 +28,7 @@ INSTALLED_APPS = [
     "dj_rest_auth.registration",
     "allauth.socialaccount.providers.google",
     "allauth.socialaccount.providers.kakao",
+    "drf_spectacular",
     # Local Apps.
     "accounts",
 ]
@@ -173,9 +174,10 @@ SITE_ID = 1
 REST_FRAMEWORK = {
     "DEFAULT_AUTHENTICATION_CLASSES": (
         "rest_framework.authentication.SessionAuthentication",
-        "rest_framework.authentication.BasicAuthentication",
         "rest_framework_simplejwt.authentication.JWTAuthentication",
-    )
+    ),
+    "DEFAULT_PERMISSION_CLASSES": ("rest_framework.permissions.IsAuthenticated",),
+    "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
 }
 
 REST_AUTH = {
@@ -192,4 +194,10 @@ SIMPLE_JWT = {
     "UPDATE_LAST_LOGIN": True,
     "USER_ID_FIELD": "uuid",
     "USER_ID_CLAIM": "user_uuid",
+}
+
+SPECTACULAR_SETTINGS = {
+    "TITLE": "Crescendo backend server API 문서",
+    "DESCRIPTION": "백엔드 서버 API 문서입니다. >_<",
+    "SERVE_INCLUDE_SCHEMA": False,
 }
