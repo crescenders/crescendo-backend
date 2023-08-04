@@ -24,6 +24,7 @@ gunicorn = "^21.2.0"
 python-dotenv = "^1.0.0"
 pillow = "^10.0.0"
 
+
 [tool.poetry.group.dev.dependencies]
 black = "^23.7.0"
 isort = "^5.12.0"
@@ -32,6 +33,9 @@ django-extensions = "^3.2.3"
 ipython = "^8.14.0"
 pre-commit = "^3.3.3"
 mypy = "^1.4.1"
+flake8 = "^6.1.0"
+pyright = "^1.1.320"
+
 
 [build-system]
 requires = ["poetry-core"]
