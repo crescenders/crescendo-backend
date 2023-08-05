@@ -30,7 +30,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     USERNAME_FIELD = "email"
     uuid = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
     email = models.EmailField(unique=True, max_length=80)
-    username = models.CharField(max_length=20)
+    username = models.CharField(max_length=20, null=False)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     is_admin = models.BooleanField(default=False)
