@@ -12,7 +12,19 @@ class JWTSerializer(serializers.Serializer):
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ["uuid"]
+        fields = [
+            "uuid",
+            "email",
+            "username",
+            "created_at",
+            "updated_at",
+        ]
+        extra_kwargs = {
+            "uuid": {"read_only": True},
+            "email": {"read_only": True},
+            "created_at": {"read_only": True},
+            "updated_at": {"read_only": True},
+        }
 
 
 class GoogleLoginSerializer(SocialLoginSerializer):
