@@ -7,6 +7,8 @@ INSTALLED_APPS += [
     "django_extensions",
 ]
 
+ALLOWED_HOSTS = ["*"]
+
 MIDDLEWARE = [
     "debug_toolbar.middleware.DebugToolbarMiddleware",
 ] + MIDDLEWARE

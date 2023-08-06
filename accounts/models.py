@@ -6,18 +6,20 @@ from django.db import models
 
 
 class UserManager(BaseUserManager):
-    def create_user(self, email, password=None) -> "User":
-        user = self.model(
+    def create_user(self, email: str, username: str, password=None) -> "User":
+        user: User = self.model(
             email=self.normalize_email(email),
+            username=username,
         )
 
         user.set_password(password)
         user.save(using=self._db)
         return user
 
-    def create_superuser(self, email, password=None) -> "User":
-        user = self.create_user(
+    def create_superuser(self, email: str, username: str, password=None) -> "User":
+        user: User = self.create_user(
             email=email,
+            username=username,
             password=password,
         )
         user.is_admin = True
@@ -28,14 +30,15 @@ class UserManager(BaseUserManager):
 
 class User(AbstractBaseUser, PermissionsMixin):
     USERNAME_FIELD = "email"
+    REQUIRED_FIELDS = ["username"]
+    objects = UserManager()
+
     uuid = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
     email = models.EmailField(unique=True, max_length=80)
-    username = models.CharField(max_length=20)
+    username = models.CharField(max_length=10, null=False)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     is_admin = models.BooleanField(default=False)
-    is_staff = models.BooleanField(default=False)
-    objects = UserManager()
 
     def __str__(self):
         return f"<User {self.email}>"

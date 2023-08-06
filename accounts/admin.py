@@ -45,17 +45,38 @@ class UserChangeForm(forms.ModelForm):
 
     class Meta:
         model = User
-        fields = ["email", "password", "is_admin"]
+        fields = [
+            "username",
+            "password",
+            "is_admin",
+        ]
 
 
 class UserAdmin(BaseUserAdmin):
     form = UserChangeForm
     add_form = UserCreationForm
+    readonly_fields = ["uuid", "email"]
     list_display = ["email", "last_login", "is_admin"]
     list_filter = ["is_admin"]
     fieldsets = [
-        (None, {"fields": ["email", "password"]}),
-        ("Permissions", {"fields": ["is_admin"]}),
+        (
+            "상세정보",
+            {
+                "fields": [
+                    "uuid",
+                    "email",
+                    "username",
+                ]
+            },
+        ),
+        (
+            "권한",
+            {
+                "fields": [
+                    "is_admin",
+                ]
+            },
+        ),
     ]
     add_fieldsets = [
         (
