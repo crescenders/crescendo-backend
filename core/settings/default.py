@@ -177,7 +177,6 @@ REST_FRAMEWORK = {
     "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
 }
 
-
 REST_AUTH = {
     "USE_JWT": True,
     "JWT_AUTH_HTTPONLY": False,
@@ -199,4 +198,13 @@ SPECTACULAR_SETTINGS = {
     "TITLE": "Crescendo backend server API 문서",
     "DESCRIPTION": "백엔드 서버 API 문서입니다. >_<",
     "SERVE_INCLUDE_SCHEMA": False,
+}
+
+SOCIALACCOUNT_PROVIDERS = {
+    "google": {
+        "APP": {
+            "client_id": os.environ["GOOGLE_CLIENT_ID"],
+            "secret": os.environ["GOOGLE_SECRET"],
+        },
+    }
 }
