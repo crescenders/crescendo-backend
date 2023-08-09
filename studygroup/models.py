@@ -40,6 +40,7 @@ class StudyGroup(TimestampedModel):
     start_date = models.DateField()
     end_date = models.DateField()
     deadline = models.DateField()
+    members = models.ManyToManyField("accounts.User", related_name="study_groups")
 
     # StudyGroup Post Fields
     head_image = models.ImageField(upload_to="studygroup/head_image", blank=True)
