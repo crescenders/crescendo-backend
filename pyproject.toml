@@ -9,6 +9,7 @@ readme = "README.md"
 python = "^3.11"
 # Django
 django = "^4.2.3"
+django-cors-headers = "^4.2.0"
 djangorestframework = "^3.14.0"
 djangorestframework-simplejwt = "^5.2.2"
 django-storages = "^1.13.2"
@@ -24,6 +25,7 @@ gunicorn = "^21.2.0"
 # Python utils
 python-dotenv = "^1.0.0"
 pillow = "^10.0.0"
+
 
 
 
