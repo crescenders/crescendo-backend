@@ -170,6 +170,8 @@ AUTH_USER_MODEL = "accounts.User"
 
 SITE_ID = 1
 
+CORS_URLS_REGEX = r"^/api/.*$"
+
 CORS_ALLOWED_ORIGINS = [
     "https://crescendo-study.vercel.app",
     "http://localhost:3000",
