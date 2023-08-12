@@ -14,7 +14,7 @@ from accounts.serializers import GoogleLoginSerializer, UserSerializer
 from core.exceptions.serailizers import InvalidTokenExceptionSerializer
 
 
-class TokenRefreshView(_TokenRefreshView):
+class TokenRefreshAPI(_TokenRefreshView):
     """
     클라이언트가 가지고 있는 refresh token 을 이용하여 새로운 access token 을 발급합니다.
     """
@@ -31,7 +31,7 @@ class TokenRefreshView(_TokenRefreshView):
         return super().post(request, *args, **kwargs)
 
 
-class GoogleLogin(SocialLoginView):
+class GoogleLoginAPI(SocialLoginView):
     """
     Google Login API 입니다. Google 로부터 얻은 액세스 토큰을 이용하여 Crescendo 서비스의 JWT 를 발급합니다.
 
@@ -68,7 +68,7 @@ class GoogleLogin(SocialLoginView):
             raise InvalidToken
 
 
-class KakaoLogin(SocialLoginView):
+class KakaoLoginAPI(SocialLoginView):
     """
     Kakao Login API 입니다. 현재 개발 중입니다.
     """
