@@ -1,3 +1,5 @@
+from typing import Any
+
 from drf_spectacular.utils import extend_schema
 from rest_framework import generics, viewsets
 from rest_framework.permissions import AllowAny
@@ -13,6 +15,26 @@ class StudyGroupAPISet(viewsets.ModelViewSet):
     permission_classes = (AllowAny,)
     queryset = models.StudyGroup.objects.all()
     serializer_class = serializers.StudyGroupSerializer
+
+    @extend_schema(summary="스터디그룹 홍보글 목록을 조회합니다.")
+    def list(self, request: Request, *args: Any, **kwargs: Any) -> Response:
+        return super().list(request, *args, **kwargs)
+
+    @extend_schema(summary="create")
+    def create(self, request: Request, *args: Any, **kwargs: Any) -> Response:
+        return super().create(request, *args, **kwargs)
+
+    @extend_schema(summary="retrieve")
+    def retrieve(self, request: Request, *args: Any, **kwargs: Any) -> Response:
+        return super().retrieve(request, *args, **kwargs)
+
+    @extend_schema(summary="update")
+    def update(self, request: Request, *args: Any, **kwargs: Any) -> Response:
+        pass
+
+    @extend_schema(summary="delete")
+    def destroy(self, request: Request, *args: Any, **kwargs: Any) -> Response:
+        return super().create(request, *args, **kwargs)
 
 
 @extend_schema(tags=["카테고리 API"])
