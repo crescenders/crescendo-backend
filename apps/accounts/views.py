@@ -94,7 +94,7 @@ class KakaoLoginAPI(SocialLoginView):
 @extend_schema(
     tags=["내 정보 API"],
 )
-class ProfileAPI(generics.RetrieveUpdateDestroyAPIView):
+class MyProfileAPI(generics.RetrieveUpdateDestroyAPIView):
     """
     로그인한 사용자의 정보를 조회/수정/탈퇴합니다.
     """

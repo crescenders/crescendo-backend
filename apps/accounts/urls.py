@@ -10,5 +10,5 @@ urlpatterns = [
     path("login/google/", views.GoogleLoginAPI.as_view(), name="google_login"),
     path("login/kakao/", views.KakaoLoginAPI.as_view(), name="kakao_login"),
     # 내 정보 조회/수정/탈퇴
-    path("profiles/me/", views.ProfileAPI.as_view(), name="user_profile"),
+    path("profiles/me/", views.MyProfileAPI.as_view(), name="user_profile"),
 ]
