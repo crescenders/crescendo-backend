@@ -46,6 +46,8 @@ MIDDLEWARE = [
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
 
+CORS_URLS_REGEX = r"^/api/.*$"
+
 CORS_ALLOWED_ORIGINS = [
     "https://www.crescendo-study.site/",
     "http://localhost:3000",
