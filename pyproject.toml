@@ -9,13 +9,13 @@ readme = "README.md"
 python = "^3.11"
 # Django
 django = "^4.2.3"
-django-cors-headers = "^4.2.0"
 djangorestframework = "^3.14.0"
 djangorestframework-simplejwt = "^5.2.2"
 django-storages = "^1.13.2"
 dj-rest-auth = "^4.0.1"
 django-allauth = "^0.54.0"
 drf-spectacular = "^0.26.4"
+django-cors-headers = "^4.2.0"
 # Database
 cx-oracle = "^8.3.0"
 # Storage
@@ -25,9 +25,6 @@ gunicorn = "^21.2.0"
 # Python utils
 python-dotenv = "^1.0.0"
 pillow = "^10.0.0"
-
-
-
 
 [tool.poetry.group.dev.dependencies]
 black = "^23.7.0"
@@ -40,7 +37,6 @@ mypy = "^1.4.1"
 flake8 = "^6.1.0"
 django-stubs = "^4.2.3"
 djangorestframework-stubs = "^3.14.2"
-
 
 [build-system]
 requires = ["poetry-core"]
