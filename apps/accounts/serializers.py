@@ -1,7 +1,7 @@
 from dj_rest_auth.registration.serializers import SocialLoginSerializer
 from rest_framework import serializers
 
-from accounts.models import User
+from apps.accounts.models import User
 
 
 class JWTSerializer(serializers.Serializer):

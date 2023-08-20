@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from studygroup import models
+from apps.studygroup import models
 
 
 @admin.register(models.Category)

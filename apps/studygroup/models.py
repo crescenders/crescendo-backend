@@ -2,7 +2,7 @@ import uuid
 
 from django.db import models
 
-from accounts.models import User
+from apps.accounts.models import User
 from core.utils.models import TimestampedModel
 
 

@@ -31,8 +31,8 @@ INSTALLED_APPS = [
     "allauth.socialaccount.providers.kakao",
     "drf_spectacular",
     # Local Apps.
-    "accounts",
-    "studygroup",
+    "apps.accounts",
+    "apps.studygroup",
 ]
 
 MIDDLEWARE = [
@@ -49,7 +49,7 @@ MIDDLEWARE = [
 CORS_URLS_REGEX = r"^/api/.*$"
 
 CORS_ALLOWED_ORIGINS = [
-    "https://www.crescendo-study.site/",
+    "https://www.crescendo-study.site",
     "http://localhost:3000",
 ]
 
@@ -190,7 +190,7 @@ REST_FRAMEWORK = {
 REST_AUTH = {
     "USE_JWT": True,
     "JWT_AUTH_HTTPONLY": False,
-    "JWT_SERIALIZER": "accounts.serializers.JWTSerializer",
+    "JWT_SERIALIZER": "apps.accounts.serializers.JWTSerializer",
 }
 
 SIMPLE_JWT = {

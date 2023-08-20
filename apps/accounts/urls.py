@@ -1,6 +1,6 @@
 from django.urls import include, path
 
-from accounts import views
+from apps.accounts import views
 
 urlpatterns = [
     # 회원가입

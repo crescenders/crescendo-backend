@@ -6,7 +6,7 @@ from rest_framework.permissions import AllowAny
 from rest_framework.request import Request
 from rest_framework.response import Response
 
-from studygroup import models, serializers
+from apps.studygroup import models, serializers
 
 
 @extend_schema(tags=["스터디그룹 API"])
