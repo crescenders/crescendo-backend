@@ -1,6 +1,6 @@
 from django.urls import path
 
-from studygroup import views
+from apps.studygroup import views
 
 urlpatterns = [
     path(

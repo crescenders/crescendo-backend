@@ -2,8 +2,8 @@ from rest_framework import status
 from rest_framework.reverse import reverse
 from rest_framework.test import APITestCase
 
-from accounts.models import User
-from studygroup.models import Category
+from apps.accounts.models import User
+from apps.studygroup.models import Category
 
 
 class CategoryTestCase(APITestCase):

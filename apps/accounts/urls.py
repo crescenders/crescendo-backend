@@ -1,6 +1,6 @@
 from django.urls import include, path
 
-from accounts import views
+from apps.accounts import views
 
 urlpatterns = [
     # 회원가입
@@ -10,5 +10,10 @@ urlpatterns = [
     path("login/google/", views.GoogleLoginAPI.as_view(), name="google_login"),
     path("login/kakao/", views.KakaoLoginAPI.as_view(), name="kakao_login"),
     # 내 정보 조회/수정/탈퇴
-    path("profiles/me/", views.ProfileAPI.as_view(), name="user_profile"),
+    path("profiles/me/", views.MyProfileAPI.as_view(), name="user_profile_me"),
+    path(
+        "profiles/<uuid:uuid>/",
+        views.UUIDProfileAPI.as_view(),
+        name="user_profile_uuid",
+    ),
 ]

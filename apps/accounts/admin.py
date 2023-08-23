@@ -7,7 +7,7 @@ from django.contrib.auth.forms import ReadOnlyPasswordHashField
 from django.core.exceptions import ValidationError
 from rest_framework.authtoken.models import TokenProxy
 
-from accounts.models import User
+from apps.accounts.models import User
 
 
 class UserCreationForm(forms.ModelForm):

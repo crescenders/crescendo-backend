@@ -1,16 +1,19 @@
 from allauth.socialaccount.providers.google.views import GoogleOAuth2Adapter
 from allauth.socialaccount.providers.kakao.views import KakaoOAuth2Adapter
-from allauth.socialaccount.providers.oauth2.client import OAuth2Client, OAuth2Error
+from allauth.socialaccount.providers.oauth2.client import (OAuth2Client,
+                                                           OAuth2Error)
 from dj_rest_auth.app_settings import api_settings
 from dj_rest_auth.registration.views import SocialLoginView
 from drf_spectacular.utils import extend_schema
 from rest_framework import generics, status
 from rest_framework.generics import get_object_or_404
+from rest_framework.permissions import AllowAny
 from rest_framework_simplejwt.exceptions import InvalidToken
-from rest_framework_simplejwt.views import TokenRefreshView as _TokenRefreshView
+from rest_framework_simplejwt.views import \
+    TokenRefreshView as _TokenRefreshView
 
-from accounts.models import User
-from accounts.serializers import GoogleLoginSerializer, UserSerializer
+from apps.accounts.models import User
+from apps.accounts.serializers import GoogleLoginSerializer, ProfileSerializer
 from core.exceptions.serailizers import InvalidTokenExceptionSerializer
 
 
@@ -90,16 +93,16 @@ class KakaoLoginAPI(SocialLoginView):
 
 
 @extend_schema(
-    tags=["내 정보 API"],
+    tags=["사용자 정보 API"],
 )
-class ProfileAPI(generics.RetrieveUpdateDestroyAPIView):
+class MyProfileAPI(generics.RetrieveUpdateDestroyAPIView):
     """
     로그인한 사용자의 정보를 조회/수정/탈퇴합니다.
     """
 
     http_method_names = ["get", "put", "delete"]
     queryset = User.objects.all()
-    serializer_class = UserSerializer
+    serializer_class = ProfileSerializer
 
     def get_object(self):
         queryset = self.get_queryset()
@@ -117,3 +120,21 @@ class ProfileAPI(generics.RetrieveUpdateDestroyAPIView):
     @extend_schema(summary="로그인한 사용자를 탈퇴 처리합니다.")
     def delete(self, request, *args, **kwargs):
         return super().delete(request, *args, **kwargs)
+
+
+@extend_schema(
+    tags=["사용자 정보 API"],
+)
+class UUIDProfileAPI(generics.RetrieveAPIView):
+    """
+    UUID를 이용하여 사용자의 정보를 조회합니다.
+    """
+
+    lookup_field = "uuid"
+    queryset = User.objects.all()
+    serializer_class = ProfileSerializer
+    permission_classes = (AllowAny,)
+
+    @extend_schema(summary="UUID를 이용하여 사용자의 정보를 조회합니다.")
+    def get(self, request, *args, **kwargs):
+        return super().get(request, *args, **kwargs)

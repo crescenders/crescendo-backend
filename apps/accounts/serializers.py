@@ -1,7 +1,8 @@
 from dj_rest_auth.registration.serializers import SocialLoginSerializer
 from rest_framework import serializers
+from rest_framework.reverse import reverse
 
-from accounts.models import User
+from apps.accounts.models import User
 
 
 class JWTSerializer(serializers.Serializer):
@@ -9,7 +10,9 @@ class JWTSerializer(serializers.Serializer):
     refresh = serializers.CharField()
 
 
-class UserSerializer(serializers.ModelSerializer):
+class ProfileSerializer(serializers.ModelSerializer):
+    _links = serializers.SerializerMethodField()
+
     class Meta:
         model = User
         fields = [
@@ -18,6 +21,7 @@ class UserSerializer(serializers.ModelSerializer):
             "username",
             "created_at",
             "updated_at",
+            "_links",
         ]
         extra_kwargs = {
             "uuid": {"read_only": True},
@@ -25,6 +29,17 @@ class UserSerializer(serializers.ModelSerializer):
             "created_at": {"read_only": True},
             "updated_at": {"read_only": True},
         }
+
+    def get__links(self, obj):
+        request = self.context["request"]
+        links = {
+            "self": {
+                "href": reverse(
+                    "user_profile_uuid", kwargs={"uuid": obj.uuid}, request=request
+                )
+            },
+        }
+        return links
 
 
 class GoogleLoginSerializer(SocialLoginSerializer):

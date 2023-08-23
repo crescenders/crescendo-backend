@@ -31,8 +31,8 @@ INSTALLED_APPS = [
     "allauth.socialaccount.providers.kakao",
     "drf_spectacular",
     # Local Apps.
-    "accounts",
-    "studygroup",
+    "apps.accounts",
+    "apps.studygroup",
 ]
 
 MIDDLEWARE = [
@@ -49,7 +49,7 @@ MIDDLEWARE = [
 CORS_URLS_REGEX = r"^/api/.*$"
 
 CORS_ALLOWED_ORIGINS = [
-    "https://www.crescendo-study.site/",
+    "https://www.crescendo-study.site",
     "http://localhost:3000",
 ]
 
@@ -99,7 +99,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = "en-us"
 
-TIME_ZONE = "UTC"
+TIME_ZONE = "Asia/Seoul"
 
 USE_I18N = True
 
@@ -180,9 +180,13 @@ SITE_ID = 1
 ################
 # DRF settings #
 ################
-
 REST_FRAMEWORK = {
-    "DEFAULT_AUTHENTICATION_CLASSES": ("dj_rest_auth.jwt_auth.JWTAuthentication",),
+    "DEFAULT_PAGINATION_CLASS": "rest_framework.pagination.PageNumberPagination",
+    "PAGE_SIZE": 12,
+    "DEFAULT_AUTHENTICATION_CLASSES": (
+        "dj_rest_auth.jwt_auth.JWTAuthentication",
+        "rest_framework.authentication.SessionAuthentication",
+    ),
     "DEFAULT_PERMISSION_CLASSES": ("rest_framework.permissions.IsAuthenticated",),
     "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
 }
@@ -190,7 +194,7 @@ REST_FRAMEWORK = {
 REST_AUTH = {
     "USE_JWT": True,
     "JWT_AUTH_HTTPONLY": False,
-    "JWT_SERIALIZER": "accounts.serializers.JWTSerializer",
+    "JWT_SERIALIZER": "apps.accounts.serializers.JWTSerializer",
 }
 
 SIMPLE_JWT = {
@@ -208,6 +212,7 @@ SPECTACULAR_SETTINGS = {
     "TITLE": "Crescendo backend server API 문서",
     "DESCRIPTION": "백엔드 서버 API 문서입니다. >_<",
     "SERVE_INCLUDE_SCHEMA": False,
+    "COMPONENT_SPLIT_REQUEST": True,
 }
 
 SOCIALACCOUNT_PROVIDERS = {
