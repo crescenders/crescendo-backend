@@ -1,4 +1,5 @@
 from django.contrib import admin
+from django.utils import timezone
 
 from apps.studygroup import models
 
@@ -15,19 +16,15 @@ class TagAdmin(admin.ModelAdmin):
 
 @admin.register(models.StudyGroup)
 class StudyGroupAdmin(admin.ModelAdmin):
-    class PromotionPostInline(admin.TabularInline):
-        model = models.PromotionPost
-        extra = 0
-
-    class StudyGroupMemberInline(admin.TabularInline):
-        model = models.StudyGroupMember
-        extra = 0
-
     list_display = (
         "name",
-        "user_limit",
-        "start_date",
-        "end_date",
+        "member_limit",
+        "leader",
+        "is_closed",
+        "deadline",
     )
-    filter_horizontal = ("categories", "tags")
-    inlines = (StudyGroupMemberInline, PromotionPostInline)
+
+    def is_closed(self, instance):
+        return timezone.now().date() > instance.deadline
+
+    is_closed.boolean = True
