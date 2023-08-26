@@ -11,8 +11,31 @@ class CategorySerializer(serializers.ModelSerializer):
         fields = ["name"]
 
 
+class LeaderSerializer(serializers.ModelSerializer):
+    username = serializers.CharField(source="user.username")
+    _links = serializers.SerializerMethodField()
+
+    class Meta:
+        model = models.StudyGroupMember
+        fields = [
+            "username",
+            "_links",
+        ]
+
+    def get__links(self, obj):
+        request = self.context["request"]
+        links = {
+            "self": {
+                "href": reverse(
+                    "user_profile_uuid", kwargs={"uuid": obj.user.uuid}, request=request
+                )
+            },
+        }
+        return links
+
+
 class StudyGroupListSerializer(serializers.ModelSerializer):
-    leader_username = serializers.CharField(source="leader.username", read_only=True)
+    leaders = LeaderSerializer(many=True, read_only=True)
     post_title = serializers.CharField(source="title")
     post_content = serializers.CharField(source="content", write_only=True)
     study_name = serializers.CharField(source="name")
@@ -20,9 +43,10 @@ class StudyGroupListSerializer(serializers.ModelSerializer):
     end_date = serializers.DateField(write_only=True)
     deadline = serializers.DateField(write_only=True)
     until_deadline = serializers.SerializerMethodField(read_only=True)
+    is_closed = serializers.SerializerMethodField()
     current_member_count = serializers.IntegerField(
         source="members.count", read_only=True
-    )  # 현재 인원수를 나타냅니다.
+    )
     categories = serializers.SlugRelatedField(
         slug_field="name",
         many=True,
@@ -37,7 +61,7 @@ class StudyGroupListSerializer(serializers.ModelSerializer):
         model = models.StudyGroup
         fields = [
             "head_image",
-            "leader_username",
+            "leaders",
             "post_title",
             "post_content",
             "study_name",
@@ -45,6 +69,7 @@ class StudyGroupListSerializer(serializers.ModelSerializer):
             "end_date",
             "deadline",
             "until_deadline",
+            "is_closed",
             "tags",
             "categories",
             "current_member_count",
@@ -54,22 +79,23 @@ class StudyGroupListSerializer(serializers.ModelSerializer):
         ]
 
     @staticmethod
-    def get_until_deadline(obj):
+    def get_leaders(obj):
+        return [leader.user.username for leader in obj.leaders]
+
+    @staticmethod
+    def get_until_deadline(obj) -> int:
         return (obj.deadline - date.today()).days
 
-    def get__links(self, obj):
+    @staticmethod
+    def get_is_closed(obj) -> bool:
+        return obj.is_closed
+
+    def get__links(self, obj) -> dict[str, dict[str, str]]:
         request = self.context["request"]
         links = {
             "self": {
                 "href": reverse(
                     "studygroup_detail", kwargs={"uuid": obj.uuid}, request=request
-                )
-            },
-            "leader": {
-                "href": reverse(
-                    "user_profile_uuid",
-                    kwargs={"uuid": obj.leader.uuid},
-                    request=request,
                 )
             },
         }
