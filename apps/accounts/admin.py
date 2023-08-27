@@ -4,6 +4,7 @@ from django import forms
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 from django.contrib.auth.forms import ReadOnlyPasswordHashField
+from django.contrib.auth.models import Group
 from django.core.exceptions import ValidationError
 from rest_framework.authtoken.models import TokenProxy
 
@@ -93,6 +94,7 @@ class UserAdmin(BaseUserAdmin):
 
 admin.site.register(User, UserAdmin)
 
+admin.site.unregister(Group)
 admin.site.unregister(TokenProxy)
 admin.site.unregister(EmailAddress)
 admin.site.unregister(SocialToken)
