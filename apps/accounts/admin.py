@@ -1,9 +1,10 @@
 from allauth.account.models import EmailAddress
-from allauth.socialaccount.models import SocialToken
+from allauth.socialaccount.models import SocialApp, SocialToken
 from django import forms
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 from django.contrib.auth.forms import ReadOnlyPasswordHashField
+from django.contrib.auth.models import Group
 from django.core.exceptions import ValidationError
 from rest_framework.authtoken.models import TokenProxy
 
@@ -56,7 +57,7 @@ class UserAdmin(BaseUserAdmin):
     form = UserChangeForm
     add_form = UserCreationForm
     readonly_fields = ["uuid", "email"]
-    list_display = ["email", "last_login", "is_admin"]
+    list_display = ["email", "last_login", "is_admin", "social_accounts"]
     list_filter = ["is_admin"]
     fieldsets = [
         (
@@ -90,9 +91,19 @@ class UserAdmin(BaseUserAdmin):
     search_fields = ["email"]
     ordering = ["email"]
 
+    @staticmethod
+    def social_accounts(obj):
+        return (
+            obj.socialaccount_set.all()
+            if obj.socialaccount_set.all()
+            else "연결된 소셜 계정이 없습니다."
+        )
+
 
 admin.site.register(User, UserAdmin)
 
+admin.site.unregister(Group)
 admin.site.unregister(TokenProxy)
 admin.site.unregister(EmailAddress)
 admin.site.unregister(SocialToken)
+admin.site.unregister(SocialApp)

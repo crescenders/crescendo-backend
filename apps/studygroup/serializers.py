@@ -3,6 +3,7 @@ from rest_framework import serializers
 from rest_framework.reverse import reverse
 
 from apps.studygroup import models
+from core.utils.serializers import CreatableSlugRelatedField
 
 
 class CategorySerializer(serializers.ModelSerializer):
@@ -11,33 +12,65 @@ class CategorySerializer(serializers.ModelSerializer):
         fields = ["name"]
 
 
+class LeaderSerializer(serializers.ModelSerializer):
+    username = serializers.CharField(source="user.username")
+    _links = serializers.SerializerMethodField()
+
+    class Meta:
+        model = models.StudyGroupMember
+        fields = [
+            "username",
+            "_links",
+        ]
+
+    def get__links(self, obj):
+        request = self.context["request"]
+        links = {
+            "self": {
+                "href": reverse(
+                    "user_profile_uuid", kwargs={"uuid": obj.user.uuid}, request=request
+                )
+            },
+        }
+        return links
+
+
 class StudyGroupListSerializer(serializers.ModelSerializer):
-    leader_username = serializers.CharField(source="leader.username", read_only=True)
+    # 헤더 이미지, 제목, 내용
+    head_image = serializers.SerializerMethodField()
     post_title = serializers.CharField(source="title")
     post_content = serializers.CharField(source="content", write_only=True)
+
+    # 리터, 스터디 이름
+    leaders = LeaderSerializer(many=True, read_only=True)
     study_name = serializers.CharField(source="name")
+
+    # 스터디 시작일, 종료일, 모집 마감일
     start_date = serializers.DateField(write_only=True)
     end_date = serializers.DateField(write_only=True)
     deadline = serializers.DateField(write_only=True)
     until_deadline = serializers.SerializerMethodField(read_only=True)
+
+    # 마감 여부, 현재 인원
+    is_closed = serializers.SerializerMethodField()
     current_member_count = serializers.IntegerField(
         source="members.count", read_only=True
-    )  # 현재 인원수를 나타냅니다.
-    categories = serializers.SlugRelatedField(
-        slug_field="name",
-        many=True,
-        queryset=models.Category.objects.all(),
     )
-    tags = serializers.SlugRelatedField(
-        slug_field="name", many=True, queryset=models.Tag.objects.all()
+
+    # Category, Tag
+    tags = CreatableSlugRelatedField(
+        many=True, queryset=models.Tag.objects.all(), slug_field="name"
     )
+
+    # hateoas
     _links = serializers.SerializerMethodField()
 
     class Meta:
         model = models.StudyGroup
         fields = [
+            "uuid",
             "head_image",
-            "leader_username",
+            "leaders",
             "post_title",
             "post_content",
             "study_name",
@@ -45,6 +78,7 @@ class StudyGroupListSerializer(serializers.ModelSerializer):
             "end_date",
             "deadline",
             "until_deadline",
+            "is_closed",
             "tags",
             "categories",
             "current_member_count",
@@ -53,11 +87,27 @@ class StudyGroupListSerializer(serializers.ModelSerializer):
             "_links",
         ]
 
+    def get_head_image(self, obj):
+        return (
+            serializers.ImageField.to_representation(self, obj.head_image)
+            if serializers.ImageField.to_representation(self, obj.head_image)
+            is not None
+            else f"https://picsum.photos/seed/{obj.uuid}/200/300"
+        )
+
     @staticmethod
-    def get_until_deadline(obj):
+    def get_leaders(obj):
+        return [leader.user.username for leader in obj.leaders]
+
+    @staticmethod
+    def get_until_deadline(obj) -> int:
         return (obj.deadline - date.today()).days
 
-    def get__links(self, obj):
+    @staticmethod
+    def get_is_closed(obj) -> bool:
+        return obj.is_closed
+
+    def get__links(self, obj) -> dict[str, dict[str, str]]:
         request = self.context["request"]
         links = {
             "self": {
@@ -65,12 +115,33 @@ class StudyGroupListSerializer(serializers.ModelSerializer):
                     "studygroup_detail", kwargs={"uuid": obj.uuid}, request=request
                 )
             },
-            "leader": {
-                "href": reverse(
-                    "user_profile_uuid",
-                    kwargs={"uuid": obj.leader.uuid},
-                    request=request,
-                )
-            },
         }
         return links
+
+
+class StudyGroupDetailSerializer(StudyGroupListSerializer):
+    post_content = serializers.CharField(source="content")
+    start_date = serializers.DateField()
+    end_date = serializers.DateField()
+    deadline = serializers.DateField()
+
+    class Meta:
+        model = models.StudyGroup
+        fields = [
+            "head_image",
+            "leaders",
+            "post_title",
+            "post_content",
+            "study_name",
+            "start_date",
+            "end_date",
+            "deadline",
+            "until_deadline",
+            "is_closed",
+            "tags",
+            "categories",
+            "current_member_count",
+            "member_limit",
+            "until_deadline",
+            "_links",
+        ]
