@@ -10,15 +10,20 @@ from rest_framework.permissions import AllowAny, IsAuthenticatedOrReadOnly
 from rest_framework.request import Request
 from rest_framework.response import Response
 
-from apps.studygroup import models, serializers
 from apps.studygroup.filters import StudyGroupFilter
+from apps.studygroup.models import Category, StudyGroup, StudyGroupMember
 from apps.studygroup.pagination import StudyGroupPagination
+from apps.studygroup.serializers import (
+    CategorySerializer,
+    StudyGroupDetailSerializer,
+    StudyGroupListSerializer,
+)
 
 
 @extend_schema(tags=["스터디그룹 API"])
 class StudyGroupAPISet(viewsets.ModelViewSet):
     # Serializer
-    serializer_class = serializers.StudyGroupListSerializer
+    serializer_class = StudyGroupListSerializer
 
     # Parser
     parser_classes = (MultiPartParser, FormParser)
@@ -33,7 +38,7 @@ class StudyGroupAPISet(viewsets.ModelViewSet):
     ordering_fields = ["created_at", "deadline"]
 
     # Filtering
-    queryset = models.StudyGroup.objects.all()
+    queryset = StudyGroup.objects.all()
     filter_backends = (
         DjangoFilterBackend,
         OrderingFilter,
@@ -45,9 +50,9 @@ class StudyGroupAPISet(viewsets.ModelViewSet):
 
     def get_serializer_class(self):
         if self.action in ["list", "create"]:
-            return serializers.StudyGroupListSerializer
+            return StudyGroupListSerializer
         elif self.action in ["retrieve", "update", "partial_update", "destroy"]:
-            return serializers.StudyGroupDetailSerializer
+            return StudyGroupDetailSerializer
         return super().get_serializer_class()
 
     @transaction.atomic
@@ -56,8 +61,7 @@ class StudyGroupAPISet(viewsets.ModelViewSet):
         스터디그룹을 생성하면, 스터디그룹장으로 자동으로 등록됩니다.
         """
         super().perform_create(serializer)
-        print(serializer.instance)
-        initial_member = models.StudyGroupMember.objects.create(
+        initial_member = StudyGroupMember.objects.create(
             user=self.request.user, study_group=serializer.instance, is_leader=True
         )
         serializer.instance.members.add(initial_member)
@@ -87,8 +91,8 @@ class StudyGroupAPISet(viewsets.ModelViewSet):
 class CategoryListAPI(generics.ListAPIView):
     pagination_class = None
     permission_classes = (AllowAny,)
-    queryset = models.Category.objects.all()
-    serializer_class = serializers.CategorySerializer
+    queryset = Category.objects.all()
+    serializer_class = CategorySerializer
 
     @extend_schema(summary="카테고리 목록을 조회합니다.")
     def get(self, request: Request, *args, **kwargs) -> Response:
