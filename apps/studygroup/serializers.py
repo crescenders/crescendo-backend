@@ -1,4 +1,6 @@
 from django.utils.datetime_safe import date
+from drf_spectacular.types import OpenApiTypes
+from drf_spectacular.utils import extend_schema_field
 from rest_framework import serializers
 from rest_framework.reverse import reverse
 
@@ -23,15 +25,28 @@ class LeaderSerializer(serializers.ModelSerializer):
             "_links",
         ]
 
+    @extend_schema_field(
+        {
+            "example": [
+                {
+                    "rel": "self",
+                    "href": "http://localhost:8000/api/v1/user/profile/uuid/",
+                },
+            ],
+        }
+    )
     def get__links(self, obj):
         request = self.context["request"]
-        links = {
-            "self": {
+        links = [
+            {
+                "rel": "self",
                 "href": reverse(
-                    "user_profile_uuid", kwargs={"uuid": obj.user.uuid}, request=request
-                )
-            },
-        }
+                    "user_profile_uuid",
+                    kwargs={"uuid": obj.user.uuid},
+                    request=request,
+                ),
+            }
+        ]
         return links
 
 
@@ -87,6 +102,11 @@ class StudyGroupListSerializer(serializers.ModelSerializer):
             "_links",
         ]
 
+    @extend_schema_field(
+        {
+            "example": "https://picsum.photos/seed/uuid/200/300",
+        }
+    )
     def get_head_image(self, obj):
         return (
             serializers.ImageField.to_representation(self, obj.head_image)
@@ -107,15 +127,29 @@ class StudyGroupListSerializer(serializers.ModelSerializer):
     def get_is_closed(obj) -> bool:
         return obj.is_closed
 
-    def get__links(self, obj) -> dict[str, dict[str, str]]:
-        request = self.context["request"]
-        links = {
-            "self": {
-                "href": reverse(
-                    "studygroup_detail", kwargs={"uuid": obj.uuid}, request=request
-                )
-            },
+    @extend_schema_field(
+        {
+            "example": [
+                {
+                    "rel": "self",
+                    "href": "http://localhost:8000/api/v1/studygroup/uuid/",
+                },
+            ],
         }
+    )
+    def get__links(self, obj):
+        request = self.context["request"]
+        links = (
+            [
+                {
+                    "rel": "self",
+                    "href": reverse(
+                        "studygroup_detail", kwargs={"uuid": obj.uuid}, request=request
+                    ),
+                },
+            ],
+        )
+
         return links
 
 

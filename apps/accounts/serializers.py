@@ -1,4 +1,5 @@
 from dj_rest_auth.registration.serializers import SocialLoginSerializer
+from drf_spectacular.utils import extend_schema_field
 from rest_framework import serializers
 from rest_framework.reverse import reverse
 
@@ -30,15 +31,26 @@ class ProfileSerializer(serializers.ModelSerializer):
             "updated_at": {"read_only": True},
         }
 
+    @extend_schema_field(
+        {
+            "example": [
+                {
+                    "rel": "self",
+                    "href": "http://localhost:8000/api/v1/user/profile/uuid/",
+                },
+            ],
+        }
+    )
     def get__links(self, obj):
         request = self.context["request"]
-        links = {
-            "self": {
+        links = [
+            {
+                "rel": "self",
                 "href": reverse(
                     "user_profile_uuid", kwargs={"uuid": obj.uuid}, request=request
-                )
-            },
-        }
+                ),
+            }
+        ]
         return links
 
 
