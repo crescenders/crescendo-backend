@@ -37,7 +37,7 @@ class LeaderSerializer(serializers.ModelSerializer):
 
 class StudyGroupListSerializer(serializers.ModelSerializer):
     # 헤더 이미지, 제목, 내용
-    head_image = serializers.ImageField(required=False)
+    head_image = serializers.SerializerMethodField()
     post_title = serializers.CharField(source="title")
     post_content = serializers.CharField(source="content", write_only=True)
 
@@ -58,9 +58,6 @@ class StudyGroupListSerializer(serializers.ModelSerializer):
     )
 
     # Category, Tag
-    categories = serializers.SlugRelatedField(
-        many=True, queryset=models.Category.objects.all(), slug_field="name"
-    )
     tags = CreatableSlugRelatedField(
         many=True, queryset=models.Tag.objects.all(), slug_field="name"
     )
@@ -89,6 +86,14 @@ class StudyGroupListSerializer(serializers.ModelSerializer):
             "until_deadline",
             "_links",
         ]
+
+    def get_head_image(self, obj):
+        return (
+            serializers.ImageField.to_representation(self, obj.head_image)
+            if serializers.ImageField.to_representation(self, obj.head_image)
+            is not None
+            else f"https://picsum.photos/seed/{obj.uuid}/200/300"
+        )
 
     @staticmethod
     def get_leaders(obj):
