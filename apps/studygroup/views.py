@@ -1,5 +1,6 @@
 from typing import Any
 
+from django.db import transaction
 from django_filters.rest_framework import DjangoFilterBackend
 from drf_spectacular.utils import extend_schema
 from rest_framework import generics, viewsets
@@ -45,11 +46,15 @@ class StudyGroupAPISet(viewsets.ModelViewSet):
     def get_serializer_class(self):
         if self.action in ["list", "create"]:
             return serializers.StudyGroupListSerializer
-        # elif self.action in ["retrieve", "update", "partial_update", "destroy"]:
-        #     return serializers.StudyGroupDetailSerializer
+        elif self.action in ["retrieve", "update", "partial_update", "destroy"]:
+            return serializers.StudyGroupDetailSerializer
         return super().get_serializer_class()
 
+    @transaction.atomic
     def perform_create(self, serializer):
+        """
+        스터디그룹을 생성하면, 스터디그룹장으로 자동으로 등록됩니다.
+        """
         super().perform_create(serializer)
         print(serializer.instance)
         initial_member = models.StudyGroupMember.objects.create(
@@ -71,7 +76,7 @@ class StudyGroupAPISet(viewsets.ModelViewSet):
 
     @extend_schema(summary="스터디그룹 정보를 수정합니다.")
     def update(self, request: Request, *args: Any, **kwargs: Any) -> Response:
-        pass
+        return super().update(request, *args, **kwargs)
 
     @extend_schema(summary="특정 스터디그룹을 삭제합니다.")
     def destroy(self, request: Request, *args: Any, **kwargs: Any) -> Response:
