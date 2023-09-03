@@ -1,4 +1,5 @@
 from django.utils.datetime_safe import date
+from drf_spectacular.types import OpenApiTypes
 from drf_spectacular.utils import extend_schema_field
 from rest_framework import serializers
 from rest_framework.reverse import reverse
@@ -101,6 +102,11 @@ class StudyGroupListSerializer(serializers.ModelSerializer):
             "_links",
         ]
 
+    @extend_schema_field(
+        {
+            "example": "https://picsum.photos/seed/uuid/200/300",
+        }
+    )
     def get_head_image(self, obj):
         return (
             serializers.ImageField.to_representation(self, obj.head_image)
