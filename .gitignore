@@ -85,4 +85,4 @@ dmypy.json
 static/
 
 # Oracle instant client
-/instantclient_21_10
+/instantclient_21_11
