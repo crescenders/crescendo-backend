@@ -23,15 +23,18 @@ class LeaderSerializer(serializers.ModelSerializer):
             "_links",
         ]
 
-    def get__links(self, obj):
+    def get__links(self, obj) -> list[dict[str, str]]:
         request = self.context["request"]
-        links = {
-            "self": {
+        links = [
+            {
+                "rel": "self",
                 "href": reverse(
-                    "user_profile_uuid", kwargs={"uuid": obj.user.uuid}, request=request
-                )
-            },
-        }
+                    "user_profile_uuid",
+                    kwargs={"uuid": obj.user.uuid},
+                    request=request,
+                ),
+            }
+        ]
         return links
 
 
@@ -107,15 +110,19 @@ class StudyGroupListSerializer(serializers.ModelSerializer):
     def get_is_closed(obj) -> bool:
         return obj.is_closed
 
-    def get__links(self, obj) -> dict[str, dict[str, str]]:
+    def get__links(self, obj) -> list[dict[str, str]]:
         request = self.context["request"]
-        links = {
-            "self": {
-                "href": reverse(
-                    "studygroup_detail", kwargs={"uuid": obj.uuid}, request=request
-                )
-            },
-        }
+        links = (
+            [
+                {
+                    "rel": "self",
+                    "href": reverse(
+                        "studygroup_detail", kwargs={"uuid": obj.uuid}, request=request
+                    ),
+                },
+            ],
+        )
+
         return links
 
 
