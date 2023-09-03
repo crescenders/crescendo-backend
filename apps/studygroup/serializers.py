@@ -1,4 +1,5 @@
 from django.utils.datetime_safe import date
+from drf_spectacular.utils import extend_schema_field
 from rest_framework import serializers
 from rest_framework.reverse import reverse
 
@@ -23,7 +24,17 @@ class LeaderSerializer(serializers.ModelSerializer):
             "_links",
         ]
 
-    def get__links(self, obj) -> list[dict[str, str]]:
+    @extend_schema_field(
+        {
+            "example": [
+                {
+                    "rel": "self",
+                    "href": "http://localhost:8000/api/v1/user/profile/uuid/",
+                },
+            ],
+        }
+    )
+    def get__links(self, obj):
         request = self.context["request"]
         links = [
             {
@@ -110,7 +121,17 @@ class StudyGroupListSerializer(serializers.ModelSerializer):
     def get_is_closed(obj) -> bool:
         return obj.is_closed
 
-    def get__links(self, obj) -> list[dict[str, str]]:
+    @extend_schema_field(
+        {
+            "example": [
+                {
+                    "rel": "self",
+                    "href": "http://localhost:8000/api/v1/studygroup/uuid/",
+                },
+            ],
+        }
+    )
+    def get__links(self, obj):
         request = self.context["request"]
         links = (
             [
