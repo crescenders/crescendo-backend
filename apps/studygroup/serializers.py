@@ -73,6 +73,9 @@ class StudyGroupListSerializer(serializers.ModelSerializer):
     )
 
     # Category, Tag
+    categories = serializers.SlugRelatedField(
+        many=True, queryset=models.Category.objects.all(), slug_field="name"
+    )
     tags = CreatableSlugRelatedField(
         many=True, queryset=models.Tag.objects.all(), slug_field="name"
     )
