@@ -12,6 +12,7 @@ SECRET_KEY = os.environ["SECRET_KEY"]
 
 INSTALLED_APPS = [
     # Django Apps.
+    "jazzmin",
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
@@ -177,6 +178,20 @@ LOGGING = {
 AUTH_USER_MODEL = "accounts.User"
 
 SITE_ID = 1
+
+JAZZMIN_SETTINGS = {
+    "site_title": "Crescendo Admin",
+    "login_logo": None,
+    "welcome_sign": "Crescendo 관리자 페이지 로그인",
+    "search_model": [
+        AUTH_USER_MODEL,
+    ],
+    "icons": {
+        AUTH_USER_MODEL: "fas fa-user",
+    },
+    "changeform_format": "single",
+}
+
 
 ################
 # DRF settings #
