@@ -169,6 +169,8 @@ class StudyGroupDetailSerializer(StudyGroupListSerializer):
             "leaders",
             "post_title",
             "post_content",
+            "created_at",
+            "updated_at",
             "study_name",
             "start_date",
             "end_date",
