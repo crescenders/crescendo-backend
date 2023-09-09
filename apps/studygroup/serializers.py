@@ -107,7 +107,7 @@ class StudyGroupListSerializer(serializers.ModelSerializer):
 
     @extend_schema_field(
         {
-            "example": "https://picsum.photos/seed/uuid/200/300",
+            "example": "https://picsum.photos/seed/uuid/210/150",
         }
     )
     def get_head_image(self, obj):
@@ -115,7 +115,7 @@ class StudyGroupListSerializer(serializers.ModelSerializer):
             serializers.ImageField.to_representation(self, obj.head_image)
             if serializers.ImageField.to_representation(self, obj.head_image)
             is not None
-            else f"https://picsum.photos/seed/{obj.uuid}/200/300"
+            else obj.default_head_image
         )
 
     @staticmethod
