@@ -1,6 +1,10 @@
 import uuid
 
-from django.core.validators import MaxValueValidator, MinValueValidator
+from django.core.validators import (
+    MaxValueValidator,
+    MinLengthValidator,
+    MinValueValidator,
+)
 from django.db import models
 from django.utils.datetime_safe import date
 
@@ -13,7 +17,9 @@ class Tag(models.Model):
         verbose_name = "Tag"
         verbose_name_plural = "Tags"
 
-    name = models.CharField(max_length=20, unique=True)
+    name = models.CharField(
+        max_length=20, unique=True, validators=[MinLengthValidator(1)]
+    )
 
     def __str__(self):
         return f"<Tag {self.name}>"
@@ -70,7 +76,9 @@ class StudyGroup(TimestampedModel):
     end_date = models.DateField()
 
     # Post Fields
-    head_image = models.ImageField(upload_to="studygroup/head_image", blank=True)
+    head_image = models.ImageField(
+        upload_to="studygroup/head_images/%Y/%m/%d", blank=True
+    )
     title = models.CharField(max_length=64)
     content = models.TextField(max_length=3000)
     deadline = models.DateField()
@@ -78,6 +86,10 @@ class StudyGroup(TimestampedModel):
     # Foreign Keys
     categories = models.ManyToManyField(Category, related_name="study_groups")
     tags = models.ManyToManyField(Tag, related_name="study_groups", blank=True)
+
+    @property
+    def default_head_image(self):
+        return f"https://picsum.photos/seed/{self.uuid}/210/150"
 
     @property
     def leaders(self):
