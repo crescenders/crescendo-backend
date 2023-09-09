@@ -1,6 +1,10 @@
 import uuid
 
-from django.core.validators import MaxValueValidator, MinValueValidator
+from django.core.validators import (
+    MaxValueValidator,
+    MinLengthValidator,
+    MinValueValidator,
+)
 from django.db import models
 from django.utils.datetime_safe import date
 
@@ -13,7 +17,9 @@ class Tag(models.Model):
         verbose_name = "Tag"
         verbose_name_plural = "Tags"
 
-    name = models.CharField(max_length=20, unique=True)
+    name = models.CharField(
+        max_length=20, unique=True, validators=[MinLengthValidator(1)]
+    )
 
     def __str__(self):
         return f"<Tag {self.name}>"
