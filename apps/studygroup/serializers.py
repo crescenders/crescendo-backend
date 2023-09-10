@@ -165,7 +165,7 @@ class StudyGroupListSerializer(serializers.ModelSerializer):
 
     def validate(self, attrs):
         # 이미 종료된 스터디그룹이라면, 수정 불가능
-        if self.uuid and self.instance.is_closed is True:
+        if self.instance.uuid and self.instance.is_closed is True:
             raise serializers.ValidationError(
                 "The studygroup is already closed. You can't update it."
             )
