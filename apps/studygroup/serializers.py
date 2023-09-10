@@ -155,6 +155,22 @@ class StudyGroupListSerializer(serializers.ModelSerializer):
 
         return links
 
+    @staticmethod
+    def validate_start_date(value):
+        if value < date.today():
+            raise serializers.ValidationError(
+                "The studygroup's study start date must be after today."
+            )
+        return value
+
+    @staticmethod
+    def validate(attrs):
+        if not attrs["deadline"] < attrs["start_date"] < attrs["end_date"]:
+            raise serializers.ValidationError(
+                "Each date must be: recruitment deadline < study start date < study end date."
+            )
+        return attrs
+
 
 class StudyGroupDetailSerializer(StudyGroupListSerializer):
     post_content = serializers.CharField(source="content")
