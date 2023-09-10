@@ -163,8 +163,13 @@ class StudyGroupListSerializer(serializers.ModelSerializer):
             )
         return value
 
-    @staticmethod
-    def validate(attrs):
+    def validate(self, attrs):
+        # 이미 종료된 스터디그룹이라면, 수정 불가능
+        if self.uuid and self.instance.is_closed is True:
+            raise serializers.ValidationError(
+                "The studygroup is already closed. You can't update it."
+            )
+        # 날짜 검증
         if not attrs["deadline"] < attrs["start_date"] < attrs["end_date"]:
             raise serializers.ValidationError(
                 "Each date must be: recruitment deadline < study start date < study end date."
