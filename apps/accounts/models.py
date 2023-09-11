@@ -41,7 +41,7 @@ class User(AbstractBaseUser, PermissionsMixin, TimestampedModel):
     is_admin = models.BooleanField(default=False)
 
     def __str__(self):
-        return f"<User {self.email}>"
+        return self.email
 
     def has_perm(self, perm, obj=None):
         return True

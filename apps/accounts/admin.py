@@ -56,7 +56,7 @@ class UserChangeForm(forms.ModelForm):
 class UserAdmin(BaseUserAdmin):
     form = UserChangeForm
     add_form = UserCreationForm
-    readonly_fields = ["uuid", "email"]
+    readonly_fields = ["uuid"]
     list_display = ["email", "last_login", "is_admin", "social_accounts"]
     list_filter = ["is_admin"]
     fieldsets = [

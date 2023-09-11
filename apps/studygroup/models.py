@@ -22,7 +22,7 @@ class Tag(models.Model):
     )
 
     def __str__(self):
-        return f"<Tag {self.name}>"
+        return self.name
 
 
 class Category(models.Model):
@@ -33,7 +33,7 @@ class Category(models.Model):
     name = models.CharField(max_length=20, unique=True)
 
     def __str__(self):
-        return f"<Category {self.name}>"
+        return self.name
 
 
 class StudyGroupMember(models.Model):
@@ -55,7 +55,7 @@ class StudyGroupMember(models.Model):
     )
 
     def __str__(self):
-        return f"<스터디그룹 {self.study_group.name} Member {self.user.username}>"
+        return f"멤버 {self.user.username}"
 
 
 class StudyGroup(TimestampedModel):
@@ -103,18 +103,9 @@ class StudyGroup(TimestampedModel):
     def is_closed(self):
         """
         스터디그룹이 모집이 완료되었는지 여부를 반환합니다.
-        1. 오늘 날짜 > deadline
-        2. 현재 인원 == member_limit
-        3. 현재 인원 < member_limit and 오늘 날짜 > deadline
+        오늘 날짜 > deadline or 현재 인원 == member_limit
         """
-        return (
-            date.today() > self.deadline
-            or self.members.count() == self.member_limit
-            or (
-                self.members.count() < self.member_limit
-                and date.today() > self.deadline
-            )
-        )
+        return date.today() > self.deadline or self.members.count() == self.member_limit
 
     def __str__(self):
-        return f"<StudyGroup {self.name}>"
+        return self.name
