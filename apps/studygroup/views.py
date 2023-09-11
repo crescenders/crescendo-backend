@@ -13,6 +13,7 @@ from rest_framework.response import Response
 from apps.studygroup.filters import StudyGroupFilter
 from apps.studygroup.models import Category, StudyGroup, StudyGroupMember
 from apps.studygroup.pagination import StudyGroupPagination
+from apps.studygroup.permissions import IsLeaderOrReadOnly
 from apps.studygroup.serializers import (
     CategorySerializer,
     StudyGroupDetailSerializer,
@@ -32,7 +33,7 @@ class StudyGroupAPISet(viewsets.ModelViewSet):
     lookup_field = "uuid"
 
     # Permission
-    permission_classes = (IsAuthenticatedOrReadOnly,)
+    permission_classes = (IsLeaderOrReadOnly,)
 
     # Ordering
     ordering_fields = ["created_at", "deadline"]
@@ -84,7 +85,7 @@ class StudyGroupAPISet(viewsets.ModelViewSet):
 
     @extend_schema(summary="특정 스터디그룹을 삭제합니다.")
     def destroy(self, request: Request, *args: Any, **kwargs: Any) -> Response:
-        return super().create(request, *args, **kwargs)
+        return super().destroy(request, *args, **kwargs)
 
 
 @extend_schema(tags=["카테고리 API"])
