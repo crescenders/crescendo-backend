@@ -52,7 +52,7 @@ class LeaderSerializer(serializers.ModelSerializer):
 
 class StudyGroupListSerializer(serializers.ModelSerializer):
     # 헤더 이미지, 제목, 내용
-    head_image = serializers.SerializerMethodField()
+    head_image = serializers.ImageField(required=False)
     post_title = serializers.CharField(source="title")
     post_content = serializers.CharField(source="content", write_only=True)
 
@@ -108,7 +108,7 @@ class StudyGroupListSerializer(serializers.ModelSerializer):
     @extend_schema_field(
         {
             "example": "https://picsum.photos/seed/uuid/210/150",
-        }
+        },
     )
     def get_head_image(self, obj):
         return (
@@ -163,9 +163,15 @@ class StudyGroupListSerializer(serializers.ModelSerializer):
             )
         return value
 
+    def to_representation(self, instance):
+        ret = super().to_representation(instance)
+        if not ret["head_image"]:
+            ret["head_image"] = self.get_head_image(instance)
+        return ret
+
     def validate(self, attrs):
         # 이미 종료된 스터디그룹이라면, 수정 불가능
-        if self.instance.uuid and self.instance.is_closed is True:
+        if self.instance and self.instance.uuid and self.instance.is_closed is True:
             raise serializers.ValidationError(
                 "The studygroup is already closed. You can't update it."
             )
