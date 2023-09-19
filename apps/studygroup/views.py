@@ -35,15 +35,9 @@ class StudyGroupAPISet(viewsets.ModelViewSet):
     # Permission
     permission_classes = (IsLeaderOrReadOnly,)
 
-    # Ordering
-    ordering_fields = ["created_at", "deadline"]
-
     # Filtering
     queryset = StudyGroup.objects.all()
-    filter_backends = (
-        DjangoFilterBackend,
-        OrderingFilter,
-    )
+    filter_backends = (DjangoFilterBackend,)
     filterset_class = StudyGroupFilter
 
     # Pagination

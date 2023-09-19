@@ -13,7 +13,10 @@ class CategoryAdmin(admin.ModelAdmin):
 
 @admin.register(models.Tag)
 class TagAdmin(admin.ModelAdmin):
-    list_display = ("name",)
+    list_display = (
+        "id",
+        "name",
+    )
 
 
 class StudyGroupMemberInline(admin.TabularInline):
