@@ -143,16 +143,14 @@ class StudyGroupListSerializer(serializers.ModelSerializer):
     )
     def get__links(self, obj):
         request = self.context["request"]
-        links = (
-            [
-                {
-                    "rel": "self",
-                    "href": reverse(
-                        "studygroup_detail", kwargs={"uuid": obj.uuid}, request=request
-                    ),
-                },
-            ],
-        )
+        links = [
+            {
+                "rel": "self",
+                "href": reverse(
+                    "studygroup_detail", kwargs={"uuid": obj.uuid}, request=request
+                ),
+            },
+        ]
 
         return links
 
