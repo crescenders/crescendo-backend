@@ -1,5 +1,4 @@
 from django.utils.datetime_safe import date
-from drf_spectacular.types import OpenApiTypes
 from drf_spectacular.utils import extend_schema_field
 from rest_framework import serializers
 from rest_framework.reverse import reverse
@@ -15,12 +14,14 @@ class CategorySerializer(serializers.ModelSerializer):
 
 
 class LeaderSerializer(serializers.ModelSerializer):
+    uuid = serializers.UUIDField(source="user.uuid")
     username = serializers.CharField(source="user.username")
     _links = serializers.SerializerMethodField()
 
     class Meta:
         model = models.StudyGroupMember
         fields = [
+            "uuid",
             "username",
             "_links",
         ]
@@ -74,7 +75,10 @@ class StudyGroupListSerializer(serializers.ModelSerializer):
 
     # Category, Tag
     categories = serializers.SlugRelatedField(
-        many=True, queryset=models.Category.objects.all(), slug_field="name"
+        many=True,
+        required=True,
+        queryset=models.Category.objects.all(),
+        slug_field="name",
     )
     tags = CreatableSlugRelatedField(
         many=True, queryset=models.Tag.objects.all(), slug_field="name"
@@ -142,16 +146,14 @@ class StudyGroupListSerializer(serializers.ModelSerializer):
     )
     def get__links(self, obj):
         request = self.context["request"]
-        links = (
-            [
-                {
-                    "rel": "self",
-                    "href": reverse(
-                        "studygroup_detail", kwargs={"uuid": obj.uuid}, request=request
-                    ),
-                },
-            ],
-        )
+        links = [
+            {
+                "rel": "self",
+                "href": reverse(
+                    "studygroup_detail", kwargs={"uuid": obj.uuid}, request=request
+                ),
+            },
+        ]
 
         return links
 
@@ -160,6 +162,14 @@ class StudyGroupListSerializer(serializers.ModelSerializer):
         if value < date.today():
             raise serializers.ValidationError(
                 "The studygroup's study start date must be after today."
+            )
+        return value
+
+    @staticmethod
+    def validate_categories(value):
+        if not value:
+            raise serializers.ValidationError(
+                'You must specify at least one "categories" field.'
             )
         return value
 

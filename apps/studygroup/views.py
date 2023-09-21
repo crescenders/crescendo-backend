@@ -4,9 +4,8 @@ from django.db import transaction
 from django_filters.rest_framework import DjangoFilterBackend
 from drf_spectacular.utils import extend_schema
 from rest_framework import generics, viewsets
-from rest_framework.filters import OrderingFilter, SearchFilter
 from rest_framework.parsers import FormParser, MultiPartParser
-from rest_framework.permissions import AllowAny, IsAuthenticatedOrReadOnly
+from rest_framework.permissions import AllowAny
 from rest_framework.request import Request
 from rest_framework.response import Response
 
@@ -14,11 +13,9 @@ from apps.studygroup.filters import StudyGroupFilter
 from apps.studygroup.models import Category, StudyGroup, StudyGroupMember
 from apps.studygroup.pagination import StudyGroupPagination
 from apps.studygroup.permissions import IsLeaderOrReadOnly
-from apps.studygroup.serializers import (
-    CategorySerializer,
-    StudyGroupDetailSerializer,
-    StudyGroupListSerializer,
-)
+from apps.studygroup.serializers import (CategorySerializer,
+                                         StudyGroupDetailSerializer,
+                                         StudyGroupListSerializer)
 
 
 @extend_schema(tags=["스터디그룹 API"])
@@ -60,6 +57,16 @@ class StudyGroupAPISet(viewsets.ModelViewSet):
             user=self.request.user, study_group=serializer.instance, is_leader=True
         )
         serializer.instance.members.add(initial_member)
+
+    @transaction.atomic
+    def perform_update(self, serializer):
+        """
+        formdata 의 head_image 가 빈 값이면, 이미지를 삭제하고 빈 값으로 저장합니다.
+        """
+        if self.request.data.get("head_image") == "":
+            serializer.instance.head_image.delete()
+            serializer.instance.head_image = None
+        super().perform_update(serializer)
 
     @extend_schema(summary="스터디그룹 홍보글 목록을 조회합니다.")
     def list(self, request: Request, *args: Any, **kwargs: Any) -> Response:
