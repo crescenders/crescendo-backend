@@ -61,6 +61,16 @@ class StudyGroupAPISet(viewsets.ModelViewSet):
         )
         serializer.instance.members.add(initial_member)
 
+    @transaction.atomic
+    def perform_update(self, serializer):
+        """
+        formdata 의 head_image 가 빈 값이면, 이미지를 삭제하고 빈 값으로 저장합니다.
+        """
+        if self.request.data.get("head_image") == "":
+            serializer.instance.head_image.delete()
+            serializer.instance.head_image = None
+        super().perform_update(serializer)
+
     @extend_schema(summary="스터디그룹 홍보글 목록을 조회합니다.")
     def list(self, request: Request, *args: Any, **kwargs: Any) -> Response:
         return super().list(request, *args, **kwargs)
