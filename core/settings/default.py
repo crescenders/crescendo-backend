@@ -201,6 +201,7 @@ REST_FRAMEWORK = {
         "dj_rest_auth.jwt_auth.JWTAuthentication",
         "rest_framework.authentication.SessionAuthentication",
     ),
+    "PAGE_SIZE": 12,
     "DEFAULT_PERMISSION_CLASSES": ("rest_framework.permissions.IsAuthenticated",),
     "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
     "DEFAULT_FILTER_BACKENDS": ("django_filters.rest_framework.DjangoFilterBackend",),
