@@ -75,7 +75,10 @@ class StudyGroupListSerializer(serializers.ModelSerializer):
 
     # Category, Tag
     categories = serializers.SlugRelatedField(
-        many=True, queryset=models.Category.objects.all(), slug_field="name"
+        many=True,
+        required=True,
+        queryset=models.Category.objects.all(),
+        slug_field="name",
     )
     tags = CreatableSlugRelatedField(
         many=True, queryset=models.Tag.objects.all(), slug_field="name"
@@ -159,6 +162,14 @@ class StudyGroupListSerializer(serializers.ModelSerializer):
         if value < date.today():
             raise serializers.ValidationError(
                 "The studygroup's study start date must be after today."
+            )
+        return value
+
+    @staticmethod
+    def validate_categories(value):
+        if not value:
+            raise serializers.ValidationError(
+                'You must specify at least one "categories" field.'
             )
         return value
 
