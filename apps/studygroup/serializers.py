@@ -1,5 +1,4 @@
 from django.utils.datetime_safe import date
-from drf_spectacular.types import OpenApiTypes
 from drf_spectacular.utils import extend_schema_field
 from rest_framework import serializers
 from rest_framework.reverse import reverse
@@ -15,12 +14,14 @@ class CategorySerializer(serializers.ModelSerializer):
 
 
 class LeaderSerializer(serializers.ModelSerializer):
+    uuid = serializers.UUIDField(source="user.uuid")
     username = serializers.CharField(source="user.username")
     _links = serializers.SerializerMethodField()
 
     class Meta:
         model = models.StudyGroupMember
         fields = [
+            "uuid",
             "username",
             "_links",
         ]
