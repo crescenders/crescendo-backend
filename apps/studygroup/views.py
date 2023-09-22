@@ -13,9 +13,11 @@ from apps.studygroup.filters import StudyGroupFilter
 from apps.studygroup.models import Category, StudyGroup, StudyGroupMember
 from apps.studygroup.pagination import StudyGroupPagination
 from apps.studygroup.permissions import IsLeaderOrReadOnly
-from apps.studygroup.serializers import (CategorySerializer,
-                                         StudyGroupDetailSerializer,
-                                         StudyGroupListSerializer)
+from apps.studygroup.serializers import (
+    CategorySerializer,
+    StudyGroupDetailSerializer,
+    StudyGroupListSerializer,
+)
 
 
 @extend_schema(tags=["스터디그룹 API"])
@@ -33,12 +35,17 @@ class StudyGroupAPISet(viewsets.ModelViewSet):
     permission_classes = (IsLeaderOrReadOnly,)
 
     # Filtering
-    queryset = StudyGroup.objects.all()
     filter_backends = (DjangoFilterBackend,)
     filterset_class = StudyGroupFilter
 
     # Pagination
     pagination_class = StudyGroupPagination
+
+    def get_queryset(self):
+        queryset = StudyGroup.objects.all()
+        if self.action in ["list"]:
+            return queryset.defer("content")
+        return queryset
 
     def get_serializer_class(self):
         if self.action in ["list", "create"]:
