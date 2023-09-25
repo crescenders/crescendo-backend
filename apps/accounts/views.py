@@ -1,7 +1,6 @@
 from allauth.socialaccount.providers.google.views import GoogleOAuth2Adapter
 from allauth.socialaccount.providers.kakao.views import KakaoOAuth2Adapter
-from allauth.socialaccount.providers.oauth2.client import (OAuth2Client,
-                                                           OAuth2Error)
+from allauth.socialaccount.providers.oauth2.client import OAuth2Client, OAuth2Error
 from dj_rest_auth.app_settings import api_settings
 from dj_rest_auth.registration.views import SocialLoginView
 from drf_spectacular.utils import extend_schema
@@ -9,12 +8,11 @@ from rest_framework import generics, status
 from rest_framework.generics import get_object_or_404
 from rest_framework.permissions import AllowAny
 from rest_framework_simplejwt.exceptions import InvalidToken
-from rest_framework_simplejwt.views import \
-    TokenRefreshView as _TokenRefreshView
+from rest_framework_simplejwt.views import TokenRefreshView as _TokenRefreshView
 
 from apps.accounts.models import User
 from apps.accounts.serializers import GoogleLoginSerializer, ProfileSerializer
-from core.exceptions.serailizers import InvalidTokenExceptionSerializer
+from common.exceptions.serailizers import InvalidTokenExceptionSerializer
 
 
 class TokenRefreshAPI(_TokenRefreshView):

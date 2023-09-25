@@ -4,7 +4,7 @@ from rest_framework import serializers
 from rest_framework.reverse import reverse
 
 from apps.studygroup import models
-from core.utils.serializers import CreatableSlugRelatedField
+from common.utils.serializers import CreatableSlugRelatedField
 
 
 class CategorySerializer(serializers.ModelSerializer):

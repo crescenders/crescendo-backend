@@ -4,7 +4,7 @@ from django.contrib.auth.base_user import AbstractBaseUser, BaseUserManager
 from django.contrib.auth.models import PermissionsMixin
 from django.db import models
 
-from core.utils.models import TimestampedModel
+from common.utils.models import TimestampedModel
 
 
 class UserManager(BaseUserManager):
