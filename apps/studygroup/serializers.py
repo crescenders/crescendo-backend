@@ -65,10 +65,8 @@ class StudyGroupListSerializer(serializers.ModelSerializer):
     start_date = serializers.DateField(write_only=True)
     end_date = serializers.DateField(write_only=True)
     deadline = serializers.DateField(write_only=True)
-    until_deadline = serializers.SerializerMethodField(read_only=True)
 
-    # 마감 여부, 현재 인원
-    is_closed = serializers.SerializerMethodField()
+    # 현재 인원
     current_member_count = serializers.IntegerField(
         source="members.count", read_only=True
     )
@@ -121,18 +119,6 @@ class StudyGroupListSerializer(serializers.ModelSerializer):
             is not None
             else obj.default_head_image
         )
-
-    @staticmethod
-    def get_leaders(obj):
-        return [leader.user.username for leader in obj.leaders]
-
-    @staticmethod
-    def get_until_deadline(obj) -> int:
-        return (obj.deadline - date.today()).days
-
-    @staticmethod
-    def get_is_closed(obj) -> bool:
-        return obj.is_closed
 
     @extend_schema_field(
         {

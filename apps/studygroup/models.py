@@ -91,15 +91,31 @@ class StudyGroup(TimestampedModel):
 
     @property
     def default_head_image(self):
+        """
+        스터디그룹의 기본 헤더 이미지를 반환합니다.
+        """
         return f"https://picsum.photos/seed/{self.uuid}/210/150"
 
     @property
     def leaders(self):
+        """
+        스터디그룹장들을 반환합니다.
+        """
         return self.members.filter(is_leader=True)
 
     @property
     def current_member_count(self):
+        """
+        현재 스터디그룹의 인원 수를 반환합니다.
+        """
         return self.members.count()
+
+    @property
+    def until_deadline(self):
+        """
+        모집 종료일까지 남은 날짜를 반환합니다.
+        """
+        return (self.deadline - date.today()).days
 
     @property
     def is_closed(self):
