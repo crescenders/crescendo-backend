@@ -9,7 +9,7 @@ from rest_framework.permissions import AllowAny
 from rest_framework.request import Request
 from rest_framework.response import Response
 
-from apps.studygroup.filters import StudyGroupFilter
+from apps.studygroup.filters import StudyGroupListFilter
 from apps.studygroup.models import Category, StudyGroup, StudyGroupMember
 from apps.studygroup.pagination import StudyGroupPagination
 from apps.studygroup.permissions import IsLeaderOrReadOnly
@@ -36,7 +36,7 @@ class StudyGroupAPISet(viewsets.ModelViewSet):
 
     # Filtering
     filter_backends = (DjangoFilterBackend,)
-    filterset_class = StudyGroupFilter
+    filterset_class = StudyGroupListFilter
 
     # Pagination
     pagination_class = StudyGroupPagination
@@ -61,7 +61,10 @@ class StudyGroupAPISet(viewsets.ModelViewSet):
         """
         super().perform_create(serializer)
         initial_member = StudyGroupMember.objects.create(
-            user=self.request.user, study_group=serializer.instance, is_leader=True
+            user=self.request.user,
+            study_group=serializer.instance,
+            is_leader=True,
+            is_approved=True,
         )
         serializer.instance.members.add(initial_member)
 
