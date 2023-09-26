@@ -2,7 +2,34 @@ from django.db.models import Count, F, Q
 from django.utils.datetime_safe import date
 from django_filters import rest_framework as filters
 
-from apps.studygroup.models import Category, StudyGroup, Tag
+from apps.studygroup.models import Category, StudyGroup, StudyGroupMember, Tag
+
+
+class MyStudyGroupFilter(filters.FilterSet):
+    filter = filters.TypedChoiceFilter(
+        label="filter",
+        choices=(
+            ("current", "현재 사용자가 가입해 활동 중이거나, 승인을 기다리고 있는 스터디그룹들 (개발 중, 스펙 바뀔 수 있음)"),
+            ("requested", "현재 사용자가 가입 요청한 스터디그룹들 (개발 중, 스펙 바뀔 수 있음)"),
+            ("as_leader", "현재 사용자가 리더인 스터디그룹들"),
+        ),
+        method="filter_as_leader",
+        help_text="검색 조건에 따라 나와 관련된 스터디그룹을 필터링합니다.",
+    )
+
+    def filter_as_leader(self, queryset, name, value):
+        """
+        내가 리더인 스터디그룹을 필터링합니다.
+        """
+        members_as_leader = StudyGroupMember.objects.filter(
+            user=self.request.user, is_leader=True
+        )
+        queryset = StudyGroup.objects.filter(members__in=members_as_leader)
+        return queryset
+
+    class Meta:
+        model = StudyGroup
+        fields = []
 
 
 class StudyGroupListFilter(filters.FilterSet):

@@ -1,17 +1,22 @@
 from allauth.socialaccount.providers.google.views import GoogleOAuth2Adapter
-from allauth.socialaccount.providers.kakao.views import KakaoOAuth2Adapter
-from allauth.socialaccount.providers.oauth2.client import OAuth2Client, OAuth2Error
+from allauth.socialaccount.providers.oauth2.client import OAuth2Error
 from dj_rest_auth.app_settings import api_settings
 from dj_rest_auth.registration.views import SocialLoginView
+from django_filters.rest_framework import DjangoFilterBackend
 from drf_spectacular.utils import extend_schema
-from rest_framework import generics, status
+from rest_framework import generics, mixins, status
 from rest_framework.generics import get_object_or_404
 from rest_framework.permissions import AllowAny
 from rest_framework_simplejwt.exceptions import InvalidToken
-from rest_framework_simplejwt.views import TokenRefreshView as _TokenRefreshView
+from rest_framework_simplejwt.views import \
+    TokenRefreshView as _TokenRefreshView
 
 from apps.accounts.models import User
 from apps.accounts.serializers import GoogleLoginSerializer, ProfileSerializer
+from apps.studygroup.filters import MyStudyGroupFilter
+from apps.studygroup.models import StudyGroup
+from apps.studygroup.pagination import StudyGroupPagination
+from apps.studygroup.serializers import StudyGroupListSerializer
 from common.exceptions.serailizers import InvalidTokenExceptionSerializer
 
 
@@ -97,6 +102,32 @@ class MyProfileAPI(generics.RetrieveUpdateDestroyAPIView):
     @extend_schema(summary="로그인한 사용자를 탈퇴 처리합니다.")
     def delete(self, request, *args, **kwargs):
         return super().delete(request, *args, **kwargs)
+
+
+@extend_schema(
+    tags=["사용자 정보 API"],
+)
+class MyStudyAPI(mixins.ListModelMixin, generics.GenericAPIView):
+    """
+    로그인한 사용자와 관련된 스터디 그룹을 조회합니다.
+    """
+
+    # serializer
+    serializer_class = StudyGroupListSerializer
+
+    # pagination
+    pagination_class = StudyGroupPagination
+
+    # queryset
+    queryset = StudyGroup.objects.all()
+
+    # filtering
+    filter_backends = (DjangoFilterBackend,)
+    filterset_class = MyStudyGroupFilter
+
+    @extend_schema(summary="로그인한 사용자가 가입한 스터디 그룹을 조회합니다.")
+    def get(self, request, *args, **kwargs):
+        return self.list(request, *args, **kwargs)
 
 
 @extend_schema(
