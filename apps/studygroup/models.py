@@ -6,6 +6,7 @@ from django.core.validators import (
     MinValueValidator,
 )
 from django.db import models
+from django.db.models import QuerySet
 from django.utils.datetime_safe import date
 
 from apps.accounts.models import User
@@ -90,35 +91,35 @@ class StudyGroup(TimestampedModel):
     tags = models.ManyToManyField(Tag, related_name="study_groups", blank=True)
 
     @property
-    def default_head_image(self):
+    def default_head_image(self) -> str:
         """
         스터디그룹의 기본 헤더 이미지를 반환합니다.
         """
         return f"https://picsum.photos/seed/{self.uuid}/210/150"
 
     @property
-    def leaders(self):
+    def leaders(self) -> QuerySet[StudyGroupMember]:
         """
         스터디그룹장들을 반환합니다.
         """
         return self.members.filter(is_leader=True)
 
     @property
-    def current_member_count(self):
+    def current_member_count(self) -> int:
         """
         현재 스터디그룹의 인원 수를 반환합니다.
         """
         return self.members.count()
 
     @property
-    def until_deadline(self):
+    def until_deadline(self) -> int:
         """
         모집 종료일까지 남은 날짜를 반환합니다.
         """
         return (self.deadline - date.today()).days
 
     @property
-    def is_closed(self):
+    def is_closed(self) -> bool:
         """
         스터디그룹이 모집이 완료되었는지 여부를 반환합니다.
         오늘 날짜 > deadline or 현재 인원 == member_limit
