@@ -69,27 +69,6 @@ class GoogleLoginAPI(SocialLoginView):
             raise InvalidToken
 
 
-class KakaoLoginAPI(SocialLoginView):
-    """
-    Kakao Login API 입니다. 현재 개발 중입니다.
-    """
-
-    adapter_class = KakaoOAuth2Adapter
-    callback_url = "http://localhost:3000"
-    client_class = OAuth2Client
-
-    @extend_schema(
-        tags=["로그인 API"],
-        summary="Kakao Login API 입니다. 현재 개발 중입니다.",
-        deprecated=True,
-        responses={
-            status.HTTP_200_OK: api_settings.JWT_SERIALIZER,
-        },
-    )
-    def post(self, request, *args, **kwargs):
-        return super().post(request, *args, **kwargs)
-
-
 @extend_schema(
     tags=["사용자 정보 API"],
 )
