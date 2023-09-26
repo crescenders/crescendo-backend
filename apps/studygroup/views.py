@@ -9,7 +9,7 @@ from rest_framework.permissions import AllowAny
 from rest_framework.request import Request
 from rest_framework.response import Response
 
-from apps.studygroup.filters import StudyGroupFilter
+from apps.studygroup.filters import StudyGroupListFilter
 from apps.studygroup.models import Category, StudyGroup, StudyGroupMember
 from apps.studygroup.pagination import StudyGroupPagination
 from apps.studygroup.permissions import IsLeaderOrReadOnly
@@ -36,7 +36,7 @@ class StudyGroupAPISet(viewsets.ModelViewSet):
 
     # Filtering
     filter_backends = (DjangoFilterBackend,)
-    filterset_class = StudyGroupFilter
+    filterset_class = StudyGroupListFilter
 
     # Pagination
     pagination_class = StudyGroupPagination

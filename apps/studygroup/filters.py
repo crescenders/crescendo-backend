@@ -5,7 +5,7 @@ from django_filters import rest_framework as filters
 from apps.studygroup.models import Category, StudyGroup, Tag
 
 
-class StudyGroupFilter(filters.FilterSet):
+class StudyGroupListFilter(filters.FilterSet):
     ordering = filters.OrderingFilter(
         fields=(
             ("created_at", "created_at"),
