@@ -17,7 +17,7 @@ class MyStudyGroupFilter(filters.FilterSet):
         help_text="검색 조건에 따라 나와 관련된 스터디그룹을 필터링합니다.",
     )
 
-    def filter_as_leader(self, queryset, name, value):
+    def filter_as_leader(self, queryset, name, value: str):
         """
         내가 리더인 스터디그룹을 필터링합니다.
         """
