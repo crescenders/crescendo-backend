@@ -36,7 +36,7 @@ class Category(models.Model):
         return self.name
 
 
-class StudyGroupMember(models.Model):
+class StudyGroupMember(TimestampedModel):
     class Meta:
         verbose_name = "StudyGroup Member"
         verbose_name_plural = "StudyGroup Members"
@@ -50,6 +50,8 @@ class StudyGroupMember(models.Model):
         User, on_delete=models.CASCADE, related_name="study_group_member"
     )
     is_leader = models.BooleanField(default=False)
+    is_approved = models.BooleanField(default=False)
+    request_message = models.CharField(max_length=200, blank=True)
     study_group = models.ForeignKey(
         "StudyGroup", on_delete=models.CASCADE, related_name="members"
     )
