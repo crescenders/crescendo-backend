@@ -61,7 +61,10 @@ class StudyGroupAPISet(viewsets.ModelViewSet):
         """
         super().perform_create(serializer)
         initial_member = StudyGroupMember.objects.create(
-            user=self.request.user, study_group=serializer.instance, is_leader=True
+            user=self.request.user,
+            study_group=serializer.instance,
+            is_leader=True,
+            is_approved=True,
         )
         serializer.instance.members.add(initial_member)
 
