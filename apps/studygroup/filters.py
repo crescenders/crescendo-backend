@@ -1,4 +1,4 @@
-from django.db.models import Count, F, Q
+from django.db.models import Count, F, Max, Q
 from django.utils.datetime_safe import date
 from django_filters import rest_framework as filters
 
@@ -55,7 +55,7 @@ class StudyGroupListFilter(filters.FilterSet):
         method="filter_is_closed",
         help_text="모집 마감 여부에 따라 스터디그룹을 보여줍니다. 값이 지정되지 않을 시, 모집 마감 여부에 상관없이 모든 스터디그룹을 보여줍니다.",
     )
-    random = filters.NumberFilter(
+    random = filters.BooleanFilter(
         label="random",
         method="filter_random",
         help_text="랜덤 갯수의 스터디그룹을 보여줍니다.",
@@ -93,10 +93,12 @@ class StudyGroupListFilter(filters.FilterSet):
     @staticmethod
     def filter_random(queryset, name, value):
         """
-        숫자에 따라 랜덤으로 스터디그룹을 필터링합니다.
+        True일 경우 랜덤으로 스터디그룹을 필터링합니다.
         """
-        random_queryset = queryset.order_by("?")[:value]
-        return random_queryset
+        if value is True:
+            return queryset.order_by("?")
+        else:
+            return queryset
 
     class Meta:
         model = StudyGroup
