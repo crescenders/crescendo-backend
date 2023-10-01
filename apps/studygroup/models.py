@@ -10,7 +10,7 @@ from django.db.models import QuerySet
 from django.utils.datetime_safe import date
 
 from apps.accounts.models import User
-from common.utils.models import TimestampedModel
+from apps.core.models import TimestampedModel
 
 
 class Tag(models.Model):

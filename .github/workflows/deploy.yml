@@ -32,6 +32,7 @@ jobs:
         run: |
           poetry run coverage run --source='.' manage.py test
           coverage_result=$(poetry run coverage report -m)
+          echo "$coverage_result" > coverage_status.md
           coverage_percent=$(echo "$coverage_result" | grep -oP '\d+\%')
           echo "Coverage: $coverage_percent"
           if [ "${coverage_percent%\%}" -lt 70 ]; then
@@ -97,4 +98,9 @@ jobs:
         with:
           tag: ${{ steps.tag_version.outputs.new_tag }}
           name: Release ${{ steps.tag_version.outputs.new_tag }}
-          body: ${{ steps.tag_version.outputs.changelog }}
+          body: |
+            ${{ steps.tag_version.outputs.changelog }}
+            ### Coverage Status
+            <pre>
+              $(cat coverage_status.md)
+            </pre>
