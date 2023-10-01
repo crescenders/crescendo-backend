@@ -1,5 +1,8 @@
 .github
 .gitignore
+.dockerignore
+.coverage
+media
 .env
 .git
 nginx.conf
