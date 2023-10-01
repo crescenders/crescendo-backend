@@ -1,7 +1,5 @@
 from django.contrib import admin
 from django.utils.html import format_html
-from django.utils.safestring import mark_safe
-from nh3 import clean_text
 
 from apps.studygroup import models
 

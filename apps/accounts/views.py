@@ -8,8 +8,7 @@ from rest_framework import generics, mixins, status
 from rest_framework.generics import get_object_or_404
 from rest_framework.permissions import AllowAny
 from rest_framework_simplejwt.exceptions import InvalidToken
-from rest_framework_simplejwt.views import \
-    TokenRefreshView as _TokenRefreshView
+from rest_framework_simplejwt.views import TokenRefreshView as _TokenRefreshView
 
 from apps.accounts.models import User
 from apps.accounts.serializers import GoogleLoginSerializer, ProfileSerializer
@@ -65,7 +64,9 @@ class GoogleLoginAPI(SocialLoginView):
             status.HTTP_200_OK: api_settings.JWT_SERIALIZER,
             status.HTTP_401_UNAUTHORIZED: InvalidTokenExceptionSerializer,
         },
-        external_docs="https://developers.google.com/identity/gsi/web/guides/overview?hl=ko",
+        external_docs=(
+            "https://developers.google.com/identity/gsi/web/guides/overview?hl=ko"
+        ),
     )
     def post(self, request, *args, **kwargs):
         try:

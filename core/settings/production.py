@@ -1,6 +1,4 @@
-import os
-
-from .default import *
+from .default import *  # noqa
 
 CSRF_TRUSTED_ORIGINS = [
     f"https://{os.environ['API_SERVER_DNS']}",

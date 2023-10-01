@@ -1,7 +1,6 @@
 from django.utils.datetime_safe import date
 from drf_spectacular.utils import extend_schema_field
 from rest_framework import serializers
-from rest_framework.reverse import reverse
 
 from apps.studygroup import models
 from common.utils.serializers import CreatableSlugRelatedField
@@ -121,7 +120,8 @@ class StudyGroupListSerializer(serializers.ModelSerializer):
         # 날짜 검증
         if not attrs["deadline"] < attrs["start_date"] < attrs["end_date"]:
             raise serializers.ValidationError(
-                "Each date must be: recruitment deadline < study start date < study end date."
+                "Each date must be: recruitment deadline < study start date < study end"
+                " date."
             )
         return attrs
 

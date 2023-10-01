@@ -1,7 +1,5 @@
 from dj_rest_auth.registration.serializers import SocialLoginSerializer
-from drf_spectacular.utils import extend_schema_field
 from rest_framework import serializers
-from rest_framework.reverse import reverse
 
 from apps.accounts.models import User
 
