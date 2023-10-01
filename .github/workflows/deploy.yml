@@ -6,6 +6,34 @@ on:
     types:
       - closed
 jobs:
+  Pre_Build_Steps:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'  # Replace with your desired Python version
+      - name: Install Poetry
+        run: |
+          curl -sSL https://install.python-poetry.org | python3 -
+          source $HOME/.poetry/env
+          poetry --version
+      - name: Install project dependencies
+        run: |
+          poetry install
+          poetry run flake8
+      - name: Run Django tests with coverage
+        run: |
+          poetry run coverage run --source='.' manage.py test
+          coverage_result=$(poetry run coverage report -m)
+          coverage_percent=$(echo "$coverage_result" | grep -oP '\d+\%')
+          echo "Coverage: $coverage_percent"
+          if [ "${coverage_percent%\%}" -lt 70 ]; then
+            echo "Test coverage is less than 70%."
+            exit 1
+          fi
   Deploy_Docker_image_to_DockerHub:
     runs-on: ubuntu-latest
     steps:
@@ -40,9 +68,9 @@ jobs:
           script: |
             cd app
             ./redeploy.sh
-  setup-build-deploy:
+  Release_to_GitHub:
     needs: Deploy_to_Oracle_Cloud_Infrastructure
-    name: Setup, Build, and Deploy
+    name: Release_to_GitHub
     runs-on: ubuntu-latest
     permissions:
       packages: write
