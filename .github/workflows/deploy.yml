@@ -18,7 +18,7 @@ jobs:
       - name: Install Poetry
         run: |
           curl -sSL https://install.python-poetry.org | python3 -
-          source $HOME/.poetry/env
+          export PATH=$HOME/.local/bin:$PATH  # Add Poetry bin directory to PATH
           poetry --version
       - name: Install project dependencies
         run: |
