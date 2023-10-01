@@ -99,7 +99,6 @@ jobs:
           github_token: ${{ secrets.ACTION_TOKEN }}
       - name: Read coverage_status.md
         id: read_coverage
-        uses: actions/checkout@v3
         run: |
           coverage_status=$(cat coverage_status.md)
           echo "::set-output name=coverage_status::$coverage_status"
