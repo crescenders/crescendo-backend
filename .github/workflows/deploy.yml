@@ -30,14 +30,10 @@ jobs:
           GOOGLE_CLIENT_ID: example_google_client_id
           GOOGLE_SECRET: example_google_client_secret
         run: |
-          poetry run coverage run --source='.' manage.py test # Test 실행.
+          # Run Django tests with coverage
+          poetry run coverage run --source='.' manage.py test
+          # Check test coverage, exit with error if less than 70%
           coverage_result=$(poetry run coverage report -m)
-          mkdir -p docs
-          echo "$coverage_result" > docs/coverage_status.md
-          git add -A
-          git config --global user.email "twicegoddessana1229@gmail.com"
-          git config --global user.name "tgoddessana"
-          git commit -am "auto-update coverage.md" # 커밋 메시지
           coverage_percent=$(echo "$coverage_result" | grep -oP '\d+\%')
           if [ "${coverage_percent%\%}" -lt 70 ]; then
             echo "Test coverage is less than 70%."
@@ -92,16 +88,23 @@ jobs:
       contents: write
       id-token: write
     steps:
+      - name: Read coverage_status.md
+        id: read_coverage
+        env:
+          SECRET_KEY: example_secret_key
+          GOOGLE_CLIENT_ID: example_google_client_id
+          GOOGLE_SECRET: example_google_client_secret
+        run: |
+          poetry run coverage run --source='.' manage.py test
+          coverage_result=$(poetry run coverage report -m)
+          echo "$coverage_result" > coverage_status.md
+          coverage_status=$(cat coverage_status.md)
+          echo "::set-output name=coverage_status::$coverage_status"
       - name: Bump version and push tag
         id: tag_version
         uses: mathieudutour/github-tag-action@v6.1
         with:
           github_token: ${{ secrets.ACTION_TOKEN }}
-      - name: Read coverage_status.md
-        id: read_coverage
-        run: |
-          coverage_status=$(cat docs/coverage_status.md)
-          echo "::set-output name=coverage_status::$coverage_status"
       - name: Create a GitHub release
         uses: ncipollo/release-action@v1
         with:
