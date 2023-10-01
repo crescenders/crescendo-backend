@@ -30,13 +30,18 @@ jobs:
           GOOGLE_CLIENT_ID: example_google_client_id
           GOOGLE_SECRET: example_google_client_secret
         run: |
-          poetry run coverage run --source='.' manage.py test --settings core.settings.development
+          poetry run coverage run --source='.' manage.py test
           coverage_result=$(poetry run coverage report -m)
           coverage_percent=$(echo "$coverage_result" | grep -oP '\d+\%')
           echo "Coverage: $coverage_percent"
           if [ "${coverage_percent%\%}" -lt 70 ]; then
             echo "Test coverage is less than 70%."
             exit 1
+          fi
+          exit_code=$?
+          if [ $exit_code -ne 0 ]; then
+            echo "Django tests failed."
+            exit $exit_code
           fi
   Deploy_Docker_image_to_DockerHub:
     needs: Pre_Build_Steps
