@@ -35,6 +35,7 @@ jobs:
             exit 1
           fi
   Deploy_Docker_image_to_DockerHub:
+    needs: Pre_Build_Steps
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
