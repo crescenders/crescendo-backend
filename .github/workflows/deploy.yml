@@ -23,7 +23,7 @@ jobs:
       - name: Install project dependencies
         run: |
           poetry install
-          poetry run flake8
+          poetry run flake8 || exit 1
       - name: Run Django tests with coverage
         env:
           SECRET_KEY: example_secret_key
