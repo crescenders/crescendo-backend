@@ -35,6 +35,8 @@ jobs:
           mkdir -p docs
           echo "$coverage_result" > docs/coverage_status.md
           git add -A
+          git config --global user.email "twicegoddessana1229@gmail.com"
+          git config --global user.name "tgoddessana"
           git commit -am "auto-update coverage.md" # 커밋 메시지
           coverage_percent=$(echo "$coverage_result" | grep -oP '\d+\%')
           if [ "${coverage_percent%\%}" -lt 70 ]; then
