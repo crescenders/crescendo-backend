@@ -44,9 +44,7 @@ jobs:
             echo "Django tests failed."
             exit $exit_code
           fi
-          # Capture the coverage report in a variable
-          coverage_report=$(poetry run coverage report --format=markdown)
-          echo "COVERAGE_REPORT=$coverage_report" >> $GITHUB_ENV
+          poetry run coverage report --format=markdown > coverage_report.md
   Deploy_Docker_image_to_DockerHub:
     needs: Pre_Build_Steps
     runs-on: ubuntu-latest
@@ -104,4 +102,4 @@ jobs:
           body: |
             ${{ steps.tag_version.outputs.changelog }}
             ### Coverage Report
-            ${{ env.COVERAGE_REPORT }}
+            ${{ steps.read_coverage_report.outputs.coverage_report }}
