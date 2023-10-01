@@ -30,11 +30,13 @@ jobs:
           GOOGLE_CLIENT_ID: example_google_client_id
           GOOGLE_SECRET: example_google_client_secret
         run: |
-          poetry run coverage run --source='.' manage.py test
+          poetry run coverage run --source='.' manage.py test # Test 실행.
           coverage_result=$(poetry run coverage report -m)
-          echo "$coverage_result" > coverage_status.md
+          mkdir -p docs
+          echo "$coverage_result" > docs/coverage_status.md
+          git add -A
+          git commit -am "auto-update coverage.md" # 커밋 메시지
           coverage_percent=$(echo "$coverage_result" | grep -oP '\d+\%')
-          echo "Coverage: $coverage_percent"
           if [ "${coverage_percent%\%}" -lt 70 ]; then
             echo "Test coverage is less than 70%."
             exit 1
@@ -88,8 +90,6 @@ jobs:
       contents: write
       id-token: write
     steps:
-      - name: List files in the working directory
-        run: ls -la
       - name: Bump version and push tag
         id: tag_version
         uses: mathieudutour/github-tag-action@v6.1
