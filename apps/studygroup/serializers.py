@@ -2,8 +2,8 @@ from django.utils.datetime_safe import date
 from drf_spectacular.utils import extend_schema_field
 from rest_framework import serializers
 
+from apps.core.serializers import CreatableSlugRelatedField
 from apps.studygroup import models
-from common.utils.serializers import CreatableSlugRelatedField
 
 
 class CategorySerializer(serializers.ModelSerializer):

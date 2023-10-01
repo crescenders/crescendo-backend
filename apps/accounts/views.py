@@ -16,7 +16,6 @@ from apps.studygroup.filters import MyStudyGroupFilter
 from apps.studygroup.models import StudyGroup
 from apps.studygroup.pagination import StudyGroupPagination
 from apps.studygroup.serializers import StudyGroupListSerializer
-from common.exceptions.serailizers import InvalidTokenExceptionSerializer
 
 
 class TokenRefreshAPI(_TokenRefreshView):
@@ -29,7 +28,6 @@ class TokenRefreshAPI(_TokenRefreshView):
         summary="클라이언트가 가지고 있는 refresh token 을 이용하여 새로운 access token 을 발급합니다.",
         responses={
             status.HTTP_200_OK: api_settings.JWT_SERIALIZER,
-            status.HTTP_401_UNAUTHORIZED: InvalidTokenExceptionSerializer,
         },
     )
     def post(self, request, *args, **kwargs):
@@ -62,7 +60,6 @@ class GoogleLoginAPI(SocialLoginView):
         summary="Google 로부터 얻은 액세스 토큰을 이용하여 Crescendo 서비스의 JWT 를 발급합니다.",
         responses={
             status.HTTP_200_OK: api_settings.JWT_SERIALIZER,
-            status.HTTP_401_UNAUTHORIZED: InvalidTokenExceptionSerializer,
         },
         external_docs=(
             "https://developers.google.com/identity/gsi/web/guides/overview?hl=ko"
