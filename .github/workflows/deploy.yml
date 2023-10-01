@@ -93,6 +93,11 @@ jobs:
         uses: mathieudutour/github-tag-action@v6.1
         with:
           github_token: ${{ secrets.ACTION_TOKEN }}
+      - name: Read coverage_status.md
+        id: read_coverage
+        run: |
+          coverage_status=$(cat coverage_status.md)
+          echo "::set-output name=coverage_status::$coverage_status"
       - name: Create a GitHub release
         uses: ncipollo/release-action@v1
         with:
@@ -101,6 +106,4 @@ jobs:
           body: |
             ${{ steps.tag_version.outputs.changelog }}
             ### Coverage Status
-            <pre>
-              $(cat coverage_status.md)
-            </pre>
+            ${{ steps.read_coverage.outputs.coverage_status }}
