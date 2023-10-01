@@ -8,6 +8,7 @@ from rest_framework import generics, mixins, status
 from rest_framework.generics import get_object_or_404
 from rest_framework.permissions import AllowAny
 from rest_framework_simplejwt.exceptions import InvalidToken
+from rest_framework_simplejwt.views import TokenBlacklistView as _TokenBlacklistView
 from rest_framework_simplejwt.views import TokenRefreshView as _TokenRefreshView
 
 from apps.accounts.models import User
@@ -24,7 +25,7 @@ class TokenRefreshAPI(_TokenRefreshView):
     """
 
     @extend_schema(
-        tags=["로그인 API"],
+        tags=["로그인/로그아웃 API"],
         summary="클라이언트가 가지고 있는 refresh token 을 이용하여 새로운 access token 을 발급합니다.",
         responses={
             status.HTTP_200_OK: api_settings.JWT_SERIALIZER,
@@ -48,15 +49,13 @@ class GoogleLoginAPI(SocialLoginView):
       "user_uuid": "bcbdad4c-1e13-4087-b5e9-628599d32d5a"
     }
     ```
-
-
     """
 
     serializer_class = GoogleLoginSerializer
     adapter_class = GoogleOAuth2Adapter
 
     @extend_schema(
-        tags=["로그인 API"],
+        tags=["로그인/로그아웃 API"],
         summary="Google 로부터 얻은 액세스 토큰을 이용하여 Crescendo 서비스의 JWT 를 발급합니다.",
         responses={
             status.HTTP_200_OK: api_settings.JWT_SERIALIZER,
@@ -70,6 +69,18 @@ class GoogleLoginAPI(SocialLoginView):
             return super().post(request, *args, **kwargs)
         except OAuth2Error:
             raise InvalidToken
+
+
+@extend_schema(
+    tags=["로그인/로그아웃 API"],
+    summary="로그아웃합니다. refresh token 을 blacklist 에 추가합니다.",
+)
+class LogoutAPI(_TokenBlacklistView):
+    """
+    로그아웃에 사용된 refresh token 은 더 이상 사용될 수 없습니다.
+    """
+
+    pass
 
 
 @extend_schema(
