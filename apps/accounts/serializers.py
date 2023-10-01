@@ -12,8 +12,6 @@ class JWTSerializer(serializers.Serializer):
 
 
 class ProfileSerializer(serializers.ModelSerializer):
-    _links = serializers.SerializerMethodField()
-
     class Meta:
         model = User
         fields = [
@@ -22,7 +20,6 @@ class ProfileSerializer(serializers.ModelSerializer):
             "username",
             "created_at",
             "updated_at",
-            "_links",
         ]
         extra_kwargs = {
             "uuid": {"read_only": True},
@@ -30,28 +27,6 @@ class ProfileSerializer(serializers.ModelSerializer):
             "created_at": {"read_only": True},
             "updated_at": {"read_only": True},
         }
-
-    @extend_schema_field(
-        {
-            "example": [
-                {
-                    "rel": "self",
-                    "href": "http://localhost:8000/api/v1/user/profile/uuid/",
-                },
-            ],
-        }
-    )
-    def get__links(self, obj):
-        request = self.context["request"]
-        links = [
-            {
-                "rel": "self",
-                "href": reverse(
-                    "user_profile_uuid", kwargs={"uuid": obj.uuid}, request=request
-                ),
-            }
-        ]
-        return links
 
 
 class GoogleLoginSerializer(SocialLoginSerializer):

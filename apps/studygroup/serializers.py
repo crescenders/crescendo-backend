@@ -16,39 +16,13 @@ class CategorySerializer(serializers.ModelSerializer):
 class LeaderSerializer(serializers.ModelSerializer):
     uuid = serializers.UUIDField(source="user.uuid")
     username = serializers.CharField(source="user.username")
-    _links = serializers.SerializerMethodField()
 
     class Meta:
         model = models.StudyGroupMember
         fields = [
             "uuid",
             "username",
-            "_links",
         ]
-
-    @extend_schema_field(
-        {
-            "example": [
-                {
-                    "rel": "self",
-                    "href": "http://localhost:8000/api/v1/user/profile/uuid/",
-                },
-            ],
-        }
-    )
-    def get__links(self, obj):
-        request = self.context["request"]
-        links = [
-            {
-                "rel": "self",
-                "href": reverse(
-                    "user_profile_uuid",
-                    kwargs={"uuid": obj.user.uuid},
-                    request=request,
-                ),
-            }
-        ]
-        return links
 
 
 class StudyGroupListSerializer(serializers.ModelSerializer):
@@ -82,9 +56,6 @@ class StudyGroupListSerializer(serializers.ModelSerializer):
         many=True, queryset=models.Tag.objects.all(), slug_field="name"
     )
 
-    # hateoas
-    _links = serializers.SerializerMethodField()
-
     class Meta:
         model = models.StudyGroup
         fields = [
@@ -104,7 +75,6 @@ class StudyGroupListSerializer(serializers.ModelSerializer):
             "current_member_count",
             "member_limit",
             "until_deadline",
-            "_links",
         ]
 
     @extend_schema_field(
@@ -119,29 +89,6 @@ class StudyGroupListSerializer(serializers.ModelSerializer):
             is not None
             else obj.default_head_image
         )
-
-    @extend_schema_field(
-        {
-            "example": [
-                {
-                    "rel": "self",
-                    "href": "http://localhost:8000/api/v1/studygroup/uuid/",
-                },
-            ],
-        }
-    )
-    def get__links(self, obj):
-        request = self.context["request"]
-        links = [
-            {
-                "rel": "self",
-                "href": reverse(
-                    "studygroup_detail", kwargs={"uuid": obj.uuid}, request=request
-                ),
-            },
-        ]
-
-        return links
 
     @staticmethod
     def validate_start_date(value):
@@ -205,5 +152,4 @@ class StudyGroupDetailSerializer(StudyGroupListSerializer):
             "current_member_count",
             "member_limit",
             "until_deadline",
-            "_links",
         ]
