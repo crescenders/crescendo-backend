@@ -4,12 +4,12 @@ from rest_framework import serializers
 from apps.accounts.models import User
 
 
-class JWTSerializer(serializers.Serializer):
+class JWTSerializer(serializers.Serializer):  # type: ignore
     access = serializers.CharField()
     refresh = serializers.CharField()
 
 
-class ProfileSerializer(serializers.ModelSerializer):
+class ProfileSerializer(serializers.ModelSerializer[User]):
     class Meta:
         model = User
         fields = [
@@ -27,7 +27,7 @@ class ProfileSerializer(serializers.ModelSerializer):
         }
 
 
-class GoogleLoginSerializer(SocialLoginSerializer):
+class GoogleLoginSerializer(SocialLoginSerializer):  # type: ignore
     code = None
     id_token = None
     access_token = None
