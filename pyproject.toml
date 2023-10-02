@@ -20,13 +20,11 @@ django-filter = "^23.2"
 # Database
 cx-oracle = "^8.3.0"
 # Storage
-boto3 = "^1.28.12"
 # Deploy
 gunicorn = "^21.2.0"
 # Python utils
 python-dotenv = "^1.0.0"
 pillow = "^10.0.0"
-faker = "^19.3.1"
 django-jazzmin = "^2.6.0"
 nh3 = "^0.2.14"
 
