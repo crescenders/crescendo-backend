@@ -1,15 +1,15 @@
 from django.contrib import admin
 from django.utils.html import format_html
 
-from apps.studygroup import models
+from apps.studygroup.models import Category, StudyGroup, StudyGroupMember, Tag
 
 
-@admin.register(models.Category)
+@admin.register(Category)
 class CategoryAdmin(admin.ModelAdmin):
     pass
 
 
-@admin.register(models.Tag)
+@admin.register(Tag)
 class TagAdmin(admin.ModelAdmin):
     list_display = (
         "id",
@@ -20,11 +20,11 @@ class TagAdmin(admin.ModelAdmin):
 class StudyGroupMemberInline(admin.TabularInline):
     verbose_name = "스터디그룹 멤버"
     verbose_name_plural = "스터디그룹 멤버들"
-    model = models.StudyGroupMember
+    model = StudyGroupMember
     extra = 0
 
 
-@admin.register(models.StudyGroup)
+@admin.register(StudyGroup)
 class StudyGroupAdmin(admin.ModelAdmin):
     readonly_fields = (
         "head_image_tag",
