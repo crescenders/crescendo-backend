@@ -1,15 +1,18 @@
 import uuid
 
 from django.contrib.auth.base_user import AbstractBaseUser, BaseUserManager
-from django.contrib.auth.models import PermissionsMixin
+from django.contrib.auth.models import AnonymousUser, PermissionsMixin
 from django.db import models
+from django.db.models import Model
 
 from apps.core.models import TimestampedModel
 
 
-class UserManager(BaseUserManager):
-    def create_user(self, email: str, username: str, password=None) -> "User":
-        user: User = self.model(
+class UserManager(BaseUserManager["User"]):
+    def create_user(
+        self, email: str, username: str, password: str | None = None
+    ) -> "User":
+        user = self.model(
             email=self.normalize_email(email),
             username=username,
         )
@@ -18,7 +21,9 @@ class UserManager(BaseUserManager):
         user.save(using=self._db)
         return user
 
-    def create_superuser(self, email: str, username: str, password=None) -> "User":
+    def create_superuser(
+        self, email: str, username: str, password: str | None = None
+    ) -> "User":
         user: User = self.create_user(
             email=email,
             username=username,
@@ -40,15 +45,17 @@ class User(AbstractBaseUser, PermissionsMixin, TimestampedModel):
     username = models.CharField(max_length=10, null=False)
     is_admin = models.BooleanField(default=False)
 
-    def __str__(self):
+    def __str__(self) -> str:
         return self.email
 
-    def has_perm(self, perm, obj=None):
+    def has_perm(
+        self, perm: str, obj: Model | Model | AnonymousUser | None = None
+    ) -> bool:
         return True
 
-    def has_module_perms(self, app_label):
+    def has_module_perms(self, app_label: str) -> bool:
         return True
 
     @property
-    def is_staff(self):
+    def is_staff(self) -> bool:
         return self.is_admin
