@@ -25,6 +25,7 @@ gunicorn = "^21.2.0"
 # Python utils
 python-dotenv = "^1.0.0"
 pillow = "^10.0.0"
+django-stubs-ext = "^4.2.2"
 
 [tool.poetry.group.dev.dependencies]
 black = "^23.7.0"
@@ -44,6 +45,14 @@ python_version = "3.11"
 plugins = [
     "mypy_django_plugin.main",
     "mypy_drf_plugin.main",
+]
+ignore_missing_imports = "true"
+strict = "true"
+exclude = [
+    "migrations",
+    "settings",
+    "manage.py",
+    "tests.py"
 ]
 
 [tool.django-stubs]
