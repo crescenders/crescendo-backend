@@ -1,4 +1,8 @@
 from rest_framework import permissions
+from rest_framework.request import Request
+from rest_framework.views import APIView
+
+from apps.studygroup.models import StudyGroup
 
 
 class IsLeaderOrReadOnly(permissions.IsAuthenticatedOrReadOnly):
@@ -9,7 +13,9 @@ class IsLeaderOrReadOnly(permissions.IsAuthenticatedOrReadOnly):
     - 수정, 삭제: 스터디그룹장만 가능
     """
 
-    def has_object_permission(self, request, view, obj):
+    def has_object_permission(
+        self, request: Request, view: APIView, obj: StudyGroup
+    ) -> bool:
         group_leaders = [leader.user for leader in obj.leaders]
         return (
             request.method in permissions.SAFE_METHODS or request.user in group_leaders
