@@ -22,7 +22,7 @@ class Tag(models.Model):
         max_length=20, unique=True, validators=[MinLengthValidator(1)]
     )
 
-    def __str__(self):
+    def __str__(self) -> str:
         return self.name
 
 
@@ -33,7 +33,7 @@ class Category(models.Model):
 
     name = models.CharField(max_length=20, unique=True)
 
-    def __str__(self):
+    def __str__(self) -> str:
         return self.name
 
 
@@ -57,7 +57,7 @@ class StudyGroupMember(TimestampedModel):
         "StudyGroup", on_delete=models.CASCADE, related_name="members"
     )
 
-    def __str__(self):
+    def __str__(self) -> str:
         return f"멤버 {self.user.username}"
 
 
@@ -126,5 +126,5 @@ class StudyGroup(TimestampedModel):
         """
         return date.today() > self.deadline or self.members.count() == self.member_limit
 
-    def __str__(self):
+    def __str__(self) -> str:
         return self.name
