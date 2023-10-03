@@ -80,12 +80,12 @@ class StudyGroupAdmin(admin.ModelAdmin):
 
     @staticmethod
     @admin.display(description="Head image")
-    def head_image_tag(obj):
+    def head_image_tag(obj: StudyGroup) -> str:
         image_url = obj.head_image.url if obj.head_image else obj.default_head_image
         return format_html('<img src="{}" style="width: 210px;" />', image_url)
 
     @admin.display(boolean=True)
-    def is_closed(self, instance):
+    def is_closed(self, instance: StudyGroup) -> bool:
         return instance.is_closed
 
     inlines = [
