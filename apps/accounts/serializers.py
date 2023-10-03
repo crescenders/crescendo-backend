@@ -4,7 +4,7 @@ from rest_framework import serializers
 from apps.accounts.models import User
 
 
-class JWTSerializer(serializers.Serializer):  # type: ignore
+class JWTSerializer(serializers.Serializer):
     access = serializers.CharField()
     refresh = serializers.CharField()
 
