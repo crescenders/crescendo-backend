@@ -12,10 +12,8 @@ from rest_framework.permissions import AllowAny
 from rest_framework.request import Request
 from rest_framework.response import Response
 from rest_framework_simplejwt.exceptions import InvalidToken
-from rest_framework_simplejwt.views import \
-    TokenBlacklistView as _TokenBlacklistView
-from rest_framework_simplejwt.views import \
-    TokenRefreshView as _TokenRefreshView
+from rest_framework_simplejwt.views import TokenBlacklistView as _TokenBlacklistView
+from rest_framework_simplejwt.views import TokenRefreshView as _TokenRefreshView
 
 from apps.accounts.models import User
 from apps.accounts.serializers import GoogleLoginSerializer, ProfileSerializer
@@ -92,8 +90,7 @@ class LogoutAPI(_TokenBlacklistView):  # type: ignore
 @extend_schema(
     tags=["사용자 정보 API"],
 )
-# class MyProfileAPI(generics.RetrieveUpdateDestroyAPIView[User]):
-class MyProfileAPI(generics.RetrieveUpdateAPIView):
+class MyProfileAPI(generics.RetrieveUpdateDestroyAPIView):
     """
     로그인한 사용자의 정보를 조회/수정/탈퇴합니다.
     """
@@ -119,7 +116,7 @@ class MyProfileAPI(generics.RetrieveUpdateAPIView):
 
     @extend_schema(summary="로그인한 사용자를 탈퇴 처리합니다.")
     def delete(self, request: Request, *args: Any, **kwargs: Any) -> Response:
-        return super().delete(request, *args, **kwargs)  # TODO: 탈퇴 처리
+        return super().delete(request, *args, **kwargs)
 
 
 @extend_schema(
