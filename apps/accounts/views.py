@@ -12,8 +12,10 @@ from rest_framework.permissions import AllowAny
 from rest_framework.request import Request
 from rest_framework.response import Response
 from rest_framework_simplejwt.exceptions import InvalidToken
-from rest_framework_simplejwt.views import TokenBlacklistView as _TokenBlacklistView
-from rest_framework_simplejwt.views import TokenRefreshView as _TokenRefreshView
+from rest_framework_simplejwt.views import \
+    TokenBlacklistView as _TokenBlacklistView
+from rest_framework_simplejwt.views import \
+    TokenRefreshView as _TokenRefreshView
 
 from apps.accounts.models import User
 from apps.accounts.serializers import GoogleLoginSerializer, ProfileSerializer
