@@ -1,11 +1,13 @@
-from django.db.models import Count, F, Q
+from typing import Any
+
+from django.db.models import Count, F, Q, QuerySet
 from django.utils.datetime_safe import date
 from django_filters import rest_framework as filters
 
 from apps.studygroup.models import Category, StudyGroup, StudyGroupMember, Tag
 
 
-class MyStudyGroupFilter(filters.FilterSet):
+class MyStudyGroupFilter(filters.FilterSet):  # type: ignore
     filter = filters.TypedChoiceFilter(
         label="filter",
         choices=(
@@ -23,7 +25,9 @@ class MyStudyGroupFilter(filters.FilterSet):
         help_text="검색 조건에 따라 나와 관련된 스터디그룹을 필터링합니다.",
     )
 
-    def filter_as_leader(self, queryset, name, value: str):
+    def filter_as_leader(
+        self, queryset: QuerySet[StudyGroup], name: str, value: str
+    ) -> QuerySet[StudyGroup]:
         """
         내가 리더인 스터디그룹을 필터링합니다.
         """
@@ -35,10 +39,10 @@ class MyStudyGroupFilter(filters.FilterSet):
 
     class Meta:
         model = StudyGroup
-        fields = []
+        fields: list[Any] = []
 
 
-class StudyGroupListFilter(filters.FilterSet):
+class StudyGroupListFilter(filters.FilterSet):  # type: ignore
     ordering = filters.OrderingFilter(
         fields=(
             ("created_at", "created_at"),
@@ -92,7 +96,9 @@ class StudyGroupListFilter(filters.FilterSet):
     )
 
     @staticmethod
-    def filter_is_closed(queryset, name, value):
+    def filter_is_closed(
+        queryset: QuerySet[StudyGroup], name: str, value: bool
+    ) -> QuerySet[StudyGroup]:
         """
         모집 마감에 따라 스터디그룹을 필터링합니다.
         """
@@ -105,7 +111,9 @@ class StudyGroupListFilter(filters.FilterSet):
             return queryset.exclude(id__in=filtered_queryset)
 
     @staticmethod
-    def filter_random(queryset, name, value):
+    def filter_random(
+        queryset: QuerySet[StudyGroup], name: str, value: bool
+    ) -> QuerySet[StudyGroup]:
         """
         True일 경우 랜덤으로 스터디그룹을 필터링합니다.
         """
