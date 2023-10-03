@@ -36,6 +36,7 @@ class StudyGroupAdmin(admin.ModelAdmin):
         "head_image_tag",
         "name",
         "title",
+        "leaders",
         "member_limit",
         "is_closed",
         "deadline",
@@ -83,6 +84,10 @@ class StudyGroupAdmin(admin.ModelAdmin):
     def head_image_tag(obj: StudyGroup) -> str:
         image_url = obj.head_image.url if obj.head_image else obj.default_head_image
         return format_html('<img src="{}" style="width: 210px;" />', image_url)
+
+    @admin.display(description="Leaders")
+    def leaders(self, instance: StudyGroup) -> str:
+        return ", ".join([member.user.username for member in instance.leaders])
 
     @admin.display(boolean=True)
     def is_closed(self, instance: StudyGroup) -> bool:
