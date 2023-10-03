@@ -8,6 +8,7 @@ from django.core.validators import (
 from django.db import models
 from django.db.models import QuerySet
 from django.utils.datetime_safe import date
+from django.utils.functional import cached_property
 
 from apps.accounts.models import User
 from apps.core.models import TimestampedModel
@@ -97,14 +98,14 @@ class StudyGroup(TimestampedModel):
         """
         return f"https://picsum.photos/seed/{self.uuid}/210/150"
 
-    @property
+    @cached_property
     def leaders(self) -> QuerySet[StudyGroupMember]:
         """
         스터디그룹장들을 반환합니다.
         """
         return self.members.filter(is_leader=True)
 
-    @property
+    @cached_property
     def current_member_count(self) -> int:
         """
         현재 스터디그룹의 인원 수를 반환합니다.
@@ -118,7 +119,7 @@ class StudyGroup(TimestampedModel):
         """
         return (self.deadline - date.today()).days
 
-    @property
+    @cached_property
     def is_closed(self) -> bool:
         """
         스터디그룹이 모집이 완료되었는지 여부를 반환합니다.
