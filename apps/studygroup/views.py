@@ -1,6 +1,7 @@
 from typing import Any
 
 from django.db import transaction
+from django.db.models import QuerySet
 from django_filters.rest_framework import DjangoFilterBackend
 from drf_spectacular.utils import extend_schema
 from rest_framework import generics, viewsets
@@ -8,7 +9,9 @@ from rest_framework.parsers import FormParser, MultiPartParser
 from rest_framework.permissions import AllowAny
 from rest_framework.request import Request
 from rest_framework.response import Response
+from rest_framework.serializers import BaseSerializer
 
+from apps.accounts.models import User
 from apps.studygroup.filters import StudyGroupListFilter
 from apps.studygroup.models import Category, StudyGroup, StudyGroupMember
 from apps.studygroup.pagination import StudyGroupPagination
@@ -41,13 +44,13 @@ class StudyGroupAPISet(viewsets.ModelViewSet):
     # Pagination
     pagination_class = StudyGroupPagination
 
-    def get_queryset(self):
+    def get_queryset(self) -> QuerySet[StudyGroup]:
         queryset = StudyGroup.objects.all()
         if self.action in ["list"]:
             return queryset.defer("content")
         return queryset
 
-    def get_serializer_class(self):
+    def get_serializer_class(self) -> type[BaseSerializer[StudyGroup]]:
         if self.action in ["list", "create"]:
             return StudyGroupListSerializer
         elif self.action in ["retrieve", "update", "partial_update", "destroy"]:
@@ -55,11 +58,13 @@ class StudyGroupAPISet(viewsets.ModelViewSet):
         return super().get_serializer_class()
 
     @transaction.atomic
-    def perform_create(self, serializer):
+    def perform_create(self, serializer: BaseSerializer[StudyGroup]) -> None:
         """
         스터디그룹을 생성하면, 스터디그룹장으로 자동으로 등록됩니다.
         """
         super().perform_create(serializer)
+        assert isinstance(self.request.user, User)
+        assert isinstance(serializer.instance, StudyGroup)
         initial_member = StudyGroupMember.objects.create(
             user=self.request.user,
             study_group=serializer.instance,
@@ -69,10 +74,11 @@ class StudyGroupAPISet(viewsets.ModelViewSet):
         serializer.instance.members.add(initial_member)
 
     @transaction.atomic
-    def perform_update(self, serializer):
+    def perform_update(self, serializer: BaseSerializer[StudyGroup]) -> None:
         """
         formdata 의 head_image 가 빈 값이면, 이미지를 삭제하고 빈 값으로 저장합니다.
         """
+        assert serializer.instance is not None
         if self.request.data.get("head_image") == "":
             serializer.instance.head_image.delete()
             serializer.instance.head_image = None
@@ -107,5 +113,5 @@ class CategoryListAPI(generics.ListAPIView):
     serializer_class = CategorySerializer
 
     @extend_schema(summary="카테고리 목록을 조회합니다.")
-    def get(self, request: Request, *args, **kwargs) -> Response:
+    def get(self, request: Request, *args: Any, **kwargs: Any) -> Response:
         return super().get(request, *args, **kwargs)
