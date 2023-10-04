@@ -47,7 +47,7 @@ jobs:
             exit $exit_code
           fi
   Deploy_Docker_image_to_DockerHub:
-    needs: Pre_Build_Steps
+    needs: Linting_and_Testing
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
