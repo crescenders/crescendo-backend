@@ -1,15 +1,15 @@
 from django.contrib import admin
 from django.utils.html import format_html
 
-from apps.studygroup import models
+from apps.studygroup.models import Category, StudyGroup, StudyGroupMember, Tag
 
 
-@admin.register(models.Category)
+@admin.register(Category)
 class CategoryAdmin(admin.ModelAdmin):
     pass
 
 
-@admin.register(models.Tag)
+@admin.register(Tag)
 class TagAdmin(admin.ModelAdmin):
     list_display = (
         "id",
@@ -20,11 +20,11 @@ class TagAdmin(admin.ModelAdmin):
 class StudyGroupMemberInline(admin.TabularInline):
     verbose_name = "스터디그룹 멤버"
     verbose_name_plural = "스터디그룹 멤버들"
-    model = models.StudyGroupMember
+    model = StudyGroupMember
     extra = 0
 
 
-@admin.register(models.StudyGroup)
+@admin.register(StudyGroup)
 class StudyGroupAdmin(admin.ModelAdmin):
     readonly_fields = (
         "head_image_tag",
@@ -36,6 +36,7 @@ class StudyGroupAdmin(admin.ModelAdmin):
         "head_image_tag",
         "name",
         "title",
+        "leaders",
         "member_limit",
         "is_closed",
         "deadline",
@@ -80,12 +81,16 @@ class StudyGroupAdmin(admin.ModelAdmin):
 
     @staticmethod
     @admin.display(description="Head image")
-    def head_image_tag(obj):
+    def head_image_tag(obj: StudyGroup) -> str:
         image_url = obj.head_image.url if obj.head_image else obj.default_head_image
         return format_html('<img src="{}" style="width: 210px;" />', image_url)
 
+    @admin.display(description="Leaders")
+    def leaders(self, instance: StudyGroup) -> str:
+        return ", ".join([member.user.username for member in instance.leaders])
+
     @admin.display(boolean=True)
-    def is_closed(self, instance):
+    def is_closed(self, instance: StudyGroup) -> bool:
         return instance.is_closed
 
     inlines = [

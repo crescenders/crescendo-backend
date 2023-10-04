@@ -16,6 +16,16 @@ urlpatterns = [
         name="studygroup_detail",
     ),
     path(
+        "studies/<uuid:uuid>/members/",
+        views.StudyGroupMemberListAPI.as_view(),
+        name="studygroup_members",
+    ),
+    path(
+        "studies/<uuid:uuid>/members/<int:pk>/",
+        views.StudyGroupMemberDetailAPI.as_view(),
+        name="studygroup_member_detail",
+    ),
+    path(
         "categories/",
         views.CategoryListAPI.as_view(),
         name="category_list",

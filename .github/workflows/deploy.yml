@@ -6,7 +6,7 @@ on:
     types:
       - closed
 jobs:
-  Pre_Build_Steps:
+  Linting_and_Testing:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -14,15 +14,17 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
-          python-version: '3.11'  # Replace with your desired Python version
+          python-version: '3.11'
       - name: Install Poetry
         run: |
           curl -sSL https://install.python-poetry.org | python3 -
-          export PATH=$HOME/.local/bin:$PATH  # Add Poetry bin directory to PATH
+          export PATH=$HOME/.local/bin:$PATH
           poetry --version
       - name: Install project dependencies
         run: |
           poetry install
+      - name: Run flake8
+        run: |
           poetry run flake8 || exit 1
       - name: Run Django tests with coverage
         env:
