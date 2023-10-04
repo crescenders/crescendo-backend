@@ -4,7 +4,7 @@ from django.db import transaction
 from django.db.models import QuerySet
 from django_filters.rest_framework import DjangoFilterBackend
 from drf_spectacular.utils import extend_schema
-from rest_framework import generics, viewsets
+from rest_framework import generics, mixins, viewsets
 from rest_framework.parsers import FormParser, MultiPartParser
 from rest_framework.permissions import AllowAny
 from rest_framework.request import Request
@@ -15,11 +15,14 @@ from apps.accounts.models import User
 from apps.studygroup.filters import StudyGroupListFilter
 from apps.studygroup.models import Category, StudyGroup, StudyGroupMember
 from apps.studygroup.pagination import StudyGroupPagination
-from apps.studygroup.permissions import IsLeaderOrReadOnly
+from apps.studygroup.permissions import IsLeaderOrReadOnly, StudyGroupAddMember
 from apps.studygroup.serializers import (
     CategorySerializer,
     StudyGroupDetailSerializer,
     StudyGroupListSerializer,
+    StudyGroupMemberCreateRequestBody,
+    StudyGroupMemberSchema,
+    StudyGroupMemberUpdateRequestBody,
 )
 
 
@@ -102,6 +105,79 @@ class StudyGroupAPISet(viewsets.ModelViewSet):
 
     @extend_schema(summary="특정 스터디그룹을 삭제합니다.")
     def destroy(self, request: Request, *args: Any, **kwargs: Any) -> Response:
+        return super().destroy(request, *args, **kwargs)
+
+
+@extend_schema(tags=["스터디그룹 API"])
+class StudyGroupMemberListAPI(generics.ListCreateAPIView):
+    # TODO: 권한 회의 후 설정
+    queryset = StudyGroupMember.objects.all()
+    serializer_class = StudyGroupMemberSchema
+    serializer_classes = {
+        "GET": StudyGroupMemberSchema,
+        "POST": StudyGroupMemberCreateRequestBody,
+    }
+    filterset_fields = ("is_approved",)
+
+    def get_serializer_class(self) -> type[BaseSerializer[StudyGroupMember]]:
+        return self.serializer_classes.get(self.request.method, self.serializer_class)
+
+    def get_queryset(self) -> QuerySet[StudyGroupMember]:
+        """
+        QueryString 으로 전달받은 uuid 에 해당하는 스터디그룹의 멤버 목록을 조회합니다.
+        """
+        assert self.kwargs.get("uuid") is not None
+        return StudyGroupMember.objects.filter(study_group__uuid=self.kwargs["uuid"])
+
+    @transaction.atomic
+    def perform_create(self, serializer: BaseSerializer[StudyGroupMember]) -> None:
+        """
+        스터디그룹에 참가를 요청합니다.
+
+        1. 현재 로그인한 유저 식별
+        2. 스터디그룹 식별
+        3. 스터디그룹에 참가를 요청
+        """
+        study_group = StudyGroup.objects.get(uuid=self.kwargs["uuid"])
+        new_member = StudyGroupMember.objects.create(
+            user=self.request.user,
+            study_group=study_group,
+            request_message=serializer.validated_data.get("request_message"),
+        )
+        study_group.members.add(new_member)
+
+    @extend_schema(summary="특정 스터디그룹의 멤버 목록을 조회합니다.")
+    def get(self, request: Request, *args: Any, **kwargs: Any) -> Response:
+        return super().get(request, *args, **kwargs)
+
+    @extend_schema(summary="특정 스터디그룹에 참가를 요청합니다.")
+    def post(self, request: Request, *args: Any, **kwargs: Any) -> Response:
+        return super().post(request, *args, **kwargs)
+
+
+@extend_schema(tags=["스터디그룹 API"])
+class StudyGroupMemberDetailAPI(
+    mixins.UpdateModelMixin, mixins.DestroyModelMixin, generics.GenericAPIView
+):
+    serializer_class = StudyGroupMemberCreateRequestBody
+    serializer_classes = {
+        "PATCH": StudyGroupMemberUpdateRequestBody,
+    }
+    permission_classes = (StudyGroupAddMember,)
+
+    def get_queryset(self) -> QuerySet[StudyGroupMember]:
+        assert self.kwargs.get("uuid") is not None
+        return StudyGroupMember.objects.filter(study_group__uuid=self.kwargs["uuid"])
+
+    def get_serializer_class(self) -> type[BaseSerializer[StudyGroupMember]]:
+        return self.serializer_classes.get(self.request.method, self.serializer_class)
+
+    @extend_schema(summary="스터디그룹의 참가 신청을 승인합니다.")
+    def patch(self, request: Request, *args: Any, **kwargs: Any) -> Response:
+        return super().partial_update(request, *args, **kwargs)
+
+    @extend_schema(summary="스터디그룹의 참가신청을 거절하거나, 멤버를 탈퇴시킵니다.")
+    def delete(self, request: Request, *args: Any, **kwargs: Any) -> Response:
         return super().destroy(request, *args, **kwargs)
 
 

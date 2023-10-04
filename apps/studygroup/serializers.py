@@ -5,6 +5,7 @@ from django.utils.datetime_safe import date
 from drf_spectacular.utils import extend_schema_field
 from rest_framework import serializers
 
+from apps.accounts.serializers import ProfileSerializer
 from apps.core.serializers import CreatableSlugRelatedField
 from apps.studygroup.models import Category, StudyGroup, StudyGroupMember, Tag
 
@@ -156,4 +157,53 @@ class StudyGroupDetailSerializer(StudyGroupListSerializer):
             "current_member_count",
             "member_limit",
             "until_deadline",
+        ]
+
+
+class StudyGroupMemberCreateRequestBody(serializers.ModelSerializer[StudyGroupMember]):
+    class Meta:
+        model = StudyGroupMember
+        fields = [
+            "request_message",
+        ]
+
+    def validate(self, attrs: OrderedDict[str, Any]) -> OrderedDict[str, Any]:
+        """
+        이미 스터디그룹에 가입되어 있는지 확인합니다.
+        - kwargs uuid 로 스터디그룹을 가져옵니다.
+        - 스터디그룹의 멤버 중에 현재 로그인한 유저가 있는지 확인합니다.
+        """
+        uuid = self.__dict__["_context"]["view"].kwargs["uuid"]
+        study_group = StudyGroup.objects.get(uuid=uuid)
+        members = [member.user for member in study_group.members.all()]
+        request_user = self.__dict__["_context"]["request"].user
+        if request_user in members:
+            raise serializers.ValidationError(
+                "You are already a member of this studygroup."
+            )
+        return attrs
+
+
+class StudyGroupMemberUpdateRequestBody(serializers.ModelSerializer[StudyGroupMember]):
+    class Meta:
+        model = StudyGroupMember
+        fields = [
+            "is_approved",
+        ]
+
+
+class StudyGroupMemberSchema(serializers.ModelSerializer[StudyGroupMember]):
+    user = ProfileSerializer(
+        read_only=True,
+    )
+
+    class Meta:
+        model = StudyGroupMember
+        fields = [
+            "id",
+            "user",
+            "is_leader",
+            "is_approved",
+            "request_message",
+            "created_at",
         ]
