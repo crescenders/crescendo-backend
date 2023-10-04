@@ -53,7 +53,7 @@ class StudyGroupMember(TimestampedModel):
     )
     is_leader = models.BooleanField(default=False)
     is_approved = models.BooleanField(default=False)
-    request_message = models.CharField(max_length=200, blank=True)
+    request_message = models.CharField(max_length=200, blank=False)
     study_group = models.ForeignKey(
         "StudyGroup", on_delete=models.CASCADE, related_name="members"
     )
