@@ -110,7 +110,7 @@ class StudyGroup(TimestampedModel):
         """
         현재 스터디그룹의 인원 수를 반환합니다.
         """
-        return self.members.count()
+        return self.members.filter(is_approved=True).count()
 
     @property
     def until_deadline(self) -> int:
@@ -125,7 +125,10 @@ class StudyGroup(TimestampedModel):
         스터디그룹이 모집이 완료되었는지 여부를 반환합니다.
         오늘 날짜 > deadline or 현재 인원 == member_limit
         """
-        return date.today() > self.deadline or self.members.count() == self.member_limit
+        return (
+            date.today() > self.deadline
+            or self.members.filter(is_approved=True).count() == self.member_limit
+        )
 
     def __str__(self) -> str:
         return self.name
