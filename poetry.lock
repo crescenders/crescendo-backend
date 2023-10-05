@@ -494,20 +494,20 @@ files = [
 
 [[package]]
 name = "dj-rest-auth"
-version = "5.0.1"
+version = "4.0.1"
 description = "Authentication and Registration in Django Rest Framework"
 optional = false
-python-versions = ">=3.6"
+python-versions = ">=3.5"
 files = [
-    {file = "dj-rest-auth-5.0.1.tar.gz", hash = "sha256:2f574edd7bcc9a421e6e1d9d47f7b1eb56b71eb797927be135c995ea546dd9b5"},
+    {file = "dj-rest-auth-4.0.1.tar.gz", hash = "sha256:ec87f934c83b520217399f4793506e36cccccc84e899623510ee9c7289f80573"},
 ]
 
 [package.dependencies]
-Django = ">=3.2"
-djangorestframework = ">=3.13.0"
+Django = ">=2.0"
+djangorestframework = ">=3.7.0"
 
 [package.extras]
-with-social = ["django-allauth (>=0.55.0,<0.56.0)"]
+with-social = ["django-allauth (>=0.40.0,<0.55.0)"]
 
 [[package]]
 name = "django"
@@ -531,24 +531,20 @@ bcrypt = ["bcrypt"]
 
 [[package]]
 name = "django-allauth"
-version = "0.57.0"
+version = "0.54.0"
 description = "Integrated set of Django applications addressing authentication, registration, account management as well as 3rd party (social) account authentication."
 optional = false
 python-versions = ">=3.7"
 files = [
-    {file = "django-allauth-0.57.0.tar.gz", hash = "sha256:a095ef0db7de305d9175772c78e765ebd5fceb004ae61c1383d7fc1af0f7c5b1"},
+    {file = "django-allauth-0.54.0.tar.gz", hash = "sha256:120e265f802b65738899c6cb627b827fde46a4d03067034c633f516c2adf3e3e"},
 ]
 
 [package.dependencies]
-Django = ">=3.2"
+Django = ">=2.0"
 pyjwt = {version = ">=1.7", extras = ["crypto"]}
 python3-openid = ">=3.0.8"
-requests = ">=2.0.0"
+requests = "*"
 requests-oauthlib = ">=0.3.0"
-
-[package.extras]
-mfa = ["qrcode (>=7.0.0)"]
-saml = ["python3-saml (>=1.15.0,<2.0.0)"]
 
 [[package]]
 name = "django-cors-headers"
@@ -1816,4 +1812,4 @@ files = [
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.11"
-content-hash = "c85f73d05276943e1e1b02e06022928cae1d1c1f18bb8e3861d8556773decc98"
+content-hash = "806986b3e42eac7d049ae31af91cacc280b7c2d7a7c2ffa3a2694b3445217f78"
