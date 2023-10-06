@@ -18,12 +18,14 @@ class CategorySerializer(serializers.ModelSerializer[Category]):
 
 class LeaderSerializer(serializers.ModelSerializer[StudyGroupMember]):
     uuid = serializers.UUIDField(source="user.uuid")
+    email = serializers.EmailField(source="user.email")
     username = serializers.CharField(source="user.username")
 
     class Meta:
         model = StudyGroupMember
         fields = [
             "uuid",
+            "email",
             "username",
         ]
 
