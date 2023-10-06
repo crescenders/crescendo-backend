@@ -54,7 +54,7 @@ exclude = [
     "migrations",
     "settings",
     "manage.py",
-    "tests.py"
+    "tests.py",
 ]
 
 [tool.django-stubs]
@@ -62,7 +62,7 @@ django_settings_module = "config.settings.development"
 
 [tool.coverage.run]
 omit = [
-    "tests/*",
+    "*/tests/*",
     "*/tests.py",
     "*/migrations/*",
     "*/settings/*",
