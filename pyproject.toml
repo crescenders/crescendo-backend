@@ -55,6 +55,7 @@ exclude = [
     "settings",
     "manage.py",
     "tests.py",
+    "tests",
 ]
 
 [tool.django-stubs]
