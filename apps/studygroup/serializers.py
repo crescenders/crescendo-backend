@@ -45,11 +45,6 @@ class StudyGroupListSerializer(serializers.ModelSerializer[StudyGroup]):
     end_date = serializers.DateField(write_only=True)
     deadline = serializers.DateField(write_only=True)
 
-    # 현재 인원
-    current_member_count = serializers.IntegerField(
-        source="members.count", read_only=True
-    )
-
     # Category, Tag
     categories = serializers.SlugRelatedField(
         many=True,
