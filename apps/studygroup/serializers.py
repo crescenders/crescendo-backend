@@ -162,6 +162,24 @@ class StudyGroupDetailSerializer(StudyGroupListSerializer):
         ]
 
 
+class MyStudyGroupResponseSerializer(serializers.ModelSerializer[StudyGroup]):
+    created_at = serializers.DateTimeField(format="%Y-%m-%d")
+
+    class Meta:
+        model = StudyGroup
+        fields = [
+            "uuid",
+            "name",
+            "start_date",
+            "end_date",
+            "created_at",
+            "deadline",
+            "until_deadline",
+            "is_closed",
+            "current_member_count",
+        ]
+
+
 class StudyGroupMemberCreateRequestBody(serializers.ModelSerializer[StudyGroupMember]):
     class Meta:
         model = StudyGroupMember
