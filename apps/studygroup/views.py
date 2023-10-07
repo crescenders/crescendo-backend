@@ -110,7 +110,7 @@ class StudyGroupAPISet(viewsets.ModelViewSet):
 
 @extend_schema(tags=["스터디그룹 API"])
 class StudyGroupMemberListAPI(generics.ListCreateAPIView):
-    # TODO: 권한 회의 후 설정
+    permission_classes = (StudyGroupAddMember,)
     queryset = StudyGroupMember.objects.all()
     serializer_class = StudyGroupMemberSchema
     serializer_classes = {
