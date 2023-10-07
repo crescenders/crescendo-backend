@@ -4,7 +4,7 @@ from django.db.models import Count, F, Q, QuerySet
 from django.utils.datetime_safe import date
 from django_filters import rest_framework as filters
 
-from apps.studygroup.models import Category, StudyGroup, StudyGroupMember, Tag
+from apps.studygroup.models import Category, StudyGroup, StudyGroupMember
 
 
 class MyStudyGroupFilter(filters.FilterSet):  # type: ignore
