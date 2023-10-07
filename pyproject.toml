@@ -39,6 +39,7 @@ flake8 = "^6.1.0"
 django-stubs = "^4.2.3"
 djangorestframework-stubs = "^3.14.2"
 coverage = "^7.3.1"
+factory-boy = "^3.3.0"
 
 [tool.mypy]
 python_version = "3.11"
@@ -53,7 +54,8 @@ exclude = [
     "migrations",
     "settings",
     "manage.py",
-    "tests.py"
+    "tests.py",
+    "tests",
 ]
 
 [tool.django-stubs]
@@ -61,7 +63,7 @@ django_settings_module = "config.settings.development"
 
 [tool.coverage.run]
 omit = [
-    "tests/*",
+    "*/tests/*",
     "*/tests.py",
     "*/migrations/*",
     "*/settings/*",

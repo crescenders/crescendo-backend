@@ -99,6 +99,13 @@ class StudyGroup(TimestampedModel):
         return f"https://picsum.photos/seed/{self.uuid}/210/150"
 
     @cached_property
+    def approved_members(self) -> QuerySet[StudyGroupMember]:
+        """
+        승인된 스터디그룹원들을 반환합니다.
+        """
+        return self.members.filter(is_approved=True)
+
+    @cached_property
     def leaders(self) -> QuerySet[StudyGroupMember]:
         """
         스터디그룹장들을 반환합니다.
@@ -110,7 +117,7 @@ class StudyGroup(TimestampedModel):
         """
         현재 스터디그룹의 인원 수를 반환합니다.
         """
-        return self.members.count()
+        return self.approved_members.count()
 
     @property
     def until_deadline(self) -> int:
@@ -125,7 +132,10 @@ class StudyGroup(TimestampedModel):
         스터디그룹이 모집이 완료되었는지 여부를 반환합니다.
         오늘 날짜 > deadline or 현재 인원 == member_limit
         """
-        return date.today() > self.deadline or self.members.count() == self.member_limit
+        return (
+            date.today() > self.deadline
+            or self.current_member_count == self.member_limit
+        )
 
     def __str__(self) -> str:
         return self.name

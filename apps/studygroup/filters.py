@@ -4,7 +4,7 @@ from django.db.models import Count, F, Q, QuerySet
 from django.utils.datetime_safe import date
 from django_filters import rest_framework as filters
 
-from apps.studygroup.models import Category, StudyGroup, StudyGroupMember, Tag
+from apps.studygroup.models import Category, StudyGroup, StudyGroupMember
 
 
 class MyStudyGroupFilter(filters.FilterSet):  # type: ignore
@@ -76,12 +76,9 @@ class StudyGroupListFilter(filters.FilterSet):  # type: ignore
         method="filter_random",
         help_text="랜덤 갯수의 스터디그룹을 보여줍니다.",
     )
-    tags = filters.ModelMultipleChoiceFilter(
-        conjoined=True,
+    tags = filters.CharFilter(
         field_name="tags__name",
-        to_field_name="name",
         lookup_expr="exact",
-        queryset=Tag.objects.all(),
         help_text=(
             "스터디그룹의 태그를 필터링합니다. ex) 'python' 검색 시, 'python' 태그가 포함된 스터디그룹을 보여줍니다."
         ),

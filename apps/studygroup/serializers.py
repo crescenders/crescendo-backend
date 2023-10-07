@@ -18,12 +18,14 @@ class CategorySerializer(serializers.ModelSerializer[Category]):
 
 class LeaderSerializer(serializers.ModelSerializer[StudyGroupMember]):
     uuid = serializers.UUIDField(source="user.uuid")
+    email = serializers.EmailField(source="user.email")
     username = serializers.CharField(source="user.username")
 
     class Meta:
         model = StudyGroupMember
         fields = [
             "uuid",
+            "email",
             "username",
         ]
 
@@ -42,11 +44,6 @@ class StudyGroupListSerializer(serializers.ModelSerializer[StudyGroup]):
     start_date = serializers.DateField(write_only=True)
     end_date = serializers.DateField(write_only=True)
     deadline = serializers.DateField(write_only=True)
-
-    # 현재 인원
-    current_member_count = serializers.IntegerField(
-        source="members.count", read_only=True
-    )
 
     # Category, Tag
     categories = serializers.SlugRelatedField(
@@ -157,6 +154,24 @@ class StudyGroupDetailSerializer(StudyGroupListSerializer):
             "current_member_count",
             "member_limit",
             "until_deadline",
+        ]
+
+
+class MyStudyGroupResponseSerializer(serializers.ModelSerializer[StudyGroup]):
+    created_at = serializers.DateTimeField(format="%Y-%m-%d")
+
+    class Meta:
+        model = StudyGroup
+        fields = [
+            "uuid",
+            "name",
+            "start_date",
+            "end_date",
+            "created_at",
+            "deadline",
+            "until_deadline",
+            "is_closed",
+            "current_member_count",
         ]
 
 

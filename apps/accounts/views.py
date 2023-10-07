@@ -20,7 +20,7 @@ from apps.accounts.serializers import GoogleLoginSerializer, ProfileSerializer
 from apps.studygroup.filters import MyStudyGroupFilter
 from apps.studygroup.models import StudyGroup
 from apps.studygroup.pagination import StudyGroupPagination
-from apps.studygroup.serializers import StudyGroupListSerializer
+from apps.studygroup.serializers import MyStudyGroupResponseSerializer
 
 
 class TokenRefreshAPI(_TokenRefreshView):  # type: ignore
@@ -128,7 +128,7 @@ class MyStudyAPI(mixins.ListModelMixin, generics.GenericAPIView):
     """
 
     # serializer
-    serializer_class = StudyGroupListSerializer
+    serializer_class = MyStudyGroupResponseSerializer
 
     # pagination
     pagination_class = StudyGroupPagination
