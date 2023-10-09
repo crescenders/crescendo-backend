@@ -26,7 +26,7 @@ class UserFactory(DjangoModelFactory):
     email = factory.Faker("email")
 
 
-class StudyGroupLeaderFactory(DjangoModelFactory):
+class StudyGroupLeaderMemberFactory(DjangoModelFactory):
     """
     스터디그룹장을 생성합니다.
     """
@@ -36,6 +36,18 @@ class StudyGroupLeaderFactory(DjangoModelFactory):
 
     user = factory.SubFactory(UserFactory)
     is_leader = True
+
+
+class StudyGroupGeneralMemberFactory(DjangoModelFactory):
+    """
+    일반 스터디그룹 멤버를 생성합니다.
+    """
+
+    class Meta:
+        model = StudyGroupMember
+
+    user = factory.SubFactory(UserFactory)
+    is_leader = False
 
 
 class OpenedByDeadlineStudyGroupFactory(DjangoModelFactory):
@@ -65,4 +77,4 @@ class OpenedByDeadlineStudyGroupFactory(DjangoModelFactory):
         lambda self: self.start_date
         + relativedelta.relativedelta(days=random.randrange(1, 30))
     )
-    members = factory.RelatedFactory(StudyGroupLeaderFactory, "studygroup")
+    members = factory.RelatedFactory(StudyGroupLeaderMemberFactory, "studygroup")
