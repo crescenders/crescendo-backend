@@ -13,23 +13,23 @@ class StudyGroupMemberRequestCreateTestCase(APITestCase):
         self.logged_in_user = UserFactory()
         self.studygroup_for_requested = OpenedByDeadlineStudyGroupFactory()
 
-    def test_not_anyone_can_create_studygroup_member_request(self):
+    def test_not_anyone_can_create_studygroup_member_request_list(self):
         """
         스터디그룹의 멤버 신청은 로그인하지 않으면 불가능합니다.
         """
         url = reverse(
-            "studygroup_member_request",
+            "studygroup_member_request_list",
             kwargs={"uuid": self.studygroup_for_requested.uuid},
         )
         response = self.client.post(url)
         self.assertEqual(response.status_code, 401)
 
-    def test_logged_in_user_can_create_studygroup_member_request(self):
+    def test_logged_in_user_can_create_studygroup_member_request_list(self):
         """
         스터디그룹의 멤버 신청은 로그인한 유저만 가능합니다.
         """
         url = reverse(
-            "studygroup_member_request",
+            "studygroup_member_request_list",
             kwargs={"uuid": self.studygroup_for_requested.uuid},
         )
         data = {"request_message": "가입 신청합니다."}
@@ -42,7 +42,7 @@ class StudyGroupMemberRequestCreateTestCase(APITestCase):
         스터디그룹의 멤버 신청은 중복으로 불가능합니다.
         """
         url = reverse(
-            "studygroup_member_request",
+            "studygroup_member_request_list",
             kwargs={"uuid": self.studygroup_for_requested.uuid},
         )
         data = {"request_message": "가입 신청합니다."}
@@ -52,7 +52,7 @@ class StudyGroupMemberRequestCreateTestCase(APITestCase):
         response = self.client.post(url, data=data)
         self.assertEqual(response.status_code, 400)
 
-    def test_already_member_cannot_create_studygroup_member_request(self):
+    def test_already_member_cannot_create_studygroup_member_request_list(self):
         """
         스터디그룹의 멤버 신청은 이미 가입된 멤버는 불가능합니다.
         """
@@ -62,7 +62,7 @@ class StudyGroupMemberRequestCreateTestCase(APITestCase):
         self.studygroup_for_requested.members.add(already_member)
         self.client.force_authenticate(user=already_member.user)
         url = reverse(
-            "studygroup_member_request",
+            "studygroup_member_request_list",
             kwargs={"uuid": self.studygroup_for_requested.uuid},
         )
         data = {"request_message": "가입 신청합니다."}
