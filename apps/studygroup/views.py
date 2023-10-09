@@ -26,7 +26,7 @@ from apps.studygroup.serializers import (
 )
 
 
-@extend_schema(tags=["스터디그룹 API"])
+@extend_schema(tags=["스터디그룹 관리 API"])
 class StudyGroupAPISet(viewsets.ModelViewSet):
     # Serializer
     serializer_class = StudyGroupListSerializer
@@ -108,7 +108,7 @@ class StudyGroupAPISet(viewsets.ModelViewSet):
         return super().destroy(request, *args, **kwargs)
 
 
-@extend_schema(tags=["스터디그룹 API"])
+@extend_schema(tags=["스터디그룹 멤버 관리 API"])
 class StudyGroupMemberListAPI(generics.ListCreateAPIView):
     permission_classes = (StudyGroupAddMember,)
     queryset = StudyGroupMember.objects.all()
@@ -155,7 +155,7 @@ class StudyGroupMemberListAPI(generics.ListCreateAPIView):
         return super().post(request, *args, **kwargs)
 
 
-@extend_schema(tags=["스터디그룹 API"])
+@extend_schema(tags=["스터디그룹 멤버 관리 API"])
 class StudyGroupMemberDetailAPI(
     mixins.UpdateModelMixin, mixins.DestroyModelMixin, generics.GenericAPIView
 ):
