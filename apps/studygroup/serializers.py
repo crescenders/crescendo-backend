@@ -114,17 +114,20 @@ class StudyGroupListSerializer(serializers.ModelSerializer[StudyGroup]):
 
     def validate(self, attrs: OrderedDict[str, Any]) -> OrderedDict[str, Any]:
         # 이미 종료된 스터디그룹이라면, 수정 불가능
-        assert type(self.instance) is StudyGroup
-        if self.instance and self.instance.uuid and self.instance.is_closed is True:
-            raise serializers.ValidationError(
-                "The studygroup is already closed. You can't update it."
-            )
-        # 날짜 검증
-        if not attrs["deadline"] < attrs["start_date"] < attrs["end_date"]:
-            raise serializers.ValidationError(
-                "Each date must be: recruitment deadline < study start date < study end"
-                " date."
-            )
+        if isinstance(self.instance, StudyGroup):
+            assert isinstance(
+                self.instance, StudyGroup
+            ), f"{self.instance} is not StudyGroup"
+            if self.instance and self.instance.uuid and self.instance.is_closed is True:
+                raise serializers.ValidationError(
+                    "The studygroup is already closed. You can't update it."
+                )
+            # 날짜 검증
+            if not attrs["deadline"] < attrs["start_date"] < attrs["end_date"]:
+                raise serializers.ValidationError(
+                    "Each date must be: recruitment deadline < study start date < study"
+                    " end date."
+                )
         return attrs
 
 
@@ -189,8 +192,8 @@ class StudyGroupMemberCreateRequestBody(serializers.ModelSerializer[StudyGroupMe
         - 스터디그룹의 멤버 중에 현재 로그인한 유저가 있는지 확인합니다.
         """
         uuid = self.__dict__["_context"]["view"].kwargs["uuid"]
-        study_group = StudyGroup.objects.get(uuid=uuid)
-        members = [member.user for member in study_group.members.all()]
+        studygroup = StudyGroup.objects.get(uuid=uuid)
+        members = [member.user for member in studygroup.members.all()]
         request_user = self.__dict__["_context"]["request"].user
         if request_user in members:
             raise serializers.ValidationError(

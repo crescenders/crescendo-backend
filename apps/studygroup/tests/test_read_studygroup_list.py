@@ -88,7 +88,7 @@ class OpenedByDeadlineStudyGroupFactory(DjangoModelFactory):
         lambda self: self.start_date
         + relativedelta.relativedelta(days=random.randrange(1, 30))
     )
-    members = factory.RelatedFactory(StudyGroupLeaderFactory, "study_group")
+    members = factory.RelatedFactory(StudyGroupLeaderFactory, "studygroup")
 
 
 class StudyGroupListTestCase(APITestCase):

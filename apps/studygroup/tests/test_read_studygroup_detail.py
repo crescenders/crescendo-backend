@@ -74,7 +74,7 @@ class BaseStudyGroupTestCase(APITestCase):
         self.django_study.members.add(
             StudyGroupMember.objects.create(
                 user=self.django_study_leader,
-                study_group=self.django_study,
+                studygroup=self.django_study,
                 is_leader=True,
             ),
         )
@@ -92,7 +92,7 @@ class BaseStudyGroupTestCase(APITestCase):
         self.react_study.members.add(
             StudyGroupMember.objects.create(
                 user=self.django_study_leader,
-                study_group=self.react_study,
+                studygroup=self.react_study,
                 is_leader=True,
             ),
         )

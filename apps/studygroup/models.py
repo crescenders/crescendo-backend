@@ -44,17 +44,17 @@ class StudyGroupMember(TimestampedModel):
         verbose_name_plural = "StudyGroup Members"
         constraints = [
             models.UniqueConstraint(
-                fields=["user", "study_group"], name="unique_study_group_member"
+                fields=["user", "studygroup"], name="unique_studygroup_member"
             )
         ]
 
     user = models.ForeignKey(
-        User, on_delete=models.CASCADE, related_name="study_group_member"
+        User, on_delete=models.CASCADE, related_name="studygroup_member"
     )
     is_leader = models.BooleanField(default=False)
     is_approved = models.BooleanField(default=False)
     request_message = models.CharField(max_length=200, blank=False)
-    study_group = models.ForeignKey(
+    studygroup = models.ForeignKey(
         "StudyGroup", on_delete=models.CASCADE, related_name="members"
     )
 
@@ -88,8 +88,8 @@ class StudyGroup(TimestampedModel):
     deadline = models.DateField()
 
     # Foreign Keys
-    categories = models.ManyToManyField(Category, related_name="study_groups")
-    tags = models.ManyToManyField(Tag, related_name="study_groups", blank=True)
+    categories = models.ManyToManyField(Category, related_name="studygroups")
+    tags = models.ManyToManyField(Tag, related_name="studygroups", blank=True)
 
     @property
     def default_head_image(self) -> str:

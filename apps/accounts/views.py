@@ -101,7 +101,6 @@ class MyProfileAPI(generics.RetrieveUpdateDestroyAPIView):
 
     def get_object(self) -> User:
         queryset = self.get_queryset()
-        assert type(self.request.user) is User
         obj = get_object_or_404(queryset, uuid=self.request.user.uuid)
         assert isinstance(obj, User)
         return obj

@@ -70,7 +70,7 @@ class StudyGroupAPISet(viewsets.ModelViewSet):
         assert isinstance(serializer.instance, StudyGroup)
         initial_member = StudyGroupMember.objects.create(
             user=self.request.user,
-            study_group=serializer.instance,
+            studygroup=serializer.instance,
             is_leader=True,
             is_approved=True,
         )
@@ -127,7 +127,7 @@ class StudyGroupMemberListAPI(generics.ListCreateAPIView):
         QueryString 으로 전달받은 uuid 에 해당하는 스터디그룹의 멤버 목록을 조회합니다.
         """
         assert self.kwargs.get("uuid") is not None
-        return StudyGroupMember.objects.filter(study_group__uuid=self.kwargs["uuid"])
+        return StudyGroupMember.objects.filter(studygroup__uuid=self.kwargs["uuid"])
 
     @transaction.atomic
     def perform_create(self, serializer: BaseSerializer[StudyGroupMember]) -> None:
@@ -138,13 +138,13 @@ class StudyGroupMemberListAPI(generics.ListCreateAPIView):
         2. 스터디그룹 식별
         3. 스터디그룹에 참가를 요청
         """
-        study_group = StudyGroup.objects.get(uuid=self.kwargs["uuid"])
+        studygroup = StudyGroup.objects.get(uuid=self.kwargs["uuid"])
         new_member = StudyGroupMember.objects.create(
             user=self.request.user,
-            study_group=study_group,
+            studygroup=studygroup,
             request_message=serializer.validated_data.get("request_message"),
         )
-        study_group.members.add(new_member)
+        studygroup.members.add(new_member)
 
     @extend_schema(summary="특정 스터디그룹의 멤버 목록을 조회합니다.")
     def get(self, request: Request, *args: Any, **kwargs: Any) -> Response:
@@ -167,7 +167,7 @@ class StudyGroupMemberDetailAPI(
 
     def get_queryset(self) -> QuerySet[StudyGroupMember]:
         assert self.kwargs.get("uuid") is not None
-        return StudyGroupMember.objects.filter(study_group__uuid=self.kwargs["uuid"])
+        return StudyGroupMember.objects.filter(studygroup__uuid=self.kwargs["uuid"])
 
     def get_serializer_class(self) -> type[BaseSerializer[StudyGroupMember]]:
         return self.serializer_classes.get(self.request.method, self.serializer_class)

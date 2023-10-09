@@ -44,4 +44,4 @@ class StudyGroupAddMember(permissions.BasePermission):
     def has_object_permission(
         self, request: Request, view: APIView, obj: StudyGroupMember
     ) -> bool:
-        return request.user in [member.user for member in obj.study_group.leaders.all()]
+        return request.user in [member.user for member in obj.studygroup.leaders.all()]
