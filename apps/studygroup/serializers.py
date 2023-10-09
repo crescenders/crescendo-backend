@@ -140,6 +140,7 @@ class StudyGroupDetailSerializer(StudyGroupListSerializer):
     class Meta:
         model = StudyGroup
         fields = [
+            "uuid",
             "head_image",
             "leaders",
             "post_title",
