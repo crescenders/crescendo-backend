@@ -6,7 +6,12 @@ from django.utils.datetime_safe import date
 from factory.django import DjangoModelFactory
 
 from apps.accounts.models import User
-from apps.studygroup.models import Category, StudyGroup, StudyGroupMember
+from apps.studygroup.models import (
+    Category,
+    StudyGroup,
+    StudyGroupMember,
+    StudyGroupMemberRequest,
+)
 
 
 class CategoryFactory(DjangoModelFactory):
@@ -36,6 +41,18 @@ class StudyGroupLeaderMemberFactory(DjangoModelFactory):
 
     user = factory.SubFactory(UserFactory)
     is_leader = True
+
+
+class StudyGroupMemberRequestFactory(DjangoModelFactory):
+    """
+    스터디그룹 멤버 신청을 생성합니다.
+    """
+
+    class Meta:
+        model = StudyGroupMemberRequest
+
+    user = factory.SubFactory(UserFactory)
+    request_message = factory.Faker("text")
 
 
 class StudyGroupGeneralMemberFactory(DjangoModelFactory):
