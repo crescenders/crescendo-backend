@@ -1,7 +1,6 @@
 from rest_framework.reverse import reverse
 from rest_framework.test import APITestCase
 
-from apps.studygroup.models import StudyGroup
 from apps.studygroup.tests.factories import OpenedByDeadlineStudyGroupFactory
 
 PAGINATION_LIST_FORMAT_KEYS = {
@@ -38,9 +37,6 @@ class StudyGroupListTestCase(APITestCase):
     def setUpTestData(cls) -> None:
         # 스터디그룹 10개 생성
         OpenedByDeadlineStudyGroupFactory.create_batch(10)
-
-        for studygroup in StudyGroup.objects.all():
-            print(studygroup.members.all())
 
     def test_read_list_format(self):
         url = reverse("studygroup_list")
