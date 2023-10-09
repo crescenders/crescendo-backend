@@ -41,7 +41,7 @@ class StudyGroupMemberReadTestCase(APITestCase):
         스터디그룹의 멤버 조회는 로그인하지 않으면 불가능합니다.
         """
         url = reverse(
-            "studygroup_members", kwargs={"uuid": self.studygroup_for_read.uuid}
+            "studygroup_member_list", kwargs={"uuid": self.studygroup_for_read.uuid}
         )
         response = self.client.get(url)
         self.assertEqual(response.status_code, 401)
@@ -51,7 +51,7 @@ class StudyGroupMemberReadTestCase(APITestCase):
         스터디그룹의 멤버 조회는 스터디에 가입된 멤버만 가능합니다.
         """
         url = reverse(
-            "studygroup_members", kwargs={"uuid": self.studygroup_for_read.uuid}
+            "studygroup_member_list", kwargs={"uuid": self.studygroup_for_read.uuid}
         )
         self.client.force_authenticate(user=self.general_member.user)
         response = self.client.get(url)
@@ -62,7 +62,7 @@ class StudyGroupMemberReadTestCase(APITestCase):
         스터디그룹장은 스터디그룹의 멤버를 조회할 수 있습니다.
         """
         url = reverse(
-            "studygroup_members", kwargs={"uuid": self.studygroup_for_read.uuid}
+            "studygroup_member_list", kwargs={"uuid": self.studygroup_for_read.uuid}
         )
         self.client.force_authenticate(user=self.studygroup_for_read.leaders[0].user)
         response = self.client.get(url)
@@ -74,7 +74,7 @@ class StudyGroupMemberReadTestCase(APITestCase):
         스터디그룹의 멤버 조회의 포맷을 검증합니다.
         """
         url = reverse(
-            "studygroup_members", kwargs={"uuid": self.studygroup_for_read.uuid}
+            "studygroup_member_list", kwargs={"uuid": self.studygroup_for_read.uuid}
         )
         self.client.force_authenticate(user=self.general_member.user)
         response = self.client.get(url)
@@ -93,7 +93,7 @@ class StudyGroupMemberReadTestCase(APITestCase):
         다른 스터디그룹에 가입된 일반 멤버는 스터디그룹의 멤버를 조회할 수 없습니다.
         """
         url = reverse(
-            "studygroup_members", kwargs={"uuid": self.studygroup_for_read.uuid}
+            "studygroup_member_list", kwargs={"uuid": self.studygroup_for_read.uuid}
         )
         self.client.force_authenticate(user=self.another_general_member.user)
         response = self.client.get(url)
@@ -104,7 +104,7 @@ class StudyGroupMemberReadTestCase(APITestCase):
         다른 스터디그룹의 리더는 스터디그룹의 멤버를 조회할 수 없습니다.
         """
         url = reverse(
-            "studygroup_members", kwargs={"uuid": self.studygroup_for_read.uuid}
+            "studygroup_member_list", kwargs={"uuid": self.studygroup_for_read.uuid}
         )
         self.client.force_authenticate(user=self.another_studygroup.leaders[0].user)
         response = self.client.get(url)
