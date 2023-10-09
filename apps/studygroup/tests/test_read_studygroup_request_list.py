@@ -45,7 +45,9 @@ class StudyGroupMemberRequestReadListTestCase(APITestCase):
         """
         스터디그룹의 멤버 신청 목록 조회는 리더인 경우에만 가능합니다.
         """
-        self.client.force_authenticate(user=self.studygroup_for_requested.leader.user)
+        self.client.force_authenticate(
+            user=self.studygroup_for_requested.leaders[0].user
+        )
         url = reverse(
             "studygroup_member_request_list",
             kwargs={"uuid": self.studygroup_for_requested.uuid},
