@@ -30,6 +30,12 @@ class StudyGroupMemberReadTestCase(APITestCase):
         )
         self.studygroup_for_read.members.add(self.general_member)
 
+        self.another_studygroup = OpenedByDeadlineStudyGroupFactory()
+        self.another_general_member = StudyGroupGeneralMemberFactory(
+            studygroup=self.another_studygroup
+        )
+        self.another_studygroup.members.add(self.another_general_member)
+
     def test_not_anyone_can_read_studygroup_member(self):
         """
         스터디그룹의 멤버 조회는 로그인하지 않으면 불가능합니다.
@@ -81,3 +87,25 @@ class StudyGroupMemberReadTestCase(APITestCase):
             set(response.data[0]["user"].keys()),
             USER_FORMAT_KEYS,
         )
+
+    def test_another_general_member_cannot_read_studygroup_member(self):
+        """
+        다른 스터디그룹에 가입된 일반 멤버는 스터디그룹의 멤버를 조회할 수 없습니다.
+        """
+        url = reverse(
+            "studygroup_members", kwargs={"uuid": self.studygroup_for_read.uuid}
+        )
+        self.client.force_authenticate(user=self.another_general_member.user)
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 403)
+
+    def test_another_leader_member_cannot_read_studygroup_member(self):
+        """
+        다른 스터디그룹의 리더는 스터디그룹의 멤버를 조회할 수 없습니다.
+        """
+        url = reverse(
+            "studygroup_members", kwargs={"uuid": self.studygroup_for_read.uuid}
+        )
+        self.client.force_authenticate(user=self.another_studygroup.leaders[0].user)
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 403)
