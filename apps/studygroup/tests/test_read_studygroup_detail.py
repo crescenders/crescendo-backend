@@ -10,6 +10,7 @@ from apps.accounts.models import User
 from apps.studygroup.models import Category, StudyGroup, StudyGroupMember, Tag
 
 DETAIL_FORMAT_KEYS = {
+    "uuid",
     "head_image",
     "leaders",
     "post_title",
