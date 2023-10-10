@@ -185,6 +185,7 @@ class MyStudyGroupReadSerializer(serializers.ModelSerializer[StudyGroup]):
         model = StudyGroup
         fields = [
             "uuid",
+            "head_image",
             "name",
             "categories",
             "start_date",
@@ -195,6 +196,25 @@ class MyStudyGroupReadSerializer(serializers.ModelSerializer[StudyGroup]):
             "is_closed",
             "current_member_count",
         ]
+
+    @extend_schema_field(
+        {
+            "example": "https://picsum.photos/seed/uuid/210/150",
+        },
+    )
+    def get_head_image(self, obj: StudyGroup) -> str:
+        return (
+            serializers.ImageField.to_representation(self, obj.head_image)
+            if serializers.ImageField.to_representation(self, obj.head_image)
+            is not None
+            else obj.default_head_image
+        )
+
+    def to_representation(self, instance: StudyGroup) -> OrderedDict[str, Any]:
+        ret = super().to_representation(instance)
+        if not ret["head_image"]:
+            ret["head_image"] = self.get_head_image(instance)
+        return ret
 
 
 class StudyGroupMemberRequestCreateSerializer(
@@ -212,11 +232,16 @@ class StudyGroupMemberRequestCreateSerializer(
 
     def validate(self, attrs: OrderedDict[str, Any]) -> OrderedDict[str, Any]:
         """
-        1. 이미 스터디그룹에 가입되어 있는지 확인합니다.
-        2. 이미 스터디그룹 가입 요청을 보냈는지 확인합니다.
+        1. 스터디그룹의 모집이 마감되었는지 확인합니다.
+        2. 이미 스터디그룹에 가입되어 있는지 확인합니다.
+        3. 이미 스터디그룹 가입 요청을 보냈는지 확인합니다.
         """
         uuid = self.__dict__["_context"]["view"].kwargs["uuid"]
         studygroup = StudyGroup.objects.get(uuid=uuid)
+        if studygroup.is_closed:
+            raise serializers.ValidationError(
+                "The studygroup is already closed. You can't join it."
+            )
         members = [member.user for member in studygroup.members.all()]
         request_user = self.__dict__["_context"]["request"].user
         if request_user in members:
@@ -249,9 +274,19 @@ class StudyGroupMemberRequestReadSerializer(
             "id",
             "user",
             "request_message",
-            "is_approved",
-            "created_at",
         ]
+
+
+class StudyGroupMemberRequestManageSerializer(
+    serializers.ModelSerializer[StudyGroupMemberRequest]
+):
+    """
+    스터디그룹 가입 요청을 승인하거나 거절하기 위한 serializer 입니다.
+    """
+
+    class Meta:
+        model = StudyGroupMemberRequest
+        fields = []
 
 
 class StudyGroupMemberReadSerializer(serializers.ModelSerializer[StudyGroupMember]):
