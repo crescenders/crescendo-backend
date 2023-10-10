@@ -95,3 +95,33 @@ class OpenedByDeadlineStudyGroupFactory(DjangoModelFactory):
         + relativedelta.relativedelta(days=random.randrange(1, 30))
     )
     members = factory.RelatedFactory(StudyGroupLeaderMemberFactory, "studygroup")
+
+
+class ClosedByDeadlineStudyGroupFactory(DjangoModelFactory):
+    """
+    마감되어 있는 스터디그룹을 생성합니다.
+    모집 마감이 이미 지난 경우의 스터디그룹들을 생성합니다.
+    """
+
+    class Meta:
+        model = StudyGroup
+
+    name = factory.Faker("name")
+    member_limit = factory.LazyAttribute(lambda x: random.randrange(1, 10))
+    content = factory.Faker("text")
+
+    # today < deadline < start_date < end_date
+    deadline = factory.Faker(
+        "date_between_dates",
+        date_start=date.today() - relativedelta.relativedelta(days=10),
+        date_end=date.today() - relativedelta.relativedelta(days=2),
+    )
+    start_date = factory.LazyAttribute(
+        lambda self: self.deadline
+        + relativedelta.relativedelta(days=random.randrange(1, 20))
+    )
+    end_date = factory.LazyAttribute(
+        lambda self: self.start_date
+        + relativedelta.relativedelta(days=random.randrange(1, 30))
+    )
+    members = factory.RelatedFactory(StudyGroupLeaderMemberFactory, "studygroup")
