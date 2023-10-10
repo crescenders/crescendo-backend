@@ -212,6 +212,15 @@ class StudyGroupMemberRequestDetailAPI(
             user=studygroup_request.user, studygroup=studygroup, is_leader=False
         )
 
+    @transaction.atomic
+    def perform_destroy(self, instance: StudyGroupMemberRequest) -> None:
+        """
+        스터디그룹 가입 요청을 거절합니다.
+        1. 해당 요청이 거절되고, 처리되었음이 저장됩니다.
+        """
+        instance.processed = True
+        instance.save()
+
 
 @extend_schema(tags=["스터디그룹 멤버 관리 API"])
 class StudyGroupMemberListAPI(generics.ListAPIView):
