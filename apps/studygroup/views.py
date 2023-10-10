@@ -1,32 +1,43 @@
-from typing import Any
+from typing import Any, Sequence
 
 from django.db import transaction
 from django.db.models import QuerySet
 from django_filters.rest_framework import DjangoFilterBackend
 from drf_spectacular.utils import extend_schema
-from rest_framework import generics, mixins, viewsets
+from rest_framework import generics, viewsets
 from rest_framework.parsers import FormParser, MultiPartParser
-from rest_framework.permissions import AllowAny
+from rest_framework.permissions import AllowAny, BasePermission, IsAuthenticated
 from rest_framework.request import Request
 from rest_framework.response import Response
 from rest_framework.serializers import BaseSerializer
 
 from apps.accounts.models import User
 from apps.studygroup.filters import StudyGroupListFilter
-from apps.studygroup.models import Category, StudyGroup, StudyGroupMember
+from apps.studygroup.models import (
+    Category,
+    StudyGroup,
+    StudyGroupMember,
+    StudyGroupMemberRequest,
+)
 from apps.studygroup.pagination import StudyGroupPagination
-from apps.studygroup.permissions import IsLeaderOrReadOnly, StudyGroupAddMember
+from apps.studygroup.permissions import (
+    IsStudyGroupLeader,
+    StudyGroupAddMember,
+    StudyGroupCreatePermission,
+    StudyGroupDeleteOrUpdatePermission,
+    StudyGroupMemberRead,
+)
 from apps.studygroup.serializers import (
-    CategorySerializer,
+    CategoryReadSerializer,
     StudyGroupDetailSerializer,
     StudyGroupListSerializer,
-    StudyGroupMemberCreateRequestBody,
-    StudyGroupMemberSchema,
-    StudyGroupMemberUpdateRequestBody,
+    StudyGroupMemberReadSerializer,
+    StudyGroupMemberRequestCreateSerializer,
+    StudyGroupMemberRequestReadSerializer,
 )
 
 
-@extend_schema(tags=["스터디그룹 API"])
+@extend_schema(tags=["스터디그룹 관리 API"])
 class StudyGroupAPISet(viewsets.ModelViewSet):
     # Serializer
     serializer_class = StudyGroupListSerializer
@@ -38,14 +49,23 @@ class StudyGroupAPISet(viewsets.ModelViewSet):
     lookup_field = "uuid"
 
     # Permission
-    permission_classes = (IsLeaderOrReadOnly,)
-
+    permission_classes = (AllowAny,)
     # Filtering
     filter_backends = (DjangoFilterBackend,)
     filterset_class = StudyGroupListFilter
 
     # Pagination
     pagination_class = StudyGroupPagination
+
+    def get_permissions(self) -> Sequence[BasePermission]:
+        """
+        스터디그룹을 생성할 때, 스터디그룹장이 되는 유저는 스터디그룹장 권한을 가지고 있어야 합니다.
+        """
+        if self.action == "create":
+            return [permission() for permission in [StudyGroupCreatePermission]]
+        elif self.action in ["update", "partial_update", "destroy"]:
+            return [permission() for permission in [StudyGroupDeleteOrUpdatePermission]]
+        return super().get_permissions()
 
     def get_queryset(self) -> QuerySet[StudyGroup]:
         queryset = StudyGroup.objects.all()
@@ -70,9 +90,8 @@ class StudyGroupAPISet(viewsets.ModelViewSet):
         assert isinstance(serializer.instance, StudyGroup)
         initial_member = StudyGroupMember.objects.create(
             user=self.request.user,
-            study_group=serializer.instance,
+            studygroup=serializer.instance,
             is_leader=True,
-            is_approved=True,
         )
         serializer.instance.members.add(initial_member)
 
@@ -108,75 +127,85 @@ class StudyGroupAPISet(viewsets.ModelViewSet):
         return super().destroy(request, *args, **kwargs)
 
 
-@extend_schema(tags=["스터디그룹 API"])
-class StudyGroupMemberListAPI(generics.ListCreateAPIView):
-    permission_classes = (StudyGroupAddMember,)
-    queryset = StudyGroupMember.objects.all()
-    serializer_class = StudyGroupMemberSchema
+@extend_schema(tags=["스터디그룹 멤버 관리 API"])
+class StudyGroupMemberRequestListAPI(generics.ListCreateAPIView):
+    permission_classes = (AllowAny,)
+    queryset = StudyGroupMemberRequest.objects.all()
+    serializer_class = StudyGroupMemberRequestCreateSerializer
     serializer_classes = {
-        "GET": StudyGroupMemberSchema,
-        "POST": StudyGroupMemberCreateRequestBody,
+        "GET": StudyGroupMemberRequestReadSerializer,
+        "POST": StudyGroupMemberRequestCreateSerializer,
     }
-    filterset_fields = ("is_approved",)
 
-    def get_serializer_class(self) -> type[BaseSerializer[StudyGroupMember]]:
-        return self.serializer_classes.get(self.request.method, self.serializer_class)
+    def get_permissions(self) -> Sequence[BasePermission]:
+        if self.request.method == "GET":
+            return [permission() for permission in [IsStudyGroupLeader]]
+        elif self.request.method == "POST":
+            return [permission() for permission in [IsAuthenticated]]
+        return super().get_permissions()
+
+    def get_serializer_class(self) -> type[BaseSerializer[StudyGroupMemberRequest]]:
+        return self.serializer_classes.get(self.request.method)
+
+    @extend_schema(summary="특정 스터디그룹의 가입 요청 목록을 조회합니다. 해당 스터디그룹의 리더만 가능합니다.")
+    def get(self, request: Request, *args: Any, **kwargs: Any) -> Response:
+        return super().list(request, *args, **kwargs)
+
+    @extend_schema(summary="특정 스터디그룹에 가입 요청을 보냅니다. 누구나 요청을 보낼 수 있습니다.")
+    def post(self, request: Request, *args: Any, **kwargs: Any) -> Response:
+        return super().create(request, *args, **kwargs)
+
+    def perform_create(
+        self, serializer: BaseSerializer[StudyGroupMemberRequest]
+    ) -> None:
+        """
+        스터디그룹 가입 요청을 생성합니다.
+        """
+        studygroup = StudyGroup.objects.get(uuid=self.kwargs["uuid"])
+        serializer.save(user=self.request.user, studygroup=studygroup)
+        super().perform_create(serializer)
+
+
+@extend_schema(tags=["스터디그룹 멤버 관리 API"])
+class StudyGroupMemberRequestDetailAPI(generics.DestroyAPIView):
+    @extend_schema(summary="특정 스터디그룹의 가입 요청을 거절합니다. 해당 스터디그룹의 리더만 가능합니다.")
+    def delete(self, request: Request, *args: Any, **kwargs: Any) -> Response:
+        """
+        soft delete 를 합니다. 해당 요청이 거절되었음이 저장됩니다.
+        """
+        return super().destroy(request, *args, **kwargs)
+
+
+@extend_schema(tags=["스터디그룹 멤버 관리 API"])
+class StudyGroupMemberListAPI(generics.ListAPIView):
+    permission_classes = (
+        StudyGroupMemberRead,
+    )  # 스터디그룹 멤버 조회는 스터디그룹의 가입된 멤버만 조회 가능합니다.
+    queryset = StudyGroupMember.objects.all()
+    serializer_class = StudyGroupMemberReadSerializer
 
     def get_queryset(self) -> QuerySet[StudyGroupMember]:
         """
         QueryString 으로 전달받은 uuid 에 해당하는 스터디그룹의 멤버 목록을 조회합니다.
         """
         assert self.kwargs.get("uuid") is not None
-        return StudyGroupMember.objects.filter(study_group__uuid=self.kwargs["uuid"])
-
-    @transaction.atomic
-    def perform_create(self, serializer: BaseSerializer[StudyGroupMember]) -> None:
-        """
-        스터디그룹에 참가를 요청합니다.
-
-        1. 현재 로그인한 유저 식별
-        2. 스터디그룹 식별
-        3. 스터디그룹에 참가를 요청
-        """
-        study_group = StudyGroup.objects.get(uuid=self.kwargs["uuid"])
-        new_member = StudyGroupMember.objects.create(
-            user=self.request.user,
-            study_group=study_group,
-            request_message=serializer.validated_data.get("request_message"),
-        )
-        study_group.members.add(new_member)
+        return StudyGroupMember.objects.filter(studygroup__uuid=self.kwargs["uuid"])
 
     @extend_schema(summary="특정 스터디그룹의 멤버 목록을 조회합니다.")
     def get(self, request: Request, *args: Any, **kwargs: Any) -> Response:
         return super().get(request, *args, **kwargs)
 
-    @extend_schema(summary="특정 스터디그룹에 참가를 요청합니다.")
-    def post(self, request: Request, *args: Any, **kwargs: Any) -> Response:
-        return super().post(request, *args, **kwargs)
 
-
-@extend_schema(tags=["스터디그룹 API"])
-class StudyGroupMemberDetailAPI(
-    mixins.UpdateModelMixin, mixins.DestroyModelMixin, generics.GenericAPIView
-):
-    serializer_class = StudyGroupMemberCreateRequestBody
-    serializer_classes = {
-        "PATCH": StudyGroupMemberUpdateRequestBody,
-    }
+@extend_schema(tags=["스터디그룹 멤버 관리 API"])
+class StudyGroupMemberDetailAPI(generics.DestroyAPIView):
+    serializer_class = StudyGroupMemberReadSerializer
     permission_classes = (StudyGroupAddMember,)
 
     def get_queryset(self) -> QuerySet[StudyGroupMember]:
         assert self.kwargs.get("uuid") is not None
-        return StudyGroupMember.objects.filter(study_group__uuid=self.kwargs["uuid"])
+        return StudyGroupMember.objects.filter(studygroup__uuid=self.kwargs["uuid"])
 
-    def get_serializer_class(self) -> type[BaseSerializer[StudyGroupMember]]:
-        return self.serializer_classes.get(self.request.method, self.serializer_class)
-
-    @extend_schema(summary="스터디그룹의 참가 신청을 승인합니다.")
-    def patch(self, request: Request, *args: Any, **kwargs: Any) -> Response:
-        return super().partial_update(request, *args, **kwargs)
-
-    @extend_schema(summary="스터디그룹의 참가신청을 거절하거나, 멤버를 탈퇴시킵니다.")
+    @extend_schema(summary="스터디그룹의 멤버를 탈퇴시킵니다.")
     def delete(self, request: Request, *args: Any, **kwargs: Any) -> Response:
         return super().destroy(request, *args, **kwargs)
 
@@ -186,7 +215,7 @@ class CategoryListAPI(generics.ListAPIView):
     pagination_class = None
     permission_classes = (AllowAny,)
     queryset = Category.objects.all()
-    serializer_class = CategorySerializer
+    serializer_class = CategoryReadSerializer
 
     @extend_schema(summary="카테고리 목록을 조회합니다.")
     def get(self, request: Request, *args: Any, **kwargs: Any) -> Response:

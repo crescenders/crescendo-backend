@@ -1,7 +1,13 @@
 from django.contrib import admin
 from django.utils.html import format_html
 
-from apps.studygroup.models import Category, StudyGroup, StudyGroupMember, Tag
+from apps.studygroup.models import (
+    Category,
+    StudyGroup,
+    StudyGroupMember,
+    StudyGroupMemberRequest,
+    Tag,
+)
 
 
 @admin.register(Category)
@@ -15,6 +21,13 @@ class TagAdmin(admin.ModelAdmin):
         "id",
         "name",
     )
+
+
+class StudyGroupRequestInline(admin.TabularInline):
+    verbose_name = "스터디그룹 가입 요청"
+    verbose_name_plural = "스터디그룹 가입 요청들"
+    model = StudyGroupMemberRequest
+    extra = 0
 
 
 class StudyGroupMemberInline(admin.TabularInline):
@@ -94,5 +107,6 @@ class StudyGroupAdmin(admin.ModelAdmin):
         return instance.is_closed
 
     inlines = [
+        StudyGroupRequestInline,
         StudyGroupMemberInline,
     ]

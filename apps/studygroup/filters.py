@@ -13,24 +13,32 @@ class MyStudyGroupFilter(filters.FilterSet):  # type: ignore
         choices=(
             (
                 "current",
-                "현재 사용자가 가입해 활동 중이거나, 승인을 기다리고 있는 스터디그룹들 (개발 중, 스펙 바뀔 수 있음)",
+                "현재 사용자가 가입해 활동 중인 스터디그룹들",
             ),
             (
                 "requested",
-                "현재 사용자가 가입 요청한 스터디그룹들 (개발 중, 스펙 바뀔 수 있음)",
+                "현재 사용자가 가입 요청해서 승인을 기다리고 있는 스터디그룹들",
             ),
-            ("as_leader", "현재 사용자가 리더인 스터디그룹들"),
+            (
+                "approved",
+                "현재 사용자가 가입을 요청했고, 승인되었지만 아직 활동을 시작하지 않은 스터디그룹들",
+            ),
+            (
+                "disapproved",
+                "현재 사용자가 가입을 요청했지만, 거절당한 스터디그룹들",
+            ),
+            (
+                "as_leader",
+                "현재 사용자가 리더인 스터디그룹들",
+            ),
         ),
-        method="filter_as_leader",
+        method="filter_my_studygroup",
         help_text="검색 조건에 따라 나와 관련된 스터디그룹을 필터링합니다.",
     )
 
-    def filter_as_leader(
+    def filter_my_studygroup(
         self, queryset: QuerySet[StudyGroup], name: str, value: str
     ) -> QuerySet[StudyGroup]:
-        """
-        내가 리더인 스터디그룹을 필터링합니다.
-        """
         members_as_leader = StudyGroupMember.objects.filter(
             user=self.request.user, is_leader=True
         )

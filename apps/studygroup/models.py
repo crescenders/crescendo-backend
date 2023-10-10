@@ -38,28 +38,45 @@ class Category(models.Model):
         return self.name
 
 
+class StudyGroupMemberRequest(models.Model):
+    """
+    스터디그룹 가입 요청 모델
+    """
+
+    user = models.ForeignKey(
+        User, on_delete=models.CASCADE, related_name="studygroup_member_request"
+    )
+    studygroup = models.ForeignKey(
+        "StudyGroup", on_delete=models.CASCADE, related_name="requests"
+    )
+    created_at = models.DateTimeField(auto_now_add=True)  # 신청 시간
+    request_message = models.CharField(max_length=200, blank=False)
+    processed = models.BooleanField(default=False)  # 최종 처리 여부
+    is_approved = models.BooleanField(default=False)  # 승인 여부
+
+
 class StudyGroupMember(TimestampedModel):
     class Meta:
         verbose_name = "StudyGroup Member"
         verbose_name_plural = "StudyGroup Members"
         constraints = [
             models.UniqueConstraint(
-                fields=["user", "study_group"], name="unique_study_group_member"
+                fields=["user", "studygroup"], name="unique_studygroup_member"
             )
         ]
 
     user = models.ForeignKey(
-        User, on_delete=models.CASCADE, related_name="study_group_member"
+        User, on_delete=models.CASCADE, related_name="studygroup_member"
     )
     is_leader = models.BooleanField(default=False)
-    is_approved = models.BooleanField(default=False)
-    request_message = models.CharField(max_length=200, blank=False)
-    study_group = models.ForeignKey(
+    studygroup = models.ForeignKey(
         "StudyGroup", on_delete=models.CASCADE, related_name="members"
     )
 
     def __str__(self) -> str:
-        return f"멤버 {self.user.username}"
+        if self.is_leader is True:
+            return f"리더 멤버 {self.user.username}"
+        return f"일반 멤버 {self.user.username}"
 
 
 class StudyGroup(TimestampedModel):
@@ -88,8 +105,8 @@ class StudyGroup(TimestampedModel):
     deadline = models.DateField()
 
     # Foreign Keys
-    categories = models.ManyToManyField(Category, related_name="study_groups")
-    tags = models.ManyToManyField(Tag, related_name="study_groups", blank=True)
+    categories = models.ManyToManyField(Category, related_name="studygroups")
+    tags = models.ManyToManyField(Tag, related_name="studygroups", blank=True)
 
     @property
     def default_head_image(self) -> str:
@@ -103,7 +120,7 @@ class StudyGroup(TimestampedModel):
         """
         승인된 스터디그룹원들을 반환합니다.
         """
-        return self.members.filter(is_approved=True)
+        return self.members.all()
 
     @cached_property
     def leaders(self) -> QuerySet[StudyGroupMember]:

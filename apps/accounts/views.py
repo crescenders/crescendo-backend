@@ -20,7 +20,7 @@ from apps.accounts.serializers import GoogleLoginSerializer, ProfileSerializer
 from apps.studygroup.filters import MyStudyGroupFilter
 from apps.studygroup.models import StudyGroup
 from apps.studygroup.pagination import StudyGroupPagination
-from apps.studygroup.serializers import MyStudyGroupResponseSerializer
+from apps.studygroup.serializers import MyStudyGroupReadSerializer
 
 
 class TokenRefreshAPI(_TokenRefreshView):  # type: ignore
@@ -101,7 +101,6 @@ class MyProfileAPI(generics.RetrieveUpdateDestroyAPIView):
 
     def get_object(self) -> User:
         queryset = self.get_queryset()
-        assert type(self.request.user) is User
         obj = get_object_or_404(queryset, uuid=self.request.user.uuid)
         assert isinstance(obj, User)
         return obj
@@ -128,7 +127,7 @@ class MyStudyAPI(mixins.ListModelMixin, generics.GenericAPIView):
     """
 
     # serializer
-    serializer_class = MyStudyGroupResponseSerializer
+    serializer_class = MyStudyGroupReadSerializer
 
     # pagination
     pagination_class = StudyGroupPagination

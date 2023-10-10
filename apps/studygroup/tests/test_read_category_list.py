@@ -1,14 +1,9 @@
-from factory.django import DjangoModelFactory
 from rest_framework import status
 from rest_framework.reverse import reverse
 from rest_framework.test import APITestCase
 
 from apps.studygroup.models import Category
-
-
-class CategoryFactory(DjangoModelFactory):
-    class Meta:
-        model = Category
+from apps.studygroup.tests.factories import CategoryFactory
 
 
 class CategoryTestCase(APITestCase):
