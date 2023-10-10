@@ -254,9 +254,19 @@ class StudyGroupMemberRequestReadSerializer(
             "id",
             "user",
             "request_message",
-            "is_approved",
-            "created_at",
         ]
+
+
+class StudyGroupMemberRequestManageSerializer(
+    serializers.ModelSerializer[StudyGroupMemberRequest]
+):
+    """
+    스터디그룹 가입 요청을 승인하거나 거절하기 위한 serializer 입니다.
+    """
+
+    class Meta:
+        model = StudyGroupMemberRequest
+        fields = []
 
 
 class StudyGroupMemberReadSerializer(serializers.ModelSerializer[StudyGroupMember]):
