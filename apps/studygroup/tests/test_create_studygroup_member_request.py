@@ -2,6 +2,7 @@ from rest_framework.reverse import reverse
 from rest_framework.test import APITestCase
 
 from apps.studygroup.tests.factories import (
+    ClosedByDeadlineStudyGroupFactory,
     OpenedByDeadlineStudyGroupFactory,
     StudyGroupGeneralMemberFactory,
     UserFactory,
@@ -12,6 +13,7 @@ class StudyGroupMemberRequestCreateTestCase(APITestCase):
     def setUp(self) -> None:
         self.logged_in_user = UserFactory()
         self.studygroup_for_requested = OpenedByDeadlineStudyGroupFactory()
+        self.closed_studygroup = ClosedByDeadlineStudyGroupFactory()
 
     def test_not_anyone_can_create_studygroup_member_request_list(self):
         """
@@ -66,5 +68,19 @@ class StudyGroupMemberRequestCreateTestCase(APITestCase):
             kwargs={"uuid": self.studygroup_for_requested.uuid},
         )
         data = {"request_message": "가입 신청합니다."}
+        response = self.client.post(url, data=data)
+        self.assertEqual(response.status_code, 400)
+
+    def test_cannot_request_to_closed_studygroup(self):
+        """
+        모집 마감된 스터디그룹에는 가입 신청할 수 없습니다.
+        """
+        print(self.closed_studygroup.is_closed)
+        url = reverse(
+            "studygroup_member_request_list",
+            kwargs={"uuid": self.closed_studygroup.uuid},
+        )
+        data = {"request_message": "가입 신청합니다."}
+        self.client.force_authenticate(user=self.logged_in_user)
         response = self.client.post(url, data=data)
         self.assertEqual(response.status_code, 400)
