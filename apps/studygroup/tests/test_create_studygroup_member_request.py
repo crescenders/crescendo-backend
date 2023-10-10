@@ -75,7 +75,6 @@ class StudyGroupMemberRequestCreateTestCase(APITestCase):
         """
         모집 마감된 스터디그룹에는 가입 신청할 수 없습니다.
         """
-        print(self.closed_studygroup.is_closed)
         url = reverse(
             "studygroup_member_request_list",
             kwargs={"uuid": self.closed_studygroup.uuid},
