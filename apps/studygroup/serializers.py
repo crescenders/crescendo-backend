@@ -185,6 +185,7 @@ class MyStudyGroupReadSerializer(serializers.ModelSerializer[StudyGroup]):
         model = StudyGroup
         fields = [
             "uuid",
+            "head_image",
             "name",
             "categories",
             "start_date",
@@ -195,6 +196,25 @@ class MyStudyGroupReadSerializer(serializers.ModelSerializer[StudyGroup]):
             "is_closed",
             "current_member_count",
         ]
+
+    @extend_schema_field(
+        {
+            "example": "https://picsum.photos/seed/uuid/210/150",
+        },
+    )
+    def get_head_image(self, obj: StudyGroup) -> str:
+        return (
+            serializers.ImageField.to_representation(self, obj.head_image)
+            if serializers.ImageField.to_representation(self, obj.head_image)
+            is not None
+            else obj.default_head_image
+        )
+
+    def to_representation(self, instance: StudyGroup) -> OrderedDict[str, Any]:
+        ret = super().to_representation(instance)
+        if not ret["head_image"]:
+            ret["head_image"] = self.get_head_image(instance)
+        return ret
 
 
 class StudyGroupMemberRequestCreateSerializer(
