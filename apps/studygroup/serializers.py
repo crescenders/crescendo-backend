@@ -212,11 +212,16 @@ class StudyGroupMemberRequestCreateSerializer(
 
     def validate(self, attrs: OrderedDict[str, Any]) -> OrderedDict[str, Any]:
         """
-        1. 이미 스터디그룹에 가입되어 있는지 확인합니다.
-        2. 이미 스터디그룹 가입 요청을 보냈는지 확인합니다.
+        1. 스터디그룹의 모집이 마감되었는지 확인합니다.
+        2. 이미 스터디그룹에 가입되어 있는지 확인합니다.
+        3. 이미 스터디그룹 가입 요청을 보냈는지 확인합니다.
         """
         uuid = self.__dict__["_context"]["view"].kwargs["uuid"]
         studygroup = StudyGroup.objects.get(uuid=uuid)
+        if studygroup.is_closed:
+            raise serializers.ValidationError(
+                "The studygroup is already closed. You can't join it."
+            )
         members = [member.user for member in studygroup.members.all()]
         request_user = self.__dict__["_context"]["request"].user
         if request_user in members:
