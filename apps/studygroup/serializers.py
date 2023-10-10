@@ -177,12 +177,16 @@ class MyStudyGroupReadSerializer(serializers.ModelSerializer[StudyGroup]):
     """
 
     created_at = serializers.DateTimeField(format="%Y-%m-%d")
+    categories = serializers.SlugRelatedField(
+        many=True, read_only=True, slug_field="name"
+    )
 
     class Meta:
         model = StudyGroup
         fields = [
             "uuid",
             "name",
+            "categories",
             "start_date",
             "end_date",
             "created_at",
