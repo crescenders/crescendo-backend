@@ -4,7 +4,7 @@ from django.db.models import Count, F, Q, QuerySet
 from django.utils.datetime_safe import date
 from django_filters import rest_framework as filters
 
-from apps.studygroup.models import Category, StudyGroup, StudyGroupMember
+from apps.studygroup.models import Category, StudyGroup
 
 
 class MyStudyGroupFilter(filters.FilterSet):  # type: ignore
@@ -13,15 +13,15 @@ class MyStudyGroupFilter(filters.FilterSet):  # type: ignore
         choices=(
             (
                 "current",
-                "현재 사용자가 가입해 활동 중인 스터디그룹들",
+                "현재 사용자가 가입해 활동 중인 스터디그룹들, 모집이 닫히고 활동이 시작된 스터디그룹들을 필터링합니다.",
             ),
             (
                 "requested",
-                "현재 사용자가 가입 요청해서 승인을 기다리고 있는 스터디그룹들",
+                "현재 사용자가 가입 요청해서 승인을 기다리고 있는 스터디그룹들을 필터링합니다.",
             ),
             (
                 "approved",
-                "현재 사용자가 가입을 요청했고, 승인되었지만 아직 활동을 시작하지 않은 스터디그룹들",
+                "현재 사용자가 가입을 요청했고, 승인되었지만 아직 활동을 시작하지 않은 스터디그룹들을 필터링합니다.",
             ),
             (
                 "disapproved",
@@ -39,10 +39,77 @@ class MyStudyGroupFilter(filters.FilterSet):  # type: ignore
     def filter_my_studygroup(
         self, queryset: QuerySet[StudyGroup], name: str, value: str
     ) -> QuerySet[StudyGroup]:
-        members_as_leader = StudyGroupMember.objects.filter(
-            user=self.request.user, is_leader=True
+        if value == "current":
+            return self._filter_current(queryset)
+        elif value == "requested":
+            return self._filter_requested(queryset)
+        elif value == "approved":
+            return self._filter_approved(queryset)
+        elif value == "disapproved":
+            return self._filter_disapproved(queryset)
+        elif value == "as_leader":
+            return self._filter_as_leader(queryset)
+
+    def _filter_current(self, queryset: QuerySet[StudyGroup]) -> QuerySet[StudyGroup]:
+        """
+        현재 사용자가 가입해 활동 중인 스터디그룹들을 필터링합니다.
+        """
+        queryset = queryset.filter(
+            members__user__in=[self.request.user],
+            members__is_leader=False,
+            start_date__lte=date.today(),  # 활동 시작일이 오늘보다 이전
+            end_date__gte=date.today(),  # 활동 종료일이 오늘보다 이후
         )
-        queryset = StudyGroup.objects.filter(members__in=members_as_leader)
+        return queryset
+
+    def _filter_requested(self, queryset: QuerySet[StudyGroup]) -> QuerySet[StudyGroup]:
+        """
+        현재 사용자가 가입 요청해서 승인을 기다리고 있는 스터디그룹들을 필터링합니다.
+        모집 마감일이 지나지 않고, 모집 인원이 남아있어야 합니다.
+        """
+        queryset = StudyGroup.objects.annotate(
+            members_count=Count("members"),
+        ).filter(
+            requests__user__in=[self.request.user],
+            requests__processed=False,
+            requests__is_approved=False,
+            deadline__gt=date.today(),  # 모집 마감일이 지나지 않음
+            member_limit__gt=F("members_count"),  # 모집 인원이 남음
+        )
+        return queryset
+
+    def _filter_approved(self, queryset: QuerySet[StudyGroup]) -> QuerySet[StudyGroup]:
+        """
+        현재 사용자가 가입을 요청했고, 승인되었지만 아직 활동을 시작하지 않은 스터디그룹들을 필터링합니다.
+        """
+        queryset = queryset.filter(
+            members__user__in=[self.request.user],
+            members__is_leader=False,
+            start_date__gte=date.today(),  # 활동 시작일이 오늘보다 이후
+        )
+        return queryset
+
+    def _filter_disapproved(
+        self, queryset: QuerySet[StudyGroup]
+    ) -> QuerySet[StudyGroup]:
+        """
+        현재 사용자가 가입을 요청했지만, 거절당한 스터디그룹들을 필터링합니다.
+        """
+        queryset = queryset.filter(
+            requests__user__in=[self.request.user],
+            requests__processed=True,
+            requests__is_approved=False,
+        )
+        return queryset
+
+    def _filter_as_leader(self, queryset: QuerySet[StudyGroup]) -> QuerySet[StudyGroup]:
+        """
+        현재 사용자가 리더인 스터디그룹들을 필터링합니다.
+        """
+        queryset = queryset.filter(
+            members__user__in=[self.request.user],
+            members__is_leader=True,
+        )
         return queryset
 
     class Meta:
