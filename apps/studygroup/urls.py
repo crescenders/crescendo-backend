@@ -27,8 +27,13 @@ urlpatterns = [
     ),
     path(
         "studies/<uuid:uuid>/members/requests/",
-        views.StudyGroupMemberRequestAPI.as_view(),
+        views.StudyGroupMemberRequestListAPI.as_view(),
         name="studygroup_member_request_list",
+    ),
+    path(
+        "studies/<uuid:uuid>/members/requests/<int:pk>/",
+        views.StudyGroupMemberRequestDetailAPI.as_view(),
+        name="studygroup_member_request_detail",
     ),
     path(
         "categories/",
