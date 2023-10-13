@@ -77,7 +77,7 @@ class OpenedByDeadlineStudyGroupFactory(DjangoModelFactory):
         model = StudyGroup
 
     name = factory.Faker("name")
-    member_limit = factory.LazyAttribute(lambda x: random.randrange(1, 10))
+    member_limit = factory.LazyAttribute(lambda x: random.randrange(5, 10))
     content = factory.Faker("text")
 
     # deadline < today < start_date < end_date
