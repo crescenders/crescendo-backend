@@ -19,7 +19,7 @@ class CreateStudyGroupTestCase(APITestCase):
         """
         url = reverse("studygroup_list")
         response = self.client.post(url)
-        self.assertEqual(response.status_code, 401)
+        self.assertEqual(response.status_code, 401, f"response: {response.data}")
 
     def test_logged_in_user_can_create_studygroup(self):
         """
@@ -39,5 +39,5 @@ class CreateStudyGroupTestCase(APITestCase):
         }
         self.client.force_authenticate(user=self.logged_in_user)
         response = self.client.post(url, data=data)
-        self.assertEqual(response.status_code, 201)
-        self.assertEqual(StudyGroup.objects.count(), 1)
+        self.assertEqual(response.status_code, 201, f"response: {response.data}")
+        self.assertEqual(StudyGroup.objects.count(), 1, f"response: {response.data}")

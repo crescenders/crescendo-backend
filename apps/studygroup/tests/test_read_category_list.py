@@ -20,7 +20,7 @@ class CategoryTestCase(APITestCase):
         url = reverse("category_list")
         response = self.client.get(url)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(Category.objects.count(), 3)
+        self.assertEqual(Category.objects.count(), 3, f"response: {response.data}")
         self.assertEqual(
             response.data,
             [
@@ -28,4 +28,5 @@ class CategoryTestCase(APITestCase):
                 {"name": "프론트엔드"},
                 {"name": "데브옵스"},
             ],
+            f"response: {response.data}",
         )

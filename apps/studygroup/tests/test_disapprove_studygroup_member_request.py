@@ -30,7 +30,7 @@ class DisapproveStudyGroupMemberRequestTestCase(APITestCase):
             },
         )
         response = self.client.delete(url)
-        self.assertEqual(response.status_code, 401)
+        self.assertEqual(response.status_code, 401, f"response: {response.data}")
 
     def test_general_member_cannot_disapprove_studygroup_member(self):
         """
@@ -45,7 +45,7 @@ class DisapproveStudyGroupMemberRequestTestCase(APITestCase):
             },
         )
         response = self.client.delete(url)
-        self.assertEqual(response.status_code, 403)
+        self.assertEqual(response.status_code, 403, f"response: {response.data}")
 
     def test_leader_can_disapprove_studygroup_member(self):
         """
@@ -62,7 +62,7 @@ class DisapproveStudyGroupMemberRequestTestCase(APITestCase):
             },
         )
         response = self.client.delete(url)
-        self.assertEqual(response.status_code, 204)
+        self.assertEqual(response.status_code, 204, f"response: {response.data}")
 
     def test_after_disapproved_studygroup_member_request_is_disapproved(self):
         """
@@ -79,11 +79,23 @@ class DisapproveStudyGroupMemberRequestTestCase(APITestCase):
             },
         )
         response = self.client.delete(url)
-        self.assertEqual(response.status_code, 204)
+        self.assertEqual(response.status_code, 204, f"response: {response.data}")
         self.assertEqual(
-            self.studygroup_for_disapproved.members.count(), 2
+            self.studygroup_for_disapproved.members.count(),
+            2,
+            f"response: {response.data}",
         )  # 기존 멤버 2명, 추가되지 않음
-        self.assertEqual(self.studygroup_for_disapproved.requests.count(), 1)
+        self.assertEqual(
+            self.studygroup_for_disapproved.requests.count(),
+            1,
+            f"response: {response.data}",
+        )
         self.studygroup_member_request_for_disapproved.refresh_from_db()
-        self.assertFalse(self.studygroup_member_request_for_disapproved.is_approved)
-        self.assertTrue(self.studygroup_member_request_for_disapproved.processed)
+        self.assertFalse(
+            self.studygroup_member_request_for_disapproved.is_approved,
+            f"response: {response.data}",
+        )
+        self.assertTrue(
+            self.studygroup_member_request_for_disapproved.processed,
+            f"response: {response.data}",
+        )

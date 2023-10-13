@@ -44,7 +44,7 @@ class StudyGroupMemberReadTestCase(APITestCase):
             "studygroup_member_list", kwargs={"uuid": self.studygroup_for_read.uuid}
         )
         response = self.client.get(url)
-        self.assertEqual(response.status_code, 401)
+        self.assertEqual(response.status_code, 401, f"response: {response.data}")
 
     def test_member_can_read_studygroup_member(self):
         """
@@ -55,7 +55,7 @@ class StudyGroupMemberReadTestCase(APITestCase):
         )
         self.client.force_authenticate(user=self.general_member.user)
         response = self.client.get(url)
-        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.status_code, 200, f"response: {response.data}")
 
     def test_leader_can_read_studygroup_member(self):
         """
@@ -66,7 +66,7 @@ class StudyGroupMemberReadTestCase(APITestCase):
         )
         self.client.force_authenticate(user=self.studygroup_for_read.leaders[0].user)
         response = self.client.get(url)
-        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.status_code, 200, f"response: {response.data}")
 
     # 위의 테스트코드가 성공했다고 가정하고 진행합니다.
     def test_studygroup_member_response_format(self):
@@ -78,14 +78,16 @@ class StudyGroupMemberReadTestCase(APITestCase):
         )
         self.client.force_authenticate(user=self.general_member.user)
         response = self.client.get(url)
-        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.status_code, 200, f"response: {response.data}")
         self.assertEqual(
             set(response.data[0].keys()),
             MEMBER_LIST_FORMAT_KEYS,
+            f"response: {response.data}",
         )
         self.assertEqual(
             set(response.data[0]["user"].keys()),
             USER_FORMAT_KEYS,
+            f"response: {response.data}",
         )
 
     def test_another_general_member_cannot_read_studygroup_member(self):
@@ -97,7 +99,7 @@ class StudyGroupMemberReadTestCase(APITestCase):
         )
         self.client.force_authenticate(user=self.another_general_member.user)
         response = self.client.get(url)
-        self.assertEqual(response.status_code, 403)
+        self.assertEqual(response.status_code, 403, f"response: {response.data}")
 
     def test_another_leader_member_cannot_read_studygroup_member(self):
         """
@@ -108,4 +110,4 @@ class StudyGroupMemberReadTestCase(APITestCase):
         )
         self.client.force_authenticate(user=self.another_studygroup.leaders[0].user)
         response = self.client.get(url)
-        self.assertEqual(response.status_code, 403)
+        self.assertEqual(response.status_code, 403, f"response: {response.data}")

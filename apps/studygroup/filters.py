@@ -67,7 +67,7 @@ class MyStudyGroupFilter(filters.FilterSet):  # type: ignore
         현재 사용자가 가입 요청해서 승인을 기다리고 있는 스터디그룹들을 필터링합니다.
         모집 마감일이 지나지 않고, 모집 인원이 남아있어야 합니다.
         """
-        queryset = StudyGroup.objects.annotate(
+        queryset = queryset.annotate(
             members_count=Count("members"),
         ).filter(
             requests__user__in=[self.request.user],
