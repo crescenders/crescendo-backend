@@ -104,23 +104,39 @@ class BaseStudyGroupTestCase(APITestCase):
     def test_read_detail_format_without_head_image(self):
         url = reverse("studygroup_detail", kwargs={"uuid": self.django_study.uuid})
         response = self.client.get(url)
-        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.status_code, 200, f"response: {response.data}")
         # response.data 의 키들을 확인한다.
-        self.assertEqual(set(response.data.keys()), DETAIL_FORMAT_KEYS)
+        self.assertEqual(
+            set(response.data.keys()), DETAIL_FORMAT_KEYS, f"response: {response.data}"
+        )
         # head_image 가 없는 경우, 랜덤 이미지 주소인 picsum.photos 로 대체된다.
-        self.assertTrue(response.data["head_image"].startswith("https://picsum.photos"))
+        self.assertTrue(
+            response.data["head_image"].startswith("https://picsum.photos"),
+            f"response: {response.data}",
+        )
         # 리더 정보에는 유저의 uuid, username 만 포함되어야 한다.
-        self.assertEqual(set(response.data["leaders"][0].keys()), LEADER_FORMAT_KEYS)
+        self.assertEqual(
+            set(response.data["leaders"][0].keys()),
+            LEADER_FORMAT_KEYS,
+            f"response: {response.data}",
+        )
 
     def test_read_detail_format_with_head_image(self):
         url = reverse("studygroup_detail", kwargs={"uuid": self.react_study.uuid})
         response = self.client.get(url)
-        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.status_code, 200, f"response: {response.data}")
         # response.data 의 키들을 확인한다.
-        self.assertEqual(set(response.data.keys()), DETAIL_FORMAT_KEYS)
+        self.assertEqual(
+            set(response.data.keys()), DETAIL_FORMAT_KEYS, f"response: {response.data}"
+        )
         # head_image 가 있으므로, 해당 이미지의 주소가 그대로 들어간다.
         self.assertTrue(
-            response.data["head_image"].split("/")[-1], self.react_study.head_image.name
+            response.data["head_image"].split("/")[-1],
+            self.react_study.head_image.name,
         )
         # 리더 정보에는 유저의 uuid, username 만 포함되어야 한다.
-        self.assertEqual(set(response.data["leaders"][0].keys()), LEADER_FORMAT_KEYS)
+        self.assertEqual(
+            set(response.data["leaders"][0].keys()),
+            LEADER_FORMAT_KEYS,
+            f"response: {response.data}",
+        )

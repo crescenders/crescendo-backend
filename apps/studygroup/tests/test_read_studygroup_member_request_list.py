@@ -50,7 +50,7 @@ class StudyGroupMemberRequestReadListTestCase(APITestCase):
             kwargs={"uuid": self.studygroup_for_requested.uuid},
         )
         response = self.client.get(url)
-        self.assertEqual(response.status_code, 401)
+        self.assertEqual(response.status_code, 401, f"response: {response.data}")
 
     def test_general_member_cannot_read_studygroup_member_request_list(self):
         """
@@ -62,7 +62,7 @@ class StudyGroupMemberRequestReadListTestCase(APITestCase):
             kwargs={"uuid": self.studygroup_for_requested.uuid},
         )
         response = self.client.get(url)
-        self.assertEqual(response.status_code, 403)
+        self.assertEqual(response.status_code, 403, f"response: {response.data}")
 
     def test_leader_can_read_studygroup_member_request_list(self):
         """
@@ -76,7 +76,7 @@ class StudyGroupMemberRequestReadListTestCase(APITestCase):
             kwargs={"uuid": self.studygroup_for_requested.uuid},
         )
         response = self.client.get(url)
-        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.status_code, 200, f"response: {response.data}")
 
     def test_only_returns_unprocessed_and_disapproved_requests(self):
         """
@@ -90,8 +90,8 @@ class StudyGroupMemberRequestReadListTestCase(APITestCase):
             kwargs={"uuid": self.studygroup_for_requested.uuid},
         )
         response = self.client.get(url)
-        self.assertEqual(response.status_code, 200)
-        self.assertEqual(len(response.data), 3)
+        self.assertEqual(response.status_code, 200, f"response: {response.data}")
+        self.assertEqual(len(response.data), 3, f"response: {response.data}")
 
     def test_read_studygroup_member_request_list_format(self):
         """
@@ -105,7 +105,13 @@ class StudyGroupMemberRequestReadListTestCase(APITestCase):
             kwargs={"uuid": self.studygroup_for_requested.uuid},
         )
         response = self.client.get(url)
-        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.status_code, 200, f"response: {response.data}")
         for item in response.data:
-            self.assertEqual(set(item.keys()), MEMBER_REQUEST_FORMAT_KEYS)
-            self.assertEqual(set(item["user"].keys()), USER_FORMAT_KEYS)
+            self.assertEqual(
+                set(item.keys()),
+                MEMBER_REQUEST_FORMAT_KEYS,
+                f"response: {response.data}",
+            )
+            self.assertEqual(
+                set(item["user"].keys()), USER_FORMAT_KEYS, f"response: {response.data}"
+            )

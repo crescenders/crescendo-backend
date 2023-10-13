@@ -24,7 +24,7 @@ class StudyGroupMemberRequestCreateTestCase(APITestCase):
             kwargs={"uuid": self.studygroup_for_requested.uuid},
         )
         response = self.client.post(url)
-        self.assertEqual(response.status_code, 401)
+        self.assertEqual(response.status_code, 401, f"response: {response.data}")
 
     def test_logged_in_user_can_create_studygroup_member_request_list(self):
         """
@@ -37,7 +37,7 @@ class StudyGroupMemberRequestCreateTestCase(APITestCase):
         data = {"request_message": "가입 신청합니다."}
         self.client.force_authenticate(user=self.logged_in_user)
         response = self.client.post(url, data=data)
-        self.assertEqual(response.status_code, 201)
+        self.assertEqual(response.status_code, 201, f"response: {response.data}")
 
     def test_not_duplicate_member_request(self):
         """
@@ -50,9 +50,9 @@ class StudyGroupMemberRequestCreateTestCase(APITestCase):
         data = {"request_message": "가입 신청합니다."}
         self.client.force_authenticate(user=self.logged_in_user)
         response = self.client.post(url, data=data)
-        self.assertEqual(response.status_code, 201)
+        self.assertEqual(response.status_code, 201, f"response: {response.data}")
         response = self.client.post(url, data=data)
-        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.status_code, 400, f"response: {response.data}")
 
     def test_already_member_cannot_create_studygroup_member_request_list(self):
         """
@@ -69,7 +69,7 @@ class StudyGroupMemberRequestCreateTestCase(APITestCase):
         )
         data = {"request_message": "가입 신청합니다."}
         response = self.client.post(url, data=data)
-        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.status_code, 400, f"response: {response.data}")
 
     def test_cannot_request_to_closed_studygroup(self):
         """
@@ -82,4 +82,4 @@ class StudyGroupMemberRequestCreateTestCase(APITestCase):
         data = {"request_message": "가입 신청합니다."}
         self.client.force_authenticate(user=self.logged_in_user)
         response = self.client.post(url, data=data)
-        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.status_code, 400, f"response: {response.data}")

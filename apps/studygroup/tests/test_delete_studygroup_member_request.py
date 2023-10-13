@@ -28,4 +28,4 @@ class StudyGroupMemberDisapproveTestCase(APITestCase):
             },
         )
         response = self.client.delete(url)
-        self.assertEqual(response.status_code, 401)
+        self.assertEqual(response.status_code, 401, f"response: {response.data}")

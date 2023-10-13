@@ -32,7 +32,7 @@ class ApproveStudyGroupMemberRequestTestCase(APITestCase):
             },
         )
         response = self.client.post(url)
-        self.assertEqual(response.status_code, 401)
+        self.assertEqual(response.status_code, 401, f"response: {response.data}")
 
     def test_general_member_cannot_approve_studygroup_member(self):
         """
@@ -47,7 +47,7 @@ class ApproveStudyGroupMemberRequestTestCase(APITestCase):
             },
         )
         response = self.client.post(url)
-        self.assertEqual(response.status_code, 403)
+        self.assertEqual(response.status_code, 403, f"response: {response.data}")
 
     def test_leader_can_approve_studygroup_member(self):
         """
@@ -64,9 +64,11 @@ class ApproveStudyGroupMemberRequestTestCase(APITestCase):
             },
         )
         response = self.client.post(url)
-        self.assertEqual(response.status_code, 201)
+        self.assertEqual(response.status_code, 201), f"response: {response.data}"
         self.assertEqual(
-            self.studygroup_for_approved.members.count(), 3
+            self.studygroup_for_approved.members.count(),
+            3,
+            f"response: {response.data}",
         )  # 기존 멤버 2명에, 새로운 멤버 1명
 
     def another_leader_cannot_approve_studygroup_member(self):
@@ -82,8 +84,12 @@ class ApproveStudyGroupMemberRequestTestCase(APITestCase):
             },
         )
         response = self.client.post(url)
-        self.assertEqual(response.status_code, 403)
-        self.assertEqual(self.studygroup_for_approved.members.count(), 2)
+        self.assertEqual(response.status_code, 403, f"response: {response.data}")
+        self.assertEqual(
+            self.studygroup_for_approved.members.count(),
+            2,
+            f"response: {response.data}",
+        )
 
     def test_after_approve_studygroup_member_request_is_approved_and_processed(self):
         """
@@ -107,15 +113,27 @@ class ApproveStudyGroupMemberRequestTestCase(APITestCase):
             },
         )
         response = self.client.post(url)
-        self.assertEqual(response.status_code, 201)
+        self.assertEqual(response.status_code, 201, f"response: {response.data}")
         self.assertEqual(
-            self.studygroup_for_approved.members.count(), 3
+            self.studygroup_for_approved.members.count(),
+            3,
+            f"response: {response.data}",
         )  # 기존 멤버 2명에, 새로운 멤버 1명
 
         # 스터디그룹 멤버 요청은 그대로 남아있어야 합니다.
-        self.assertEqual(self.studygroup_for_approved.requests.count(), 1)
+        self.assertEqual(
+            self.studygroup_for_approved.requests.count(),
+            1,
+            f"response: {response.data}",
+        )
 
         # 처리되고 난 후, 요청의 필드들이 "처리됨", "승인됨" 으로 변경되어야 합니다.
         self.studygroup_member_request_for_approved.refresh_from_db()
-        self.assertTrue(self.studygroup_member_request_for_approved.processed)
-        self.assertTrue(self.studygroup_member_request_for_approved.is_approved)
+        self.assertTrue(
+            self.studygroup_member_request_for_approved.processed,
+            f"response: {response.data}",
+        )
+        self.assertTrue(
+            self.studygroup_member_request_for_approved.is_approved,
+            f"response: {response.data}",
+        )

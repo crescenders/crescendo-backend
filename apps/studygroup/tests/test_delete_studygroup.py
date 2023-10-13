@@ -23,7 +23,7 @@ class DeleteStudyGroupTestCase(APITestCase):
             "studygroup_detail", kwargs={"uuid": self.studygroup_be_deleted.uuid}
         )
         response = self.client.delete(url)
-        self.assertEqual(response.status_code, 401)
+        self.assertEqual(response.status_code, 401, f"response: {response.data}")
 
     def test_general_member_cannot_delete_studygroup(self):
         """
@@ -34,7 +34,7 @@ class DeleteStudyGroupTestCase(APITestCase):
         )
         self.client.force_authenticate(user=self.studygroup_member.user)
         response = self.client.delete(url)
-        self.assertEqual(response.status_code, 403)
+        self.assertEqual(response.status_code, 403, f"response: {response.data}")
 
     def test_only_leader_can_delete_studygroup(self):
         """
@@ -45,5 +45,5 @@ class DeleteStudyGroupTestCase(APITestCase):
         )
         self.client.force_authenticate(user=self.studygroup_be_deleted.leaders[0].user)
         response = self.client.delete(url)
-        self.assertEqual(response.status_code, 204)
-        self.assertEqual(StudyGroup.objects.count(), 0)
+        self.assertEqual(response.status_code, 204, f"response: {response.data}")
+        self.assertEqual(StudyGroup.objects.count(), 0, f"response: {response.data}")
