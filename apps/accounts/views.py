@@ -4,6 +4,7 @@ from allauth.socialaccount.providers.google.views import GoogleOAuth2Adapter
 from allauth.socialaccount.providers.oauth2.client import OAuth2Error
 from dj_rest_auth.app_settings import api_settings
 from dj_rest_auth.registration.views import SocialLoginView
+from django.db.models import QuerySet
 from django_filters.rest_framework import DjangoFilterBackend
 from drf_spectacular.utils import extend_schema
 from rest_framework import generics, mixins, status
@@ -138,6 +139,9 @@ class MyStudyAPI(mixins.ListModelMixin, generics.GenericAPIView):
     # filtering
     filter_backends = (DjangoFilterBackend,)
     filterset_class = MyStudyGroupFilter
+
+    def get_queryset(self) -> QuerySet[StudyGroup]:
+        return self.queryset.defer("content")
 
     @extend_schema(summary="로그인한 사용자가 가입한 스터디 그룹을 조회합니다.")
     def get(self, request: Request, *args: Any, **kwargs: Any) -> Response:
