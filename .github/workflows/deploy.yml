@@ -33,7 +33,7 @@ jobs:
           GOOGLE_SECRET: example_google_client_secret
         run: |
           # Run Django tests with coverage
-          poetry run coverage run --source='.' manage.py test
+          poetry run coverage run --source='.' manage.py test --settings=config.settings.development
           # Check test coverage, exit with error if less than 70%
           coverage_result=$(poetry run coverage report -m)
           coverage_percent=$(echo "$coverage_result" | grep -oP '\d+\%')
