@@ -54,6 +54,9 @@ class StudyGroupMemberRequest(models.Model):
     processed = models.BooleanField(default=False)  # 최종 처리 여부
     is_approved = models.BooleanField(default=False)  # 승인 여부
 
+    def __str__(self) -> str:
+        return f"{self.user.username}의 {self.studygroup} 로 가입 요청"
+
 
 class StudyGroupMember(TimestampedModel):
     class Meta:
