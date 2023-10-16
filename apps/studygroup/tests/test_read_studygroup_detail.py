@@ -1,13 +1,13 @@
 from datetime import timedelta
 
 from django.core.files.storage import default_storage
-from django.core.files.uploadedfile import SimpleUploadedFile
 from django.utils.datetime_safe import date
 from rest_framework.reverse import reverse
 from rest_framework.test import APITestCase
 
 from apps.accounts.models import User
 from apps.studygroup.models import Category, StudyGroup, StudyGroupMember, Tag
+from apps.studygroup.tests.utils import create_dummy_image
 
 DETAIL_FORMAT_KEYS = {
     "uuid",
@@ -34,10 +34,6 @@ LEADER_FORMAT_KEYS = {
     "username",
     "email",
 }
-
-
-def create_dummy_image(name, content_type="image/jpeg", size=1024):
-    return SimpleUploadedFile(name, bytes(size), content_type)
 
 
 class BaseStudyGroupTestCase(APITestCase):
