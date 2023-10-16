@@ -97,7 +97,7 @@ class CreateStudyGroupTestCase(APITestCase):
             data["head_image"].name.split("/")[-1],
         )
 
-    def test_create_invalid_date(self):
+    def test_deadline_is_future(self):
         """
         스터디그룹 모집 마감일은 오늘보다 미래여야 합니다.
         """
@@ -109,6 +109,46 @@ class CreateStudyGroupTestCase(APITestCase):
             "start_date": date.today() + timedelta(days=7),
             "end_date": date.today() + timedelta(days=14),
             "deadline": date.today() - timedelta(days=3),  # 오늘보다 과거
+            "member_limit": 10,
+            "categories": "Django",
+        }
+        self.client.force_authenticate(user=self.logged_in_user)
+        response = self.client.post(url, data=data)
+        self.assertEqual(response.status_code, 400, f"response: {response.data}")
+        self.assertEqual(StudyGroup.objects.count(), 0, f"response: {response.data}")
+
+    def test_start_date_is_bigger_than_deadline(self):
+        """
+        스터디그룹 시작일은 모집 마감일보다 뒤여야 합니다.
+        """
+        url = reverse("studygroup_list")
+        data = {
+            "post_title": "스터디그룹 개설합니다.",
+            "post_content": "Django 스터디그룹입니다.",
+            "study_name": "Django 스터디",
+            "start_date": date.today() + timedelta(days=7),  # 모집 마감일보다 일찍
+            "end_date": date.today() + timedelta(days=14),
+            "deadline": date.today() + timedelta(days=10),
+            "member_limit": 10,
+            "categories": "Django",
+        }
+        self.client.force_authenticate(user=self.logged_in_user)
+        response = self.client.post(url, data=data)
+        self.assertEqual(response.status_code, 400, f"response: {response.data}")
+        self.assertEqual(StudyGroup.objects.count(), 0, f"response: {response.data}")
+
+    def test_end_date_is_bigger_than_start_date(self):
+        """
+        스터디그룹 종료일은 시작일보다 뒤여야 합니다.
+        """
+        url = reverse("studygroup_list")
+        data = {
+            "post_title": "스터디그룹 개설합니다.",
+            "post_content": "Django 스터디그룹입니다.",
+            "study_name": "Django 스터디",
+            "start_date": date.today() + timedelta(days=7),
+            "end_date": date.today() + timedelta(days=3),  # 시작일보다 일찍
+            "deadline": date.today() + timedelta(days=10),
             "member_limit": 10,
             "categories": "Django",
         }
