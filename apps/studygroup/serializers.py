@@ -140,8 +140,8 @@ class StudyGroupListSerializer(serializers.ModelSerializer[StudyGroup]):
             < attrs["end_date"]
         ):
             raise serializers.ValidationError(
-                "Each date must be: recruitment deadline < study start date < study"
-                " end date."
+                f"Each date must be: today({date.today()}) < recruitment deadline <"
+                " study start date < study end date."
             )
         return attrs
 
