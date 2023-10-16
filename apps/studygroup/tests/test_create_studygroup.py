@@ -156,3 +156,28 @@ class CreateStudyGroupTestCase(APITestCase):
         response = self.client.post(url, data=data)
         self.assertEqual(response.status_code, 400, f"response: {response.data}")
         self.assertEqual(StudyGroup.objects.count(), 0, f"response: {response.data}")
+
+    def test_member_limit_is_between_2_and_10(self):
+        """
+        스터디그룹 인원 제한은 2명 이상 10명 이하여야 합니다.
+        """
+        url = reverse("studygroup_list")
+        data = {
+            "post_title": "스터디그룹 개설합니다.",
+            "post_content": "Django 스터디그룹입니다.",
+            "study_name": "Django 스터디",
+            "start_date": date.today() + timedelta(days=7),
+            "end_date": date.today() + timedelta(days=10),
+            "deadline": date.today() + timedelta(days=3),
+            "member_limit": 1,  # 2명 미만
+            "categories": "Django",
+        }
+        self.client.force_authenticate(user=self.logged_in_user)
+        response = self.client.post(url, data=data)
+        self.assertEqual(response.status_code, 400, f"response: {response.data}")
+        self.assertEqual(StudyGroup.objects.count(), 0, f"response: {response.data}")
+
+        data["member_limit"] = 11  # 10명 초과
+        response = self.client.post(url, data=data)
+        self.assertEqual(response.status_code, 400, f"response: {response.data}")
+        self.assertEqual(StudyGroup.objects.count(), 0, f"response: {response.data}")
