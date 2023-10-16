@@ -132,12 +132,17 @@ class StudyGroupListSerializer(serializers.ModelSerializer[StudyGroup]):
                 raise serializers.ValidationError(
                     "The studygroup is already closed. You can't update it."
                 )
-            # 날짜 검증
-            if not attrs["deadline"] < attrs["start_date"] < attrs["end_date"]:
-                raise serializers.ValidationError(
-                    "Each date must be: recruitment deadline < study start date < study"
-                    " end date."
-                )
+        # 날짜 검증
+        if (
+            not date.today()
+            < attrs["deadline"]
+            < attrs["start_date"]
+            < attrs["end_date"]
+        ):
+            raise serializers.ValidationError(
+                "Each date must be: recruitment deadline < study start date < study"
+                " end date."
+            )
         return attrs
 
 
