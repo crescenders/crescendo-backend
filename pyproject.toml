@@ -69,6 +69,8 @@ omit = [
     "*/settings/*",
     "*/admin.py",
     "manage.py",
+    "config/asgi.py",
+    "config/wsgi.py",
 ]
 
 [build-system]
