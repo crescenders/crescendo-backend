@@ -1,9 +1,12 @@
 from django.contrib import admin
+from django.http import HttpResponseRedirect
+from django.urls import reverse
 from django.utils.html import format_html
 
 from apps.studygroup.models import (
     Category,
     StudyGroup,
+    StudyGroupAssignmentRequest,
     StudyGroupMember,
     StudyGroupMemberRequest,
     Tag,
@@ -35,6 +38,21 @@ class StudyGroupMemberInline(admin.TabularInline):
     verbose_name_plural = "스터디그룹 멤버들"
     model = StudyGroupMember
     extra = 0
+
+
+class StudyGroupAssignmentRequestInline(admin.TabularInline):
+    verbose_name = "스터디그룹 과제 요청"
+    verbose_name_plural = "스터디그룹 과제 요청들"
+    model = StudyGroupAssignmentRequest
+    extra = 0
+
+    def formfield_for_foreignkey(self, db_field, request, **kwargs):
+        if db_field.name == "author":
+            studygroup_id = request.resolver_match.kwargs["object_id"]
+            kwargs["queryset"] = StudyGroupMember.objects.filter(
+                studygroup_id=studygroup_id, is_leader=True
+            )
+        return super().formfield_for_foreignkey(db_field, request, **kwargs)
 
 
 @admin.register(StudyGroup)
@@ -92,6 +110,16 @@ class StudyGroupAdmin(admin.ModelAdmin):
         ),
     )
 
+    def response_change(self, request, obj):
+        if "_save" in request.POST:
+            change_url = reverse(
+                "admin:%s_%s_change" % (obj._meta.app_label, obj._meta.model_name),
+                args=[obj.pk],
+            )
+            return HttpResponseRedirect(change_url)
+
+        return super().response_change(request, obj)
+
     @staticmethod
     @admin.display(description="Head image")
     def head_image_tag(obj: StudyGroup) -> str:
@@ -109,4 +137,5 @@ class StudyGroupAdmin(admin.ModelAdmin):
     inlines = [
         StudyGroupRequestInline,
         StudyGroupMemberInline,
+        StudyGroupAssignmentRequestInline,
     ]
