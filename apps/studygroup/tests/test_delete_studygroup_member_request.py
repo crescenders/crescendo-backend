@@ -21,7 +21,7 @@ class StudyGroupMemberDisapproveTestCase(APITestCase):
         스터디그룹의 멤버 거절은 로그인하지 않으면 불가능합니다.
         """
         url = reverse(
-            "studygroup_member_request_detail",
+            "studygroupmember-request-detail",
             kwargs={
                 "uuid": self.studygroup_for_disapproved.uuid,
                 "pk": self.studygroup_member_request_for_disapproved.pk,

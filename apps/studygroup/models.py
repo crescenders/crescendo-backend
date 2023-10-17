@@ -1,5 +1,6 @@
 import uuid
 
+from django.core.exceptions import ValidationError
 from django.core.validators import (
     MaxValueValidator,
     MinLengthValidator,
@@ -53,6 +54,17 @@ class StudyGroupMemberRequest(models.Model):
     request_message = models.CharField(max_length=200, blank=False)
     processed = models.BooleanField(default=False)  # 최종 처리 여부
     is_approved = models.BooleanField(default=False)  # 승인 여부
+
+    def __str__(self) -> str:
+        return f"{self.user.username}의 {self.studygroup} 로 가입 요청"
+
+    def clean(self) -> None:
+        if self.is_approved is True and self.processed is False:
+            raise ValidationError("is_approved가 True이면 processed는 True여야 합니다.")
+
+    def save(self, *args, **kwargs) -> None:
+        self.full_clean()
+        super().save(*args, **kwargs)
 
 
 class StudyGroupMember(TimestampedModel):
@@ -156,3 +168,17 @@ class StudyGroup(TimestampedModel):
 
     def __str__(self) -> str:
         return self.name
+
+
+class StudyGroupAssignmentRequest(TimestampedModel):
+    studygroup = models.ForeignKey(
+        StudyGroup, on_delete=models.CASCADE, related_name="assignments"
+    )
+    author = models.ForeignKey(
+        StudyGroupMember, on_delete=models.CASCADE, related_name="assignments"
+    )
+    title = models.CharField(max_length=64)
+    content = models.TextField(max_length=1500)
+
+    def __str__(self) -> str:
+        return f"{self.author}의 {self.title} 과제 요청"

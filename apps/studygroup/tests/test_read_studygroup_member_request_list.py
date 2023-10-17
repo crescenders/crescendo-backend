@@ -46,7 +46,7 @@ class StudyGroupMemberRequestReadListTestCase(APITestCase):
         스터디그룹의 멤버 신청 목록 조회는 로그인하지 않으면 불가능합니다.
         """
         url = reverse(
-            "studygroup_member_request_list",
+            "studygroupmember-request-list",
             kwargs={"uuid": self.studygroup_for_requested.uuid},
         )
         response = self.client.get(url)
@@ -58,7 +58,7 @@ class StudyGroupMemberRequestReadListTestCase(APITestCase):
         """
         self.client.force_authenticate(user=self.some_general_studygroup_member.user)
         url = reverse(
-            "studygroup_member_request_list",
+            "studygroupmember-request-list",
             kwargs={"uuid": self.studygroup_for_requested.uuid},
         )
         response = self.client.get(url)
@@ -72,7 +72,7 @@ class StudyGroupMemberRequestReadListTestCase(APITestCase):
             user=self.studygroup_for_requested.leaders[0].user
         )
         url = reverse(
-            "studygroup_member_request_list",
+            "studygroupmember-request-list",
             kwargs={"uuid": self.studygroup_for_requested.uuid},
         )
         response = self.client.get(url)
@@ -86,7 +86,7 @@ class StudyGroupMemberRequestReadListTestCase(APITestCase):
             user=self.studygroup_for_requested.leaders[0].user
         )
         url = reverse(
-            "studygroup_member_request_list",
+            "studygroupmember-request-list",
             kwargs={"uuid": self.studygroup_for_requested.uuid},
         )
         response = self.client.get(url)
@@ -101,7 +101,7 @@ class StudyGroupMemberRequestReadListTestCase(APITestCase):
             user=self.studygroup_for_requested.leaders[0].user
         )
         url = reverse(
-            "studygroup_member_request_list",
+            "studygroupmember-request-list",
             kwargs={"uuid": self.studygroup_for_requested.uuid},
         )
         response = self.client.get(url)

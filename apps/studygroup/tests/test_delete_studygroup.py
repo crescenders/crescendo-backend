@@ -20,7 +20,7 @@ class DeleteStudyGroupTestCase(APITestCase):
         스터디그룹 삭제는 로그인하지 않으면 불가능합니다.
         """
         url = reverse(
-            "studygroup_detail", kwargs={"uuid": self.studygroup_be_deleted.uuid}
+            "studygroup-detail", kwargs={"uuid": self.studygroup_be_deleted.uuid}
         )
         response = self.client.delete(url)
         self.assertEqual(response.status_code, 401, f"response: {response.data}")
@@ -30,7 +30,7 @@ class DeleteStudyGroupTestCase(APITestCase):
         일반 멤버는 스터디그룹을 삭제할 수 없습니다.
         """
         url = reverse(
-            "studygroup_detail", kwargs={"uuid": self.studygroup_be_deleted.uuid}
+            "studygroup-detail", kwargs={"uuid": self.studygroup_be_deleted.uuid}
         )
         self.client.force_authenticate(user=self.studygroup_member.user)
         response = self.client.delete(url)
@@ -41,7 +41,7 @@ class DeleteStudyGroupTestCase(APITestCase):
         리더만 스터디그룹을 삭제할 수 있습니다.
         """
         url = reverse(
-            "studygroup_detail", kwargs={"uuid": self.studygroup_be_deleted.uuid}
+            "studygroup-detail", kwargs={"uuid": self.studygroup_be_deleted.uuid}
         )
         self.client.force_authenticate(user=self.studygroup_be_deleted.leaders[0].user)
         response = self.client.delete(url)

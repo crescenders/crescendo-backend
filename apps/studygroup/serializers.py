@@ -10,6 +10,7 @@ from apps.core.serializers import CreatableSlugRelatedField
 from apps.studygroup.models import (
     Category,
     StudyGroup,
+    StudyGroupAssignmentRequest,
     StudyGroupMember,
     StudyGroupMemberRequest,
     Tag,
@@ -132,12 +133,17 @@ class StudyGroupListSerializer(serializers.ModelSerializer[StudyGroup]):
                 raise serializers.ValidationError(
                     "The studygroup is already closed. You can't update it."
                 )
-            # 날짜 검증
-            if not attrs["deadline"] < attrs["start_date"] < attrs["end_date"]:
-                raise serializers.ValidationError(
-                    "Each date must be: recruitment deadline < study start date < study"
-                    " end date."
-                )
+        # 날짜 검증
+        if (
+            not date.today()
+            < attrs["deadline"]
+            < attrs["start_date"]
+            < attrs["end_date"]
+        ):
+            raise serializers.ValidationError(
+                f"Each date must be: today({date.today()}) < recruitment deadline <"
+                " study start date < study end date."
+            )
         return attrs
 
 
@@ -305,4 +311,43 @@ class StudyGroupMemberReadSerializer(serializers.ModelSerializer[StudyGroupMembe
             "user",
             "is_leader",
             "created_at",
+        ]
+
+
+class StudyGroupAssignmentReadSerializer(
+    serializers.ModelSerializer[StudyGroupAssignmentRequest]
+):
+    """
+    스터디그룹의 과제를 조회하기 위한 serializer 입니다.
+    """
+
+    author = ProfileSerializer(
+        source="author.user",
+        read_only=True,
+    )
+
+    class Meta:
+        model = StudyGroupAssignmentRequest
+        fields = [
+            "id",
+            "author",
+            "title",
+            "content",
+            "created_at",
+            "updated_at",
+        ]
+
+
+class StudyGroupAssignmentCreateSerializer(
+    serializers.ModelSerializer[StudyGroupAssignmentRequest]
+):
+    """
+    스터디그룹의 과제를 생성하기 위한 serializer 입니다.
+    """
+
+    class Meta:
+        model = StudyGroupAssignmentRequest
+        fields = [
+            "title",
+            "content",
         ]

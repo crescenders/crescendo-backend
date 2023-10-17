@@ -39,7 +39,7 @@ class StudyGroupListTestCase(APITestCase):
         OpenedByDeadlineStudyGroupFactory.create_batch(10)
 
     def test_read_list_format(self):
-        url = reverse("studygroup_list")
+        url = reverse("studygroup-list")
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200, f"response: {response.data}")
         # response.data 의 키들을 확인한다.

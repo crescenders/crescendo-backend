@@ -20,7 +20,7 @@ class StudyGroupMemberRequestCreateTestCase(APITestCase):
         스터디그룹의 멤버 신청은 로그인하지 않으면 불가능합니다.
         """
         url = reverse(
-            "studygroup_member_request_list",
+            "studygroupmember-request-list",
             kwargs={"uuid": self.studygroup_for_requested.uuid},
         )
         response = self.client.post(url)
@@ -31,7 +31,7 @@ class StudyGroupMemberRequestCreateTestCase(APITestCase):
         스터디그룹의 멤버 신청은 로그인한 유저만 가능합니다.
         """
         url = reverse(
-            "studygroup_member_request_list",
+            "studygroupmember-request-list",
             kwargs={"uuid": self.studygroup_for_requested.uuid},
         )
         data = {"request_message": "가입 신청합니다."}
@@ -44,7 +44,7 @@ class StudyGroupMemberRequestCreateTestCase(APITestCase):
         스터디그룹의 멤버 신청은 중복으로 불가능합니다.
         """
         url = reverse(
-            "studygroup_member_request_list",
+            "studygroupmember-request-list",
             kwargs={"uuid": self.studygroup_for_requested.uuid},
         )
         data = {"request_message": "가입 신청합니다."}
@@ -64,7 +64,7 @@ class StudyGroupMemberRequestCreateTestCase(APITestCase):
         self.studygroup_for_requested.members.add(already_member)
         self.client.force_authenticate(user=already_member.user)
         url = reverse(
-            "studygroup_member_request_list",
+            "studygroupmember-request-list",
             kwargs={"uuid": self.studygroup_for_requested.uuid},
         )
         data = {"request_message": "가입 신청합니다."}
@@ -76,7 +76,7 @@ class StudyGroupMemberRequestCreateTestCase(APITestCase):
         모집 마감된 스터디그룹에는 가입 신청할 수 없습니다.
         """
         url = reverse(
-            "studygroup_member_request_list",
+            "studygroupmember-request-list",
             kwargs={"uuid": self.closed_studygroup.uuid},
         )
         data = {"request_message": "가입 신청합니다."}
