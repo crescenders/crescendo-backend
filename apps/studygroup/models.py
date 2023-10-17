@@ -1,5 +1,6 @@
 import uuid
 
+from django.core.exceptions import ValidationError
 from django.core.validators import (
     MaxValueValidator,
     MinLengthValidator,
@@ -56,6 +57,14 @@ class StudyGroupMemberRequest(models.Model):
 
     def __str__(self) -> str:
         return f"{self.user.username}의 {self.studygroup} 로 가입 요청"
+
+    def clean(self) -> None:
+        if self.is_approved is True and self.processed is False:
+            raise ValidationError("is_approved가 True이면 processed는 True여야 합니다.")
+
+    def save(self, *args, **kwargs) -> None:
+        self.full_clean()
+        super().save(*args, **kwargs)
 
 
 class StudyGroupMember(TimestampedModel):
