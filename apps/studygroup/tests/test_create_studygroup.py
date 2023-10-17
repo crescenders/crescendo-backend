@@ -22,7 +22,7 @@ class CreateStudyGroupTestCase(APITestCase):
         """
         스터디그룹 생성은 로그인하지 않으면 불가능합니다.
         """
-        url = reverse("studygroup_list")
+        url = reverse("studygroup-list")
         response = self.client.post(url)
         self.assertEqual(response.status_code, 401, f"response: {response.data}")
 
@@ -30,7 +30,7 @@ class CreateStudyGroupTestCase(APITestCase):
         """
         스터디그룹 생성은 로그인한 유저만 가능합니다.
         """
-        url = reverse("studygroup_list")
+        url = reverse("studygroup-list")
         data = {
             "post_title": "스터디그룹 개설합니다.",
             "post_content": "Django 스터디그룹입니다.",
@@ -51,7 +51,7 @@ class CreateStudyGroupTestCase(APITestCase):
         """
         head_image가 없는 경우, default_head_image가 반환됩니다.
         """
-        url = reverse("studygroup_list")
+        url = reverse("studygroup-list")
         data = {
             "post_title": "스터디그룹 개설합니다.",
             "post_content": "Django 스터디그룹입니다.",
@@ -75,7 +75,7 @@ class CreateStudyGroupTestCase(APITestCase):
         """
         head_image가 있는 경우, 해당 이미지가 반환됩니다.
         """
-        url = reverse("studygroup_list")
+        url = reverse("studygroup-list")
         data = {
             # file
             "head_image": open("apps/studygroup/tests/test_image.png", "rb"),
@@ -102,7 +102,7 @@ class CreateStudyGroupTestCase(APITestCase):
         """
         스터디그룹 모집 마감일은 오늘보다 미래여야 합니다.
         """
-        url = reverse("studygroup_list")
+        url = reverse("studygroup-list")
         data = {
             "post_title": "스터디그룹 개설합니다.",
             "post_content": "Django 스터디그룹입니다.",
@@ -122,7 +122,7 @@ class CreateStudyGroupTestCase(APITestCase):
         """
         스터디그룹 시작일은 모집 마감일보다 뒤여야 합니다.
         """
-        url = reverse("studygroup_list")
+        url = reverse("studygroup-list")
         data = {
             "post_title": "스터디그룹 개설합니다.",
             "post_content": "Django 스터디그룹입니다.",
@@ -142,7 +142,7 @@ class CreateStudyGroupTestCase(APITestCase):
         """
         스터디그룹 종료일은 시작일보다 뒤여야 합니다.
         """
-        url = reverse("studygroup_list")
+        url = reverse("studygroup-list")
         data = {
             "post_title": "스터디그룹 개설합니다.",
             "post_content": "Django 스터디그룹입니다.",
@@ -162,7 +162,7 @@ class CreateStudyGroupTestCase(APITestCase):
         """
         스터디그룹 인원 제한은 2명 이상 10명 이하여야 합니다.
         """
-        url = reverse("studygroup_list")
+        url = reverse("studygroup-list")
         data = {
             "post_title": "스터디그룹 개설합니다.",
             "post_content": "Django 스터디그룹입니다.",
@@ -187,7 +187,7 @@ class CreateStudyGroupTestCase(APITestCase):
         """
         스터디그룹 카테고리는 필수입니다.
         """
-        url = reverse("studygroup_list")
+        url = reverse("studygroup-list")
         # 카테고리 없이 요청
         data = {
             "post_title": "스터디그룹 개설합니다.",
@@ -211,7 +211,7 @@ class CreateStudyGroupTestCase(APITestCase):
         categories = "React"
         """
 
-        url = reverse("studygroup_list")
+        url = reverse("studygroup-list")
         data = {
             "post_title": "스터디그룹 개설합니다.",
             "post_content": "Django 스터디그룹입니다.",
@@ -231,7 +231,7 @@ class CreateStudyGroupTestCase(APITestCase):
         """
         스터디그룹 태그는 비워둘 수 있습니다.
         """
-        url = reverse("studygroup_list")
+        url = reverse("studygroup-list")
         data = {
             "post_title": "스터디그룹 개설합니다.",
             "post_content": "Django 스터디그룹입니다.",
@@ -252,7 +252,7 @@ class CreateStudyGroupTestCase(APITestCase):
         이미 존재하는 태그를 요청하면, 새로운 태그를 생성하지 않습니다.
         """
         Tag.objects.create(name="some_tag")
-        url = reverse("studygroup_list")
+        url = reverse("studygroup-list")
         data = {
             "post_title": "스터디그룹 개설합니다.",
             "post_content": "React 스터디그룹입니다.",
@@ -274,7 +274,7 @@ class CreateStudyGroupTestCase(APITestCase):
         """
         스터디그룹 태그는 존재하지 않는 태그를 요청하면 생성됩니다.
         """
-        url = reverse("studygroup_list")
+        url = reverse("studygroup-list")
         data = {
             "post_title": "스터디그룹 개설합니다.",
             "post_content": "React 스터디그룹입니다.",
@@ -296,7 +296,7 @@ class CreateStudyGroupTestCase(APITestCase):
         """
         스터디그룹 생성 시 태그를 여러 개 생성할 수 있습니다.
         """
-        url = reverse("studygroup_list")
+        url = reverse("studygroup-list")
         data = {
             "post_title": "스터디그룹 개설합니다.",
             "post_content": "React 스터디그룹입니다.",
@@ -320,7 +320,7 @@ class CreateStudyGroupTestCase(APITestCase):
         """
         스터디그룹 개설자는 자동으로 스터디그룹장이 됩니다.
         """
-        url = reverse("studygroup_list")
+        url = reverse("studygroup-list")
         data = {
             "post_title": "스터디그룹 개설합니다.",
             "post_content": "Django 스터디그룹입니다.",
