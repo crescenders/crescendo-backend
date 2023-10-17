@@ -40,6 +40,6 @@ urlpatterns = [
     path(
         "categories/",
         CategoryListAPI.as_view(),
-        name="category_list",
+        name="category-list",
     ),
 ]

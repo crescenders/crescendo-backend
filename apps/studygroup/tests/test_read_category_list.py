@@ -17,7 +17,7 @@ class CategoryTestCase(APITestCase):
         CategoryFactory(name="데브옵스")
 
     def test_read_categories(self):
-        url = reverse("category_list")
+        url = reverse("category-list")
         response = self.client.get(url)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(Category.objects.count(), 3, f"response: {response.data}")
