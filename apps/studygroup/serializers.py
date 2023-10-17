@@ -323,6 +323,7 @@ class StudyGroupAssignmentReadSerializer(
 
     author = ProfileSerializer(
         source="author.user",
+        read_only=True,
     )
 
     class Meta:
@@ -334,4 +335,19 @@ class StudyGroupAssignmentReadSerializer(
             "content",
             "created_at",
             "updated_at",
+        ]
+
+
+class StudyGroupAssignmentCreateSerializer(
+    serializers.ModelSerializer[StudyGroupAssignmentRequest]
+):
+    """
+    스터디그룹의 과제를 생성하기 위한 serializer 입니다.
+    """
+
+    class Meta:
+        model = StudyGroupAssignmentRequest
+        fields = [
+            "title",
+            "content",
         ]
