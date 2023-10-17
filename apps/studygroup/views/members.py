@@ -75,14 +75,18 @@ class StudyGroupMemberRequestDetailAPI(
     permission_classes = (IsStudyGroupLeader,)
     serializer_class = StudyGroupMemberRequestManageSerializer
 
-    @extend_schema(summary="특정 스터디그룹의 가입 요청을 승인합니다. 해당 스터디그룹의 리더만 가능합니다.")
+    @extend_schema(
+        summary="특정 스터디그룹의 가입 요청을 승인합니다. 해당 스터디그룹의 리더만 가능합니다.", operation_id="approve"
+    )
     def post(self, request: Request, *args: Any, **kwargs: Any) -> Response:
         """
         스터디그룹 가입 요청을 승인합니다. 해당 요청이 승인되었음이 저장됩니다.
         """
         return super().create(request, *args, **kwargs)
 
-    @extend_schema(summary="특정 스터디그룹의 가입 요청을 거절합니다. 해당 스터디그룹의 리더만 가능합니다.")
+    @extend_schema(
+        summary="특정 스터디그룹의 가입 요청을 거절합니다. 해당 스터디그룹의 리더만 가능합니다.", operation_id="reject"
+    )
     def delete(self, request: Request, *args: Any, **kwargs: Any) -> Response:
         """
         soft delete 를 합니다. 해당 요청이 거절되었음이 저장됩니다.
