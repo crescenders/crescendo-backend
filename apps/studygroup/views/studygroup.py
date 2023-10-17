@@ -29,6 +29,12 @@ from apps.studygroup.serializers import (
 class StudyGroupAPISet(viewsets.ModelViewSet):
     # Serializer
     serializer_class = StudyGroupListSerializer
+    serializer_classes = {
+        "list": StudyGroupListSerializer,
+        "create": StudyGroupListSerializer,
+        "retrieve": StudyGroupDetailSerializer,
+        "update": StudyGroupDetailSerializer,
+    }
 
     # Parser
     parser_classes = (MultiPartParser, FormParser)
@@ -62,11 +68,7 @@ class StudyGroupAPISet(viewsets.ModelViewSet):
         return queryset
 
     def get_serializer_class(self) -> type[BaseSerializer[StudyGroup]]:
-        if self.action in ["list", "create"]:
-            return StudyGroupListSerializer
-        elif self.action in ["retrieve", "update", "partial_update", "destroy"]:
-            return StudyGroupDetailSerializer
-        return super().get_serializer_class()
+        return self.serializer_classes.get(self.action, self.serializer_class)
 
     @transaction.atomic
     def perform_create(self, serializer: BaseSerializer[StudyGroup]) -> None:
@@ -109,6 +111,10 @@ class StudyGroupAPISet(viewsets.ModelViewSet):
     @extend_schema(summary="스터디그룹 정보를 수정합니다.")
     def update(self, request: Request, *args: Any, **kwargs: Any) -> Response:
         return super().update(request, *args, **kwargs)
+
+    @extend_schema(summary="스터디그룹 정보를 일부 수정합니다.", deprecated=True)
+    def partial_update(self, request: Request, *args: Any, **kwargs: Any) -> Response:
+        return super().partial_update(request, *args, **kwargs)
 
     @extend_schema(summary="특정 스터디그룹을 삭제합니다.")
     def destroy(self, request: Request, *args: Any, **kwargs: Any) -> Response:
