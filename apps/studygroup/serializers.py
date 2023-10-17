@@ -10,6 +10,7 @@ from apps.core.serializers import CreatableSlugRelatedField
 from apps.studygroup.models import (
     Category,
     StudyGroup,
+    StudyGroupAssignmentRequest,
     StudyGroupMember,
     StudyGroupMemberRequest,
     Tag,
@@ -310,4 +311,25 @@ class StudyGroupMemberReadSerializer(serializers.ModelSerializer[StudyGroupMembe
             "user",
             "is_leader",
             "created_at",
+        ]
+
+
+class StudyGroupAssignmentReadSerializer(
+    serializers.ModelSerializer[StudyGroupAssignmentRequest]
+):
+    """
+    스터디그룹의 과제를 조회하기 위한 serializer 입니다.
+    """
+
+    author = ProfileSerializer(
+        source="author.user",
+    )
+
+    class Meta:
+        model = StudyGroupAssignmentRequest
+        fields = [
+            "id",
+            "author",
+            "title",
+            "content",
         ]
