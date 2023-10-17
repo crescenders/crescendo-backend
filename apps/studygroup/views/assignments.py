@@ -5,6 +5,7 @@ from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 
 from apps.studygroup.models import StudyGroupAssignmentRequest
+from apps.studygroup.pagination import StudyGroupAssignmentPagination
 from apps.studygroup.serializers import StudyGroupAssignmentReadSerializer
 
 
@@ -17,6 +18,7 @@ class StudyGroupAssignmentRequestAPISet(viewsets.ModelViewSet):
     permission_classes = (AllowAny,)
     queryset = StudyGroupAssignmentRequest.objects.all()
     serializer_class = StudyGroupAssignmentReadSerializer
+    pagination_class = StudyGroupAssignmentPagination
 
     def get_queryset(self) -> QuerySet[StudyGroupAssignmentRequest]:
         studygroup_uuid = self.kwargs.get("uuid")
@@ -47,29 +49,49 @@ class StudyGroupAssignmentRequestAPISet(viewsets.ModelViewSet):
         """
         queryset = self.filter_queryset(self.get_queryset())
         truncate = int(request.query_params.get("truncate", 20))
+
         page = self.paginate_queryset(queryset)
         if page is not None:
-            serializer = self.get_serializer(page, many=True)
-            return self.get_paginated_response(serializer.data)
-        serializer = self.get_serializer(queryset, many=True)
+            if self._check_user_is_member(request):
+                serializer = self.get_serializer(page, many=True)
+                for data in serializer.data:
+                    data["content"] = self._get_truncate_content(
+                        data["content"], truncate
+                    )
+                return self.get_paginated_response(serializer.data)
+            else:
+                serializer = self.get_serializer(page, many=True)
+                for data in serializer.data:
+                    data["content"] = self._get_empty_content(data["content"])
+                return self.get_paginated_response(serializer.data)
 
-        # 스터디그룹의 멤버일 경우, 과제의 내용을 일부 볼 수 있습니다.
-        # 과제의 내용이 길 경우, 일부만 보여줍니다.
-        users = [member.user for member in queryset.first().studygroup.members.all()]
+    def _check_user_is_member(self, request) -> bool:
+        """
+        멤버인지 확인합니다.
+        """
+        studygroup_uuid = self.kwargs.get("uuid")
+        studygroup = self.queryset.filter(studygroup__uuid=studygroup_uuid).first()
+        users = [member.user for member in studygroup.studygroup.members.all()]
         if request.user in users:
-            for data in serializer.data:
-                if len(data["content"]) > truncate:
-                    data["content"] = data["content"][:truncate] + "..."
-                else:
-                    data["content"] = data["content"][:truncate]
+            return True
+        return False
 
-        # 스터디그룹의 멤버가 아니거나 로그인 하지 않은 경우, 과제의 내용을 볼 수 없습니다.
-        # content 필드를 빈 문자열로 바꿔줍니다.
-        else:
-            for data in serializer.data:
-                data["content"] = ""
+    @staticmethod
+    def _get_truncate_content(content: str, truncate: int) -> str:
+        """
+        content를 truncate 길이만큼 자릅니다.
+        """
+        if len(content) > truncate:
+            return content[:truncate] + "..."
+        return content[:truncate]
 
-        return Response(serializer.data)
+    @staticmethod
+    def _get_empty_content(content: str) -> str:
+        """
+        content를 비웁니다.
+        단순히 빈 문자열을 리턴하지만, 이후에 다른 로직이 추가될 수 있으므로 메서드로 분리합니다.
+        """
+        return ""
 
     @extend_schema(summary="스터디그룹 과제를 생성합니다.")
     def create(self, request, *args, **kwargs) -> Response:
