@@ -1,6 +1,7 @@
 from django.urls import include, path
-from rest_framework.routers import DefaultRouter
+from rest_framework.routers import SimpleRouter
 
+from apps.studygroup.views.assignments import StudyGroupAssignmentRequestAPISet
 from apps.studygroup.views.category import CategoryListAPI
 from apps.studygroup.views.members import (
     StudyGroupMemberDetailAPI,
@@ -10,13 +11,19 @@ from apps.studygroup.views.members import (
 )
 from apps.studygroup.views.studygroup import StudyGroupAPISet
 
-router = DefaultRouter()
+studygroup_router = SimpleRouter()
+studygroup_router.register("studies", StudyGroupAPISet, basename="studygroup")
 
-router.register("studies", StudyGroupAPISet, basename="studygroup")
-
+assignment_router = SimpleRouter()
+assignment_router.register(
+    r"assignments",
+    StudyGroupAssignmentRequestAPISet,
+    basename="assignment",
+)
 
 urlpatterns = [
-    path("", include(router.urls)),
+    path("", include(studygroup_router.urls)),
+    path("studies/<uuid:uuid>/", include(assignment_router.urls)),
     path(
         "studies/<uuid:uuid>/members/",
         StudyGroupMemberListAPI.as_view(),
