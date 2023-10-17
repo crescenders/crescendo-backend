@@ -1,43 +1,50 @@
 from django.urls import path
 
-from apps.studygroup import views
+from apps.studygroup.views.category import CategoryListAPI
+from apps.studygroup.views.members import (
+    StudyGroupMemberDetailAPI,
+    StudyGroupMemberListAPI,
+    StudyGroupMemberRequestDetailAPI,
+    StudyGroupMemberRequestListAPI,
+)
+from apps.studygroup.views.studygroup import StudyGroupAPISet
 
 urlpatterns = [
     path(
         "studies/",
-        views.StudyGroupAPISet.as_view({"get": "list", "post": "create"}),
+        StudyGroupAPISet.as_view({"get": "list", "post": "create"}),
         name="studygroup_list",
     ),
     path(
         "studies/<uuid:uuid>/",
-        views.StudyGroupAPISet.as_view(
+        StudyGroupAPISet.as_view(
             {"get": "retrieve", "put": "update", "delete": "destroy"}
         ),
         name="studygroup_detail",
     ),
     path(
         "studies/<uuid:uuid>/members/",
-        views.StudyGroupMemberListAPI.as_view(),
+        StudyGroupMemberListAPI.as_view(),
         name="studygroup_member_list",
     ),
     path(
         "studies/<uuid:uuid>/members/<int:pk>/",
-        views.StudyGroupMemberDetailAPI.as_view(),
+        StudyGroupMemberDetailAPI.as_view(),
         name="studygroup_member_detail",
     ),
     path(
         "studies/<uuid:uuid>/requests/",
-        views.StudyGroupMemberRequestListAPI.as_view(),
+        StudyGroupMemberRequestListAPI.as_view(),
         name="studygroup_member_request_list",
     ),
     path(
         "studies/<uuid:uuid>/requests/<int:pk>/",
-        views.StudyGroupMemberRequestDetailAPI.as_view(),
+        StudyGroupMemberRequestDetailAPI.as_view(),
         name="studygroup_member_request_detail",
     ),
     path(
         "categories/",
-        views.CategoryListAPI.as_view(),
+        CategoryListAPI.as_view(),
         name="category_list",
     ),
 ]
