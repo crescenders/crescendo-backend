@@ -23,7 +23,7 @@ class DisapproveStudyGroupMemberRequestTestCase(APITestCase):
         스터디그룹의 멤버 거절은 로그인하지 않으면 불가능합니다.
         """
         url = reverse(
-            "studygroup_member_request_detail",
+            "studygroupmember-request-detail",
             kwargs={
                 "uuid": self.studygroup_for_disapproved.uuid,
                 "pk": self.studygroup_member_request_for_disapproved.pk,
@@ -38,7 +38,7 @@ class DisapproveStudyGroupMemberRequestTestCase(APITestCase):
         """
         self.client.force_authenticate(user=self.some_general_studygroup_member.user)
         url = reverse(
-            "studygroup_member_request_detail",
+            "studygroupmember-request-detail",
             kwargs={
                 "uuid": self.studygroup_for_disapproved.uuid,
                 "pk": self.studygroup_member_request_for_disapproved.pk,
@@ -55,7 +55,7 @@ class DisapproveStudyGroupMemberRequestTestCase(APITestCase):
             user=self.studygroup_for_disapproved.leaders[0].user
         )
         url = reverse(
-            "studygroup_member_request_detail",
+            "studygroupmember-request-detail",
             kwargs={
                 "uuid": self.studygroup_for_disapproved.uuid,
                 "pk": self.studygroup_member_request_for_disapproved.pk,
@@ -72,7 +72,7 @@ class DisapproveStudyGroupMemberRequestTestCase(APITestCase):
             user=self.studygroup_for_disapproved.leaders[0].user
         )
         url = reverse(
-            "studygroup_member_request_detail",
+            "studygroupmember-request-detail",
             kwargs={
                 "uuid": self.studygroup_for_disapproved.uuid,
                 "pk": self.studygroup_member_request_for_disapproved.pk,
