@@ -1,8 +1,13 @@
 from rest_framework import permissions
 from rest_framework.request import Request
 from rest_framework.views import APIView
+from rest_framework.viewsets import ViewSet
 
-from apps.studygroup.models import StudyGroup, StudyGroupMember
+from apps.studygroup.models import (
+    StudyGroup,
+    StudyGroupAssignmentRequest,
+    StudyGroupMember,
+)
 
 
 class StudyGroupCreatePermission(permissions.IsAuthenticated):
@@ -39,6 +44,38 @@ class IsLeaderOrReadOnly(permissions.BasePermission):
         return (
             request.method in permissions.SAFE_METHODS or request.user in group_leaders
         )
+
+
+class IsLeaderOrReadOnlyForAssignment(permissions.BasePermission):
+    """
+    스터디그룹에 과제에 대한 권한을 설정합니다.
+    - 목록 조회: 누구나 가능
+    - 상세 조회: 멤버만 가능
+    - 생성: 스터디그룹장만 가능
+    - 수정, 삭제: 스터디그룹장만 가능
+    """
+
+    def has_permission(self, request: Request, view: ViewSet) -> bool:
+        if view.action == "retrieve":
+            return request.user in [
+                member.user
+                for member in StudyGroup.objects.get(
+                    uuid=view.kwargs["uuid"]
+                ).members.all()
+            ]
+        if view.action == "create":
+            return request.user in [
+                leader.user
+                for leader in StudyGroup.objects.get(
+                    uuid=view.kwargs["uuid"]
+                ).leaders.all()
+            ]
+        return True
+
+    def has_object_permission(
+        self, request: Request, view: APIView, obj: StudyGroupAssignmentRequest
+    ) -> bool:
+        return request.user in [leader.user for leader in obj.studygroup.leaders.all()]
 
 
 class IsStudyGroupMember(permissions.BasePermission):
