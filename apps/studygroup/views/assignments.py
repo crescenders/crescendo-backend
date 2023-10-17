@@ -51,19 +51,16 @@ class StudyGroupAssignmentRequestAPISet(viewsets.ModelViewSet):
         truncate = int(request.query_params.get("truncate", 20))
 
         page = self.paginate_queryset(queryset)
-        if page is not None:
-            if self._check_user_is_member(request):
-                serializer = self.get_serializer(page, many=True)
-                for data in serializer.data:
-                    data["content"] = self._get_truncate_content(
-                        data["content"], truncate
-                    )
-                return self.get_paginated_response(serializer.data)
-            else:
-                serializer = self.get_serializer(page, many=True)
-                for data in serializer.data:
-                    data["content"] = self._get_empty_content(data["content"])
-                return self.get_paginated_response(serializer.data)
+        if self._check_user_is_member(request):
+            serializer = self.get_serializer(page, many=True)
+            for data in serializer.data:
+                data["content"] = self._get_truncate_content(data["content"], truncate)
+            return self.get_paginated_response(serializer.data)
+        else:
+            serializer = self.get_serializer(page, many=True)
+            for data in serializer.data:
+                data["content"] = self._get_empty_content(data["content"])
+            return self.get_paginated_response(serializer.data)
 
     def _check_user_is_member(self, request) -> bool:
         """
