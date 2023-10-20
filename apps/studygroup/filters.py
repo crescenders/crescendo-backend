@@ -49,6 +49,7 @@ class MyStudyGroupFilter(filters.FilterSet):  # type: ignore
             return self._filter_disapproved(queryset)
         elif value == "as_leader":
             return self._filter_as_leader(queryset)
+        return queryset
 
     def _filter_current(self, queryset: QuerySet[StudyGroup]) -> QuerySet[StudyGroup]:
         """
