@@ -1,5 +1,9 @@
+from typing import Any
+
 from django.contrib import admin
-from django.http import HttpResponseRedirect
+from django.db.models import ForeignKey
+from django.forms import ModelChoiceField
+from django.http import HttpRequest, HttpResponse, HttpResponseRedirect
 from django.urls import reverse
 from django.utils.html import format_html
 
@@ -14,40 +18,47 @@ from apps.studygroup.models import (
 
 
 @admin.register(Category)
-class CategoryAdmin(admin.ModelAdmin):
+class CategoryAdmin(admin.ModelAdmin[Category]):
     pass
 
 
 @admin.register(Tag)
-class TagAdmin(admin.ModelAdmin):
+class TagAdmin(admin.ModelAdmin[Tag]):
     list_display = (
         "id",
         "name",
     )
 
 
-class StudyGroupRequestInline(admin.TabularInline):
+class StudyGroupMemberRequestInline(
+    admin.TabularInline[StudyGroupMemberRequest, StudyGroup]
+):
     verbose_name = "스터디그룹 가입 요청"
     verbose_name_plural = "스터디그룹 가입 요청들"
     model = StudyGroupMemberRequest
     extra = 0
 
 
-class StudyGroupMemberInline(admin.TabularInline):
+class StudyGroupMemberInline(admin.TabularInline[StudyGroupMember, StudyGroup]):
     verbose_name = "스터디그룹 멤버"
     verbose_name_plural = "스터디그룹 멤버들"
     model = StudyGroupMember
     extra = 0
 
 
-class StudyGroupAssignmentRequestInline(admin.TabularInline):
+class StudyGroupAssignmentRequestInline(
+    admin.TabularInline[StudyGroupAssignmentRequest, StudyGroup]
+):
     verbose_name = "스터디그룹 과제 요청"
     verbose_name_plural = "스터디그룹 과제 요청들"
     model = StudyGroupAssignmentRequest
     extra = 0
 
-    def formfield_for_foreignkey(self, db_field, request, **kwargs):
+    def formfield_for_foreignkey(
+        self, db_field: ForeignKey, request: HttpRequest, **kwargs: Any
+    ) -> ModelChoiceField:
         if db_field.name == "author":
+            assert request.resolver_match is not None
             studygroup_id = request.resolver_match.kwargs["object_id"]
             kwargs["queryset"] = StudyGroupMember.objects.filter(
                 studygroup_id=studygroup_id, is_leader=True
@@ -56,7 +67,7 @@ class StudyGroupAssignmentRequestInline(admin.TabularInline):
 
 
 @admin.register(StudyGroup)
-class StudyGroupAdmin(admin.ModelAdmin):
+class StudyGroupAdmin(admin.ModelAdmin[StudyGroup]):
     readonly_fields = (
         "head_image_tag",
         "uuid",
@@ -110,7 +121,7 @@ class StudyGroupAdmin(admin.ModelAdmin):
         ),
     )
 
-    def response_change(self, request, obj):
+    def response_change(self, request: HttpRequest, obj: StudyGroup) -> HttpResponse:
         if "_save" in request.POST:
             change_url = reverse(
                 "admin:%s_%s_change" % (obj._meta.app_label, obj._meta.model_name),
@@ -135,7 +146,7 @@ class StudyGroupAdmin(admin.ModelAdmin):
         return instance.is_closed
 
     inlines = [
-        StudyGroupRequestInline,
+        StudyGroupMemberRequestInline,
         StudyGroupMemberInline,
         StudyGroupAssignmentRequestInline,
     ]
