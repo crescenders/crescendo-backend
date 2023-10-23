@@ -11,12 +11,18 @@ from apps.studygroup.models import (
     StudyGroup,
     StudyGroupMember,
     StudyGroupMemberRequest,
+    Tag,
 )
 
 
 class CategoryFactory(DjangoModelFactory):
     class Meta:
         model = Category
+
+
+class TagFactory(DjangoModelFactory):
+    class Meta:
+        model = Tag
 
 
 class UserFactory(DjangoModelFactory):

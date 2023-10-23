@@ -12,7 +12,7 @@ from rest_framework.response import Response
 from rest_framework.serializers import BaseSerializer
 
 from apps.accounts.models import User
-from apps.studygroup.filters import StudyGroupListFilter
+from apps.studygroup.filters import StudyGroupListFilter, StudyGroupOrderingFilter
 from apps.studygroup.models import StudyGroup, StudyGroupMember
 from apps.studygroup.pagination import StudyGroupPagination
 from apps.studygroup.permissions import (
@@ -27,7 +27,6 @@ from apps.studygroup.serializers import (
 
 @extend_schema(tags=["스터디그룹 관리 API"])
 class StudyGroupAPISet(viewsets.ModelViewSet):
-    # Serializer
     serializer_class = StudyGroupListSerializer
     serializer_classes = {
         "list": StudyGroupListSerializer,
@@ -35,21 +34,16 @@ class StudyGroupAPISet(viewsets.ModelViewSet):
         "retrieve": StudyGroupDetailSerializer,
         "update": StudyGroupDetailSerializer,
     }
-
-    # Parser
     parser_classes = (MultiPartParser, FormParser)
-
-    # Lookup Field
     lookup_field = "uuid"
-
-    # Permission
     permission_classes = (AllowAny,)
-    # Filtering
-    filter_backends = (DjangoFilterBackend,)
+    filter_backends = (
+        DjangoFilterBackend,
+        StudyGroupOrderingFilter,
+    )
     filterset_class = StudyGroupListFilter
-
-    # Pagination
     pagination_class = StudyGroupPagination
+    ordering = ("-created_at",)
 
     def get_permissions(self) -> Sequence[BasePermission]:
         """

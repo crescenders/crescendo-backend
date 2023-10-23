@@ -128,8 +128,8 @@ class StudyGroupAssignmentRequestAPISet(viewsets.ModelViewSet):
         멤버인지 확인합니다.
         """
         studygroup_uuid = self.kwargs.get("uuid")
-        studygroup = self.queryset.filter(studygroup__uuid=studygroup_uuid).first()
-        users = [member.user for member in studygroup.studygroup.members.all()]
+        studygroup = StudyGroup.objects.get(uuid=studygroup_uuid)
+        users = [member.user for member in studygroup.members.all()]
         if request.user in users:
             return True
         return False

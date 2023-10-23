@@ -2,6 +2,12 @@ import os
 from datetime import timedelta
 from pathlib import Path
 
+import django_stubs_ext
+from rest_framework import fields
+from rest_framework.settings import api_settings
+
+django_stubs_ext.monkeypatch(extra_classes=(fields.Field,))
+
 ###################
 # Django settings #
 ###################
@@ -141,6 +147,7 @@ REST_FRAMEWORK = {
     "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
     "DEFAULT_FILTER_BACKENDS": ("django_filters.rest_framework.DjangoFilterBackend",),
 }
+api_settings.reload()
 
 REST_AUTH = {
     "USE_JWT": True,

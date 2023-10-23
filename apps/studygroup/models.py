@@ -1,4 +1,5 @@
 import uuid
+from typing import Any
 
 from django.core.exceptions import ValidationError
 from django.core.validators import (
@@ -62,7 +63,7 @@ class StudyGroupMemberRequest(models.Model):
         if self.is_approved is True and self.processed is False:
             raise ValidationError("is_approved가 True이면 processed는 True여야 합니다.")
 
-    def save(self, *args, **kwargs) -> None:
+    def save(self, *args: Any, **kwargs: Any) -> None:
         self.full_clean()
         super().save(*args, **kwargs)
 

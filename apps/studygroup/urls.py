@@ -10,6 +10,7 @@ from apps.studygroup.views.members import (
     StudyGroupMemberRequestListAPI,
 )
 from apps.studygroup.views.studygroup import StudyGroupAPISet
+from apps.studygroup.views.tags import TagRandomListAPI
 
 studygroup_router = SimpleRouter()
 studygroup_router.register("studies", StudyGroupAPISet, basename="studygroup")
@@ -48,5 +49,10 @@ urlpatterns = [
         "categories/",
         CategoryListAPI.as_view(),
         name="category-list",
+    ),
+    path(
+        "tags/",
+        TagRandomListAPI.as_view(),
+        name="tag-list",
     ),
 ]
