@@ -2,7 +2,9 @@ from typing import Any
 
 from django.db.models import Count, F, Q, QuerySet
 from django.utils.datetime_safe import date
+from django.utils.translation import gettext_lazy as _
 from django_filters import rest_framework as filters
+from rest_framework.filters import OrderingFilter
 
 from apps.studygroup.models import Category, StudyGroup
 
@@ -116,6 +118,60 @@ class MyStudyGroupFilter(filters.FilterSet):  # type: ignore
     class Meta:
         model = StudyGroup
         fields: list[Any] = []
+
+
+class StudyGroupOrderingFilter(OrderingFilter):  # type: ignore
+    additional_filters = ["random"]
+    fields_related = {"random": "?"}
+    ordering_fields = ("created_at", "deadline", "random")
+
+    def get_ordering(self, request, queryset, view):
+        """
+        OrderingFilter 의 get_ordering 메서드를 오버라이딩합니다.
+        random 은 모델의 필드가 아니므로 rest_framework 의 기본 get_ordering 에서 처리할 수 없습니다.
+        하여 random 쿼리스트링이 들어오면, fields_related 에서 해당하는 필드를 가져와서 처리합니다.
+        """
+        params = request.query_params.get(self.ordering_param)
+        if params:
+            fields = [param.strip() for param in params.split(",")]
+            valid_ordering_fields = [
+                self.fields_related.get(f.lstrip("-"))
+                for f in fields
+                if f.lstrip("-") in self.additional_filters
+            ]
+            if valid_ordering_fields:
+                return valid_ordering_fields
+        return super().get_ordering(request, queryset, view)
+
+    def filter_queryset(self, request, queryset, view):
+        ordering = self.get_ordering(request, queryset, view)
+        if ordering:
+            if "random" in ordering:
+                return queryset.order_by("?").order_by(*ordering)
+            return queryset.order_by(*ordering)
+        return queryset
+
+    def get_template_context(self, request, queryset, view):
+        """
+        BrowseableAPIRenderer 에서 사용하는 템플릿 컨텍스트를 커스터마이징합니다.
+        random 일 경우, "ascending" 혹은 "descending" 을 표시하지 않습니다.
+        """
+        current = self.get_ordering(request, queryset, view)
+        current = None if not current else current[0]
+        options = []
+        context = {
+            "request": request,
+            "current": current,
+            "param": self.ordering_param,
+        }
+        for key, label in self.get_valid_fields(queryset, view, context):
+            if key == "random":
+                options.append((key, label))
+                continue
+            options.append((key, "%s - %s" % (label, _("ascending"))))
+            options.append(("-" + key, "%s - %s" % (label, _("descending"))))
+        context["options"] = options
+        return context
 
 
 class StudyGroupListFilter(filters.FilterSet):  # type: ignore

@@ -3,7 +3,7 @@ from typing import Any, Sequence
 from django.db import transaction
 from django.db.models import QuerySet
 from django_filters.rest_framework import DjangoFilterBackend
-from drf_spectacular.utils import OpenApiParameter, extend_schema
+from drf_spectacular.utils import extend_schema
 from rest_framework import viewsets
 from rest_framework.parsers import FormParser, MultiPartParser
 from rest_framework.permissions import AllowAny, BasePermission
@@ -12,7 +12,7 @@ from rest_framework.response import Response
 from rest_framework.serializers import BaseSerializer
 
 from apps.accounts.models import User
-from apps.studygroup.filters import StudyGroupListFilter
+from apps.studygroup.filters import StudyGroupListFilter, StudyGroupOrderingFilter
 from apps.studygroup.models import StudyGroup, StudyGroupMember
 from apps.studygroup.pagination import StudyGroupPagination
 from apps.studygroup.permissions import (
@@ -37,9 +37,13 @@ class StudyGroupAPISet(viewsets.ModelViewSet):
     parser_classes = (MultiPartParser, FormParser)
     lookup_field = "uuid"
     permission_classes = (AllowAny,)
-    filter_backends = (DjangoFilterBackend,)
+    filter_backends = (
+        DjangoFilterBackend,
+        StudyGroupOrderingFilter,
+    )
     filterset_class = StudyGroupListFilter
     pagination_class = StudyGroupPagination
+    ordering = ("-created_at",)
 
     def get_permissions(self) -> Sequence[BasePermission]:
         """
@@ -86,32 +90,8 @@ class StudyGroupAPISet(viewsets.ModelViewSet):
             serializer.instance.head_image = None
         super().perform_update(serializer)
 
-    @extend_schema(
-        summary="스터디그룹 홍보글 목록을 조회합니다.",
-        parameters=[
-            OpenApiParameter(
-                name="random",
-                description="True 일 경우, 랜덤으로 스터디그룹을 조회합니다.",
-                type={
-                    "type": "boolean",
-                },
-                location=OpenApiParameter.QUERY,
-                default=False,
-                explode=False,
-            )
-        ],
-    )
+    @extend_schema(summary="스터디그룹 홍보글 목록을 조회합니다.")
     def list(self, request: Request, *args: Any, **kwargs: Any) -> Response:
-        # 랜덤으로 스터디그룹을 조회할 경우, 랜덤으로 정렬합니다.
-        # django_filters 에서 cursor pagination 에 대한 정렬 지원을 하지 않는 것으로 보이기에,
-        # 해당 함수를 해킹하여 정렬을 지원합니다.
-        if (
-            request.query_params.get("random")
-            and request.query_params.get("random") == "true"
-        ):
-            queryset = self.get_queryset().order_by("?")
-            serializer = self.get_serializer(queryset, many=True)
-            return Response(serializer.data)
         return super().list(request, *args, **kwargs)
 
     @extend_schema(summary="새로운 스터디그룹을 개설합니다.")
