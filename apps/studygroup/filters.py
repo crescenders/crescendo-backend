@@ -147,7 +147,7 @@ class StudyGroupOrderingFilter(OrderingFilter):  # type: ignore
         ordering = self.get_ordering(request, queryset, view)
         if ordering:
             if "random" in ordering:
-                return queryset.order_by("?").order_by(*ordering)
+                return queryset.order_by("?")
             return queryset.order_by(*ordering)
         return queryset
 
