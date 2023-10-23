@@ -27,6 +27,16 @@ class CategoryReadSerializer(serializers.ModelSerializer[Category]):
         fields = ["name"]
 
 
+class TagReadSerializer(serializers.ModelSerializer[Tag]):
+    """
+    태그 목록을 조회하기 위한 serializer 입니다.
+    """
+
+    class Meta:
+        model = Tag
+        fields = ["name"]
+
+
 class LeaderReadSerializer(serializers.ModelSerializer[StudyGroupMember]):
     uuid = serializers.UUIDField(source="user.uuid")
     email = serializers.EmailField(source="user.email")
