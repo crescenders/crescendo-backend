@@ -147,11 +147,6 @@ class StudyGroupListFilter(filters.FilterSet):  # type: ignore
             "모집 마감 여부에 따라 스터디그룹을 보여줍니다. 값이 지정되지 않을 시, 모집 마감 여부에 상관없이 모든 스터디그룹을 보여줍니다."
         ),
     )
-    random = filters.BooleanFilter(
-        label="random",
-        method="filter_random",
-        help_text="랜덤 갯수의 스터디그룹을 보여줍니다.",
-    )
     tags = filters.CharFilter(
         field_name="tags__name",
         lookup_expr="exact",
@@ -182,18 +177,6 @@ class StudyGroupListFilter(filters.FilterSet):  # type: ignore
             return filtered_queryset
         else:
             return queryset.exclude(id__in=filtered_queryset)
-
-    @staticmethod
-    def filter_random(
-        queryset: QuerySet[StudyGroup], name: str, value: bool
-    ) -> QuerySet[StudyGroup]:
-        """
-        True일 경우 랜덤으로 스터디그룹을 필터링합니다.
-        """
-        if value is True:
-            return queryset.order_by("?")
-        else:
-            return queryset
 
     class Meta:
         model = StudyGroup
