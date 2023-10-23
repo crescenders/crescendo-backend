@@ -119,13 +119,6 @@ class MyStudyGroupFilter(filters.FilterSet):  # type: ignore
 
 
 class StudyGroupListFilter(filters.FilterSet):  # type: ignore
-    ordering = filters.OrderingFilter(
-        fields=(
-            ("created_at", "created_at"),
-            ("deadline", "deadline"),
-        ),
-        help_text="스터디그룹을 정렬합니다. ex) 'created_at' 정렬 시, 최신순으로 정렬됩니다.",
-    )
     post_title = filters.CharFilter(
         field_name="title",
         lookup_expr="icontains",
