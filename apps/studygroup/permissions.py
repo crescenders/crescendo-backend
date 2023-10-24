@@ -63,7 +63,11 @@ class IsLeaderOrReadOnlyForAssignment(permissions.BasePermission):
                     uuid=view.kwargs["uuid"]
                 ).members.all()
             ]
-        if view.action == "create":
+        if (
+            view.action == "create"
+            or view.action == "update"
+            or view.action == "destroy"
+        ):
             return request.user in [
                 leader.user
                 for leader in StudyGroup.objects.get(
