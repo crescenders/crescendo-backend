@@ -30,7 +30,7 @@ class StudyGroupAssignmentRequestAPISet(viewsets.ModelViewSet):
         "list": StudyGroupAssignmentReadSerializer,
         "create": StudyGroupAssignmentCreateSerializer,
         "retrieve": StudyGroupAssignmentReadSerializer,
-        # "update": StudyGroupAssignmentReadSerializer,
+        "update": StudyGroupAssignmentCreateSerializer,
         # "delete": StudyGroupAssignmentReadSerializer,
     }
     pagination_class = StudyGroupAssignmentPagination
@@ -102,14 +102,14 @@ class StudyGroupAssignmentRequestAPISet(viewsets.ModelViewSet):
         """
         return super().retrieve(request, *args, **kwargs)
 
-    @extend_schema(summary="스터디그룹 과제를 수정합니다.", deprecated=True)
+    @extend_schema(summary="스터디그룹 과제를 수정합니다.")
     def update(self, request, *args, **kwargs) -> Response:
         """
         - 스터디그룹의 리더만 과제를 수정할 수 있습니다.
         """
         return super().update(request, *args, **kwargs)
 
-    @extend_schema(summary="스터디그룹 과제를 부분 수정합니다.", deprecated=True)
+    @extend_schema(summary="스터디그룹 과제를 부분 수정합니다.")
     def partial_update(self, request, *args, **kwargs) -> Response:
         """
         - 스터디그룹의 리더만 과제를 부분 수정할 수 있습니다.
