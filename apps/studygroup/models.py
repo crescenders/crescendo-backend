@@ -186,13 +186,22 @@ class StudyGroupAssignmentRequest(TimestampedModel):
 
 
 class StudyGroupAssignmentSubmission(TimestampedModel):
+    class Meta:
+        verbose_name = "StudyGroup Assignment Submission"
+        verbose_name_plural = "StudyGroup Assignment Submissions"
+        constraints = [
+            models.UniqueConstraint(
+                fields=["author", "assignment"], name="unique_assignment_submission"
+            )
+        ]
+
     studygroup = models.ForeignKey(
         StudyGroup, on_delete=models.CASCADE, related_name="submissions"
     )
     author = models.ForeignKey(
         StudyGroupMember, on_delete=models.CASCADE, related_name="submissions"
     )
-    assignment = models.OneToOneField(
+    assignment = models.ForeignKey(
         StudyGroupAssignmentRequest,
         on_delete=models.CASCADE,
         related_name="submissions",
