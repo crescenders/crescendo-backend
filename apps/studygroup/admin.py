@@ -11,6 +11,7 @@ from apps.studygroup.models import (
     Category,
     StudyGroup,
     StudyGroupAssignmentRequest,
+    StudyGroupAssignmentSubmission,
     StudyGroupMember,
     StudyGroupMemberRequest,
     Tag,
@@ -62,6 +63,32 @@ class StudyGroupAssignmentRequestInline(
             studygroup_id = request.resolver_match.kwargs["object_id"]
             kwargs["queryset"] = StudyGroupMember.objects.filter(
                 studygroup_id=studygroup_id, is_leader=True
+            )
+        return super().formfield_for_foreignkey(db_field, request, **kwargs)
+
+
+class StudyGroupAssignmentSubmissionInline(
+    admin.TabularInline[StudyGroupAssignmentRequest, StudyGroup]
+):
+    verbose_name = "스터디그룹 과제 제출"
+    verbose_name_plural = "스터디그룹 과제 제출들"
+    model = StudyGroupAssignmentSubmission
+    extra = 0
+
+    def formfield_for_foreignkey(
+        self, db_field: ForeignKey, request: HttpRequest, **kwargs: Any
+    ) -> ModelChoiceField:
+        if db_field.name == "author":
+            assert request.resolver_match is not None
+            studygroup_id = request.resolver_match.kwargs["object_id"]
+            kwargs["queryset"] = StudyGroupMember.objects.filter(
+                studygroup_id=studygroup_id
+            )
+        if db_field.name == "assignment":
+            assert request.resolver_match is not None
+            studygroup_id = request.resolver_match.kwargs["object_id"]
+            kwargs["queryset"] = StudyGroupAssignmentRequest.objects.filter(
+                studygroup_id=studygroup_id
             )
         return super().formfield_for_foreignkey(db_field, request, **kwargs)
 
@@ -149,4 +176,5 @@ class StudyGroupAdmin(admin.ModelAdmin[StudyGroup]):
         StudyGroupMemberRequestInline,
         StudyGroupMemberInline,
         StudyGroupAssignmentRequestInline,
+        StudyGroupAssignmentSubmissionInline,
     ]
