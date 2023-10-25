@@ -192,7 +192,7 @@ class StudyGroupAssignmentSubmission(TimestampedModel):
     author = models.ForeignKey(
         StudyGroupMember, on_delete=models.CASCADE, related_name="submissions"
     )
-    assignment = models.ForeignKey(
+    assignment = models.OneToOneField(
         StudyGroupAssignmentRequest,
         on_delete=models.CASCADE,
         related_name="submissions",
