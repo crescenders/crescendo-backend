@@ -252,7 +252,7 @@ class StudyGroupMemberRequestCreateSerializer(
         2. 이미 스터디그룹에 가입되어 있는지 확인합니다.
         3. 이미 스터디그룹 가입 요청을 보냈는지 확인합니다.
         """
-        uuid = self.__dict__["_context"]["view"].kwargs["uuid"]
+        uuid = self.__dict__["_context"]["view"].kwargs["studygroup_uuid"]
         studygroup = StudyGroup.objects.get(uuid=uuid)
         if studygroup.is_closed:
             raise serializers.ValidationError(
