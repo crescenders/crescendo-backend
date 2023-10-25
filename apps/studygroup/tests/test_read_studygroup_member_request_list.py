@@ -47,7 +47,7 @@ class StudyGroupMemberRequestReadListTestCase(APITestCase):
         """
         url = reverse(
             "studygroupmember-request-list",
-            kwargs={"uuid": self.studygroup_for_requested.uuid},
+            kwargs={"studygroup_uuid": self.studygroup_for_requested.uuid},
         )
         response = self.client.get(url)
         self.assertEqual(response.status_code, 401, f"response: {response.data}")
@@ -59,7 +59,7 @@ class StudyGroupMemberRequestReadListTestCase(APITestCase):
         self.client.force_authenticate(user=self.some_general_studygroup_member.user)
         url = reverse(
             "studygroupmember-request-list",
-            kwargs={"uuid": self.studygroup_for_requested.uuid},
+            kwargs={"studygroup_uuid": self.studygroup_for_requested.uuid},
         )
         response = self.client.get(url)
         self.assertEqual(response.status_code, 403, f"response: {response.data}")
@@ -73,7 +73,7 @@ class StudyGroupMemberRequestReadListTestCase(APITestCase):
         )
         url = reverse(
             "studygroupmember-request-list",
-            kwargs={"uuid": self.studygroup_for_requested.uuid},
+            kwargs={"studygroup_uuid": self.studygroup_for_requested.uuid},
         )
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200, f"response: {response.data}")
@@ -87,7 +87,7 @@ class StudyGroupMemberRequestReadListTestCase(APITestCase):
         )
         url = reverse(
             "studygroupmember-request-list",
-            kwargs={"uuid": self.studygroup_for_requested.uuid},
+            kwargs={"studygroup_uuid": self.studygroup_for_requested.uuid},
         )
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200, f"response: {response.data}")
@@ -102,7 +102,7 @@ class StudyGroupMemberRequestReadListTestCase(APITestCase):
         )
         url = reverse(
             "studygroupmember-request-list",
-            kwargs={"uuid": self.studygroup_for_requested.uuid},
+            kwargs={"studygroup_uuid": self.studygroup_for_requested.uuid},
         )
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200, f"response: {response.data}")

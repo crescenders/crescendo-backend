@@ -21,7 +21,7 @@ class StudyGroupMemberRequestCreateTestCase(APITestCase):
         """
         url = reverse(
             "studygroupmember-request-list",
-            kwargs={"uuid": self.studygroup_for_requested.uuid},
+            kwargs={"studygroup_uuid": self.studygroup_for_requested.uuid},
         )
         response = self.client.post(url)
         self.assertEqual(response.status_code, 401, f"response: {response.data}")
@@ -32,7 +32,7 @@ class StudyGroupMemberRequestCreateTestCase(APITestCase):
         """
         url = reverse(
             "studygroupmember-request-list",
-            kwargs={"uuid": self.studygroup_for_requested.uuid},
+            kwargs={"studygroup_uuid": self.studygroup_for_requested.uuid},
         )
         data = {"request_message": "가입 신청합니다."}
         self.client.force_authenticate(user=self.logged_in_user)
@@ -45,7 +45,7 @@ class StudyGroupMemberRequestCreateTestCase(APITestCase):
         """
         url = reverse(
             "studygroupmember-request-list",
-            kwargs={"uuid": self.studygroup_for_requested.uuid},
+            kwargs={"studygroup_uuid": self.studygroup_for_requested.uuid},
         )
         data = {"request_message": "가입 신청합니다."}
         self.client.force_authenticate(user=self.logged_in_user)
@@ -65,7 +65,7 @@ class StudyGroupMemberRequestCreateTestCase(APITestCase):
         self.client.force_authenticate(user=already_member.user)
         url = reverse(
             "studygroupmember-request-list",
-            kwargs={"uuid": self.studygroup_for_requested.uuid},
+            kwargs={"studygroup_uuid": self.studygroup_for_requested.uuid},
         )
         data = {"request_message": "가입 신청합니다."}
         response = self.client.post(url, data=data)
@@ -77,7 +77,7 @@ class StudyGroupMemberRequestCreateTestCase(APITestCase):
         """
         url = reverse(
             "studygroupmember-request-list",
-            kwargs={"uuid": self.closed_studygroup.uuid},
+            kwargs={"studygroup_uuid": self.closed_studygroup.uuid},
         )
         data = {"request_message": "가입 신청합니다."}
         self.client.force_authenticate(user=self.logged_in_user)
