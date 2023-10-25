@@ -36,7 +36,7 @@ urlpatterns = [
     path("", include(studygroup_router.urls)),
     path("studies/<uuid:studygroup_uuid>/", include(assignment_router.urls)),
     path(
-        "studies/<uuid:studygroup_uuid>/<int:assignment_id>/",
+        "studies/<uuid:studygroup_uuid>/assignments/<int:assignment_id>/",
         include(assignment_submission_router.urls),
     ),
     path(
