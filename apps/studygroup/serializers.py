@@ -11,6 +11,7 @@ from apps.studygroup.models import (
     Category,
     StudyGroup,
     StudyGroupAssignmentRequest,
+    StudyGroupAssignmentSubmission,
     StudyGroupMember,
     StudyGroupMemberRequest,
     Tag,
@@ -252,7 +253,7 @@ class StudyGroupMemberRequestCreateSerializer(
         2. 이미 스터디그룹에 가입되어 있는지 확인합니다.
         3. 이미 스터디그룹 가입 요청을 보냈는지 확인합니다.
         """
-        uuid = self.__dict__["_context"]["view"].kwargs["uuid"]
+        uuid = self.__dict__["_context"]["view"].kwargs["studygroup_uuid"]
         studygroup = StudyGroup.objects.get(uuid=uuid)
         if studygroup.is_closed:
             raise serializers.ValidationError(
@@ -361,3 +362,61 @@ class StudyGroupAssignmentCreateSerializer(
             "title",
             "content",
         ]
+
+
+class StudyGroupAssignmentSubmissionReadSerializer(
+    serializers.ModelSerializer[StudyGroupAssignmentRequest]
+):
+    """
+    스터디그룹의 과제 제출 목록을 조회하기 위한 serializer 입니다.
+    """
+
+    author = ProfileSerializer(
+        source="author.user",
+        read_only=True,
+    )
+
+    class Meta:
+        model = StudyGroupAssignmentSubmission
+        fields = [
+            "id",
+            "author",
+            "title",
+            "created_at",
+            "updated_at",
+        ]
+
+
+class StudyGroupAssignmentSubmissionCreateSerializer(
+    serializers.ModelSerializer[StudyGroupAssignmentRequest]
+):
+    """
+    스터디그룹의 과제 제출을 생성하기 위한 serializer 입니다.
+    """
+
+    class Meta:
+        model = StudyGroupAssignmentSubmission
+        fields = [
+            "title",
+            "content",
+        ]
+
+    def validate(self, attrs: OrderedDict[str, Any]) -> OrderedDict[str, Any]:
+        """
+        이미 과제를 제출한 상태인지 확인합니다.
+        """
+        uuid = self.__dict__["_context"]["view"].kwargs["studygroup_uuid"]
+        studygroup = StudyGroup.objects.get(uuid=uuid)
+        assignment_id = self.__dict__["_context"]["view"].kwargs["assignment_id"]
+        assignment = StudyGroupAssignmentRequest.objects.get(id=assignment_id)
+        request_user = self.__dict__["_context"]["request"].user
+        request_member = StudyGroupMember.objects.get(
+            studygroup=studygroup, user=request_user
+        )
+        if StudyGroupAssignmentSubmission.objects.filter(
+            studygroup=studygroup, assignment=assignment, author=request_member
+        ).exists():
+            raise serializers.ValidationError(
+                "You have already submitted this assignment."
+            )
+        return attrs

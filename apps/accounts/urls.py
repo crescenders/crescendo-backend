@@ -15,7 +15,7 @@ urlpatterns = [
     path("profiles/me/studies/", views.MyStudyAPI.as_view(), name="user_study_me"),
     # UUID 기반 유저 정보 조회
     path(
-        "profiles/<uuid:uuid>/",
+        "profiles/<uuid:user_uuid>/",
         views.UUIDProfileAPI.as_view(),
         name="user_profile_uuid",
     ),

@@ -27,7 +27,7 @@ class ApproveStudyGroupMemberRequestTestCase(APITestCase):
         url = reverse(
             "studygroupmember-request-detail",
             kwargs={
-                "uuid": self.studygroup_for_approved.uuid,
+                "studygroup_uuid": self.studygroup_for_approved.uuid,
                 "pk": self.studygroup_member_request_for_approved.pk,
             },
         )
@@ -42,7 +42,7 @@ class ApproveStudyGroupMemberRequestTestCase(APITestCase):
         url = reverse(
             "studygroupmember-request-detail",
             kwargs={
-                "uuid": self.studygroup_for_approved.uuid,
+                "studygroup_uuid": self.studygroup_for_approved.uuid,
                 "pk": self.studygroup_member_request_for_approved.pk,
             },
         )
@@ -59,7 +59,7 @@ class ApproveStudyGroupMemberRequestTestCase(APITestCase):
         url = reverse(
             "studygroupmember-request-detail",
             kwargs={
-                "uuid": self.studygroup_for_approved.uuid,
+                "studygroup_uuid": self.studygroup_for_approved.uuid,
                 "pk": self.studygroup_member_request_for_approved.pk,
             },
         )
@@ -79,7 +79,7 @@ class ApproveStudyGroupMemberRequestTestCase(APITestCase):
         url = reverse(
             "studygroupmember-request-detail",
             kwargs={
-                "uuid": self.studygroup_for_approved.uuid,
+                "studygroup_uuid": self.studygroup_for_approved.uuid,
                 "pk": self.studygroup_member_request_for_approved.pk,
             },
         )
@@ -108,7 +108,7 @@ class ApproveStudyGroupMemberRequestTestCase(APITestCase):
         url = reverse(
             "studygroupmember-request-detail",
             kwargs={
-                "uuid": self.studygroup_for_approved.uuid,
+                "studygroup_uuid": self.studygroup_for_approved.uuid,
                 "pk": self.studygroup_member_request_for_approved.pk,
             },
         )

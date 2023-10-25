@@ -42,7 +42,9 @@ class StudyGroupMemberRequestListAPI(generics.ListCreateAPIView):
 
     def get_queryset(self) -> QuerySet[StudyGroupMemberRequest]:
         return self.queryset.filter(
-            studygroup__uuid=self.kwargs["uuid"], is_approved=False, processed=False
+            studygroup__uuid=self.kwargs["studygroup_uuid"],
+            is_approved=False,
+            processed=False,
         )
 
     def get_serializer_class(self) -> type[BaseSerializer[StudyGroupMemberRequest]]:
@@ -62,7 +64,7 @@ class StudyGroupMemberRequestListAPI(generics.ListCreateAPIView):
         """
         스터디그룹 가입 요청을 생성합니다.
         """
-        studygroup = StudyGroup.objects.get(uuid=self.kwargs["uuid"])
+        studygroup = StudyGroup.objects.get(uuid=self.kwargs["studygroup_uuid"])
         serializer.save(user=self.request.user, studygroup=studygroup)
         super().perform_create(serializer)
 
@@ -102,7 +104,7 @@ class StudyGroupMemberRequestDetailAPI(
         1. 해당 요청이 승인되고, 처리되었음이 저장됩니다.
         2. 스터디그룹의 멤버로 등록됩니다.
         """
-        studygroup = StudyGroup.objects.get(uuid=self.kwargs["uuid"])
+        studygroup = StudyGroup.objects.get(uuid=self.kwargs["studygroup_uuid"])
         studygroup_request = StudyGroupMemberRequest.objects.get(pk=self.kwargs["pk"])
         studygroup_request.is_approved = True
         studygroup_request.processed = True
@@ -133,8 +135,10 @@ class StudyGroupMemberListAPI(generics.ListAPIView):
         """
         QueryString 으로 전달받은 uuid 에 해당하는 스터디그룹의 멤버 목록을 조회합니다.
         """
-        assert self.kwargs.get("uuid") is not None
-        return StudyGroupMember.objects.filter(studygroup__uuid=self.kwargs["uuid"])
+        assert self.kwargs.get("studygroup_uuid") is not None
+        return StudyGroupMember.objects.filter(
+            studygroup__uuid=self.kwargs["studygroup_uuid"]
+        )
 
     @extend_schema(summary="특정 스터디그룹의 멤버 목록을 조회합니다.")
     def get(self, request: Request, *args: Any, **kwargs: Any) -> Response:
@@ -147,8 +151,10 @@ class StudyGroupMemberDetailAPI(generics.DestroyAPIView):
     permission_classes = (StudyGroupAddMember,)
 
     def get_queryset(self) -> QuerySet[StudyGroupMember]:
-        assert self.kwargs.get("uuid") is not None
-        return StudyGroupMember.objects.filter(studygroup__uuid=self.kwargs["uuid"])
+        assert self.kwargs.get("studygroup_uuid") is not None
+        return StudyGroupMember.objects.filter(
+            studygroup__uuid=self.kwargs["studygroup_uuid"]
+        )
 
     @extend_schema(summary="스터디그룹의 멤버를 탈퇴시킵니다.")
     def delete(self, request: Request, *args: Any, **kwargs: Any) -> Response:

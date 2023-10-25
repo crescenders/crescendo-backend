@@ -25,7 +25,7 @@ class DisapproveStudyGroupMemberRequestTestCase(APITestCase):
         url = reverse(
             "studygroupmember-request-detail",
             kwargs={
-                "uuid": self.studygroup_for_disapproved.uuid,
+                "studygroup_uuid": self.studygroup_for_disapproved.uuid,
                 "pk": self.studygroup_member_request_for_disapproved.pk,
             },
         )
@@ -40,7 +40,7 @@ class DisapproveStudyGroupMemberRequestTestCase(APITestCase):
         url = reverse(
             "studygroupmember-request-detail",
             kwargs={
-                "uuid": self.studygroup_for_disapproved.uuid,
+                "studygroup_uuid": self.studygroup_for_disapproved.uuid,
                 "pk": self.studygroup_member_request_for_disapproved.pk,
             },
         )
@@ -57,7 +57,7 @@ class DisapproveStudyGroupMemberRequestTestCase(APITestCase):
         url = reverse(
             "studygroupmember-request-detail",
             kwargs={
-                "uuid": self.studygroup_for_disapproved.uuid,
+                "studygroup_uuid": self.studygroup_for_disapproved.uuid,
                 "pk": self.studygroup_member_request_for_disapproved.pk,
             },
         )
@@ -74,7 +74,7 @@ class DisapproveStudyGroupMemberRequestTestCase(APITestCase):
         url = reverse(
             "studygroupmember-request-detail",
             kwargs={
-                "uuid": self.studygroup_for_disapproved.uuid,
+                "studygroup_uuid": self.studygroup_for_disapproved.uuid,
                 "pk": self.studygroup_member_request_for_disapproved.pk,
             },
         )
