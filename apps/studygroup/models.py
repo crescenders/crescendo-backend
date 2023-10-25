@@ -183,3 +183,22 @@ class StudyGroupAssignmentRequest(TimestampedModel):
 
     def __str__(self) -> str:
         return f"{self.author}의 {self.title} 과제 요청"
+
+
+class StudyGroupAssignmentSubmission(TimestampedModel):
+    studygroup = models.ForeignKey(
+        StudyGroup, on_delete=models.CASCADE, related_name="submissions"
+    )
+    author = models.ForeignKey(
+        StudyGroupMember, on_delete=models.CASCADE, related_name="submissions"
+    )
+    assignment = models.ForeignKey(
+        StudyGroupAssignmentRequest,
+        on_delete=models.CASCADE,
+        related_name="submissions",
+    )
+    title = models.CharField(max_length=64)
+    content = models.TextField(max_length=1500)
+
+    def __str__(self) -> str:
+        return f"{self.author}의 {self.assignment} 과제 제출"
