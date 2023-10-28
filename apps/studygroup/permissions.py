@@ -3,11 +3,7 @@ from rest_framework.request import Request
 from rest_framework.views import APIView
 from rest_framework.viewsets import ViewSet
 
-from apps.studygroup.models import (
-    StudyGroup,
-    StudyGroupAssignmentRequest,
-    StudyGroupMember,
-)
+from apps.studygroup.models import AssignmentRequest, StudyGroup, StudyGroupMember
 
 
 class StudyGroupCreatePermission(permissions.IsAuthenticated):
@@ -77,7 +73,7 @@ class IsLeaderOrReadOnlyForAssignment(permissions.BasePermission):
         return True
 
     def has_object_permission(
-        self, request: Request, view: APIView, obj: StudyGroupAssignmentRequest
+        self, request: Request, view: APIView, obj: AssignmentRequest
     ) -> bool:
         return request.user in [leader.user for leader in obj.studygroup.leaders.all()]
 

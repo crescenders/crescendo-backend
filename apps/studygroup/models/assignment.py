@@ -5,7 +5,7 @@ from apps.studygroup.models.member import StudyGroupMember
 from apps.studygroup.models.studygroup import StudyGroup
 
 
-class StudyGroupAssignmentRequest(TimestampedModel):
+class AssignmentRequest(TimestampedModel):
     studygroup = models.ForeignKey(
         StudyGroup, on_delete=models.CASCADE, related_name="assignments"
     )
@@ -19,7 +19,7 @@ class StudyGroupAssignmentRequest(TimestampedModel):
         return f"{self.author}의 {self.title} 과제 요청"
 
 
-class StudyGroupAssignmentSubmission(TimestampedModel):
+class AssignmentSubmission(TimestampedModel):
     class Meta:
         verbose_name = "StudyGroup Assignment Submission"
         verbose_name_plural = "StudyGroup Assignment Submissions"
@@ -36,7 +36,7 @@ class StudyGroupAssignmentSubmission(TimestampedModel):
         StudyGroupMember, on_delete=models.CASCADE, related_name="submissions"
     )
     assignment = models.ForeignKey(
-        StudyGroupAssignmentRequest,
+        AssignmentRequest,
         on_delete=models.CASCADE,
         related_name="submissions",
     )

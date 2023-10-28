@@ -5,9 +5,9 @@ from rest_framework.response import Response
 from rest_framework.serializers import BaseSerializer
 
 from apps.studygroup.models import (
+    AssignmentRequest,
+    AssignmentSubmission,
     StudyGroup,
-    StudyGroupAssignmentRequest,
-    StudyGroupAssignmentSubmission,
     StudyGroupMember,
 )
 from apps.studygroup.pagination import StudyGroupAssignmentPagination
@@ -28,7 +28,7 @@ class StudyGroupAssignmentRequestAPISet(viewsets.ModelViewSet):
 
     lookup_url_kwarg = "assignment_id"
     permission_classes = (IsLeaderOrReadOnlyForAssignment,)
-    queryset = StudyGroupAssignmentRequest.objects.all()
+    queryset = AssignmentRequest.objects.all()
     serializer_class = StudyGroupAssignmentReadSerializer
     serializer_classes = {
         "list": StudyGroupAssignmentReadSerializer,
@@ -38,11 +38,11 @@ class StudyGroupAssignmentRequestAPISet(viewsets.ModelViewSet):
     }
     pagination_class = StudyGroupAssignmentPagination
 
-    def get_queryset(self) -> QuerySet[StudyGroupAssignmentRequest]:
+    def get_queryset(self) -> QuerySet[AssignmentRequest]:
         studygroup_uuid = self.kwargs.get("studygroup_uuid")
         return self.queryset.filter(studygroup__uuid=studygroup_uuid)
 
-    def get_serializer_class(self) -> BaseSerializer[StudyGroupAssignmentRequest]:
+    def get_serializer_class(self) -> BaseSerializer[AssignmentRequest]:
         return self.serializer_classes.get(self.action, self.serializer_class)
 
     @extend_schema(
@@ -162,7 +162,7 @@ class StudyGroupAssignmentSubmissionAPISet(viewsets.ModelViewSet):
     """
 
     lookup_url_kwarg = "submission_id"
-    queryset = StudyGroupAssignmentSubmission.objects.all()
+    queryset = AssignmentSubmission.objects.all()
     serializer_class = StudyGroupAssignmentSubmissionReadSerializer
     serializer_classes = {
         "list": StudyGroupAssignmentSubmissionReadSerializer,
@@ -170,11 +170,11 @@ class StudyGroupAssignmentSubmissionAPISet(viewsets.ModelViewSet):
     }
     pagination_class = StudyGroupAssignmentPagination
 
-    def get_queryset(self) -> QuerySet[StudyGroupAssignmentSubmission]:
+    def get_queryset(self) -> QuerySet[AssignmentSubmission]:
         studygroup_uuid = self.kwargs.get("studygroup_uuid")
         return self.queryset.filter(studygroup__uuid=studygroup_uuid)
 
-    def get_serializer_class(self) -> BaseSerializer[StudyGroupAssignmentSubmission]:
+    def get_serializer_class(self) -> BaseSerializer[AssignmentSubmission]:
         return self.serializer_classes.get(self.action, self.serializer_class)
 
     @extend_schema(summary="스터디그룹 과제 제출 목록을 조회합니다.")
@@ -198,7 +198,7 @@ class StudyGroupAssignmentSubmissionAPISet(viewsets.ModelViewSet):
             studygroup=studygroup, user=self.request.user
         )
         assignment_id = self.kwargs.get("assignment_id")
-        assignment = StudyGroupAssignmentRequest.objects.get(id=assignment_id)
+        assignment = AssignmentRequest.objects.get(id=assignment_id)
         serializer.save(author=author, studygroup=studygroup, assignment=assignment)
 
     @extend_schema(summary="스터디그룹 과제 제출을 상세 조회합니다.", deprecated=True)

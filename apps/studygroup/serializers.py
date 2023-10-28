@@ -8,10 +8,10 @@ from rest_framework import serializers
 from apps.accounts.serializers import ProfileSerializer
 from apps.core.serializers import CreatableSlugRelatedField
 from apps.studygroup.models import (
+    AssignmentRequest,
+    AssignmentSubmission,
     Category,
     StudyGroup,
-    StudyGroupAssignmentRequest,
-    StudyGroupAssignmentSubmission,
     StudyGroupMember,
     StudyGroupMemberRequest,
     Tag,
@@ -326,7 +326,7 @@ class StudyGroupMemberReadSerializer(serializers.ModelSerializer[StudyGroupMembe
 
 
 class StudyGroupAssignmentReadSerializer(
-    serializers.ModelSerializer[StudyGroupAssignmentRequest]
+    serializers.ModelSerializer[AssignmentRequest]
 ):
     """
     스터디그룹의 과제를 조회하기 위한 serializer 입니다.
@@ -338,7 +338,7 @@ class StudyGroupAssignmentReadSerializer(
     )
 
     class Meta:
-        model = StudyGroupAssignmentRequest
+        model = AssignmentRequest
         fields = [
             "id",
             "author",
@@ -350,14 +350,14 @@ class StudyGroupAssignmentReadSerializer(
 
 
 class StudyGroupAssignmentCreateSerializer(
-    serializers.ModelSerializer[StudyGroupAssignmentRequest]
+    serializers.ModelSerializer[AssignmentRequest]
 ):
     """
     스터디그룹의 과제를 생성하기 위한 serializer 입니다.
     """
 
     class Meta:
-        model = StudyGroupAssignmentRequest
+        model = AssignmentRequest
         fields = [
             "title",
             "content",
@@ -365,7 +365,7 @@ class StudyGroupAssignmentCreateSerializer(
 
 
 class StudyGroupAssignmentSubmissionReadSerializer(
-    serializers.ModelSerializer[StudyGroupAssignmentRequest]
+    serializers.ModelSerializer[AssignmentRequest]
 ):
     """
     스터디그룹의 과제 제출 목록을 조회하기 위한 serializer 입니다.
@@ -377,7 +377,7 @@ class StudyGroupAssignmentSubmissionReadSerializer(
     )
 
     class Meta:
-        model = StudyGroupAssignmentSubmission
+        model = AssignmentSubmission
         fields = [
             "id",
             "author",
@@ -388,14 +388,14 @@ class StudyGroupAssignmentSubmissionReadSerializer(
 
 
 class StudyGroupAssignmentSubmissionCreateSerializer(
-    serializers.ModelSerializer[StudyGroupAssignmentRequest]
+    serializers.ModelSerializer[AssignmentRequest]
 ):
     """
     스터디그룹의 과제 제출을 생성하기 위한 serializer 입니다.
     """
 
     class Meta:
-        model = StudyGroupAssignmentSubmission
+        model = AssignmentSubmission
         fields = [
             "title",
             "content",
@@ -408,12 +408,12 @@ class StudyGroupAssignmentSubmissionCreateSerializer(
         uuid = self.__dict__["_context"]["view"].kwargs["studygroup_uuid"]
         studygroup = StudyGroup.objects.get(uuid=uuid)
         assignment_id = self.__dict__["_context"]["view"].kwargs["assignment_id"]
-        assignment = StudyGroupAssignmentRequest.objects.get(id=assignment_id)
+        assignment = AssignmentRequest.objects.get(id=assignment_id)
         request_user = self.__dict__["_context"]["request"].user
         request_member = StudyGroupMember.objects.get(
             studygroup=studygroup, user=request_user
         )
-        if StudyGroupAssignmentSubmission.objects.filter(
+        if AssignmentSubmission.objects.filter(
             studygroup=studygroup, assignment=assignment, author=request_member
         ).exists():
             raise serializers.ValidationError(
