@@ -21,7 +21,7 @@ from apps.studygroup.serializers import (
 
 
 @extend_schema(tags=["스터디그룹 과제 등록 관리 API"])
-class StudyGroupAssignmentRequestAPISet(viewsets.ModelViewSet):
+class AssignmentRequestAPISet(viewsets.ModelViewSet):
     """
     스터디그룹 과제 관리 API
     """
@@ -156,7 +156,7 @@ class StudyGroupAssignmentRequestAPISet(viewsets.ModelViewSet):
 
 
 @extend_schema(tags=["스터디그룹 과제 제출 관리 API"])
-class StudyGroupAssignmentSubmissionAPISet(viewsets.ModelViewSet):
+class AssignmentSubmissionAPISet(viewsets.ModelViewSet):
     """
     스터디그룹 과제 제출 관리 API
     """

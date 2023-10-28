@@ -2,8 +2,8 @@ from django.urls import include, path
 from rest_framework.routers import SimpleRouter
 
 from apps.studygroup.views.assignment import (
-    StudyGroupAssignmentRequestAPISet,
-    StudyGroupAssignmentSubmissionAPISet,
+    AssignmentRequestAPISet,
+    AssignmentSubmissionAPISet,
 )
 from apps.studygroup.views.category import CategoryListAPI
 from apps.studygroup.views.member import (
@@ -21,14 +21,14 @@ studygroup_router.register("studies", StudyGroupAPISet, basename="studygroup")
 assignment_router = SimpleRouter()
 assignment_router.register(
     r"assignments",
-    StudyGroupAssignmentRequestAPISet,
+    AssignmentRequestAPISet,
     basename="assignment-request",
 )
 
 assignment_submission_router = SimpleRouter()
 assignment_submission_router.register(
     r"submissions",
-    StudyGroupAssignmentSubmissionAPISet,
+    AssignmentSubmissionAPISet,
     basename="assignment-submission",
 )
 
