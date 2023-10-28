@@ -1,19 +1,17 @@
 from django.urls import include, path
 from rest_framework.routers import SimpleRouter
 
-from apps.studygroup.views.assignment import (
+from apps.studygroup.views import (
     AssignmentRequestAPISet,
     AssignmentSubmissionAPISet,
-)
-from apps.studygroup.views.category import CategoryListAPI
-from apps.studygroup.views.member import (
+    CategoryListAPI,
+    StudyGroupAPISet,
     StudyGroupMemberDetailAPI,
     StudyGroupMemberListAPI,
     StudyGroupMemberRequestDetailAPI,
     StudyGroupMemberRequestListAPI,
+    TagRandomListAPI,
 )
-from apps.studygroup.views.studygroup import StudyGroupAPISet
-from apps.studygroup.views.tag import TagRandomListAPI
 
 studygroup_router = SimpleRouter()
 studygroup_router.register("studies", StudyGroupAPISet, basename="studygroup")
