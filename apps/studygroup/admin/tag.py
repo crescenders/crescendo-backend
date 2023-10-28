@@ -8,4 +8,5 @@ class TagAdmin(admin.ModelAdmin[Tag]):
     list_display = (
         "id",
         "name",
+        "related_studygroups_count",
     )
