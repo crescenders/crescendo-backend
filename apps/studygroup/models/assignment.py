@@ -6,6 +6,11 @@ from apps.studygroup.models.studygroup import StudyGroup
 
 
 class AssignmentRequest(TimestampedModel):
+    class Meta:
+        verbose_name = "StudyGroup Assignment Request"
+        verbose_name_plural = "StudyGroup Assignment Requests"
+        ordering = ["-created_at"]
+
     studygroup = models.ForeignKey(
         StudyGroup, on_delete=models.CASCADE, related_name="assignments"
     )
