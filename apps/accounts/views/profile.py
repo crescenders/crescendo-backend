@@ -79,6 +79,7 @@ class UUIDProfileAPI(generics.RetrieveAPIView):
     """
 
     lookup_field = "uuid"
+    lookup_url_kwarg = "user_uuid"
     queryset = User.objects.all()
     serializer_class = ProfileSerializer
     permission_classes = (AllowAny,)
