@@ -4,6 +4,7 @@ from rest_framework.test import APITestCase
 from rest_framework_simplejwt.tokens import RefreshToken
 
 from apps.accounts.models import User
+from apps.accounts.urls import AccountsURLs
 
 
 class TokenRefreshTestCase(APITestCase):
@@ -20,7 +21,7 @@ class TokenRefreshTestCase(APITestCase):
         """
         refresh_token = RefreshToken.for_user(self.user)
         response = self.client.post(
-            path=reverse("token_refresh"),
+            path=reverse(AccountsURLs.REFRESH_LOGIN),
             data={"refresh": str(refresh_token)},
         )
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -32,7 +33,7 @@ class TokenRefreshTestCase(APITestCase):
         유효하지 않은 토큰으로 Token Refresh API 를 호출하면 401 응답을 받아야 합니다.
         """
         response = self.client.post(
-            path=reverse("token_refresh"),
+            path=reverse(AccountsURLs.REFRESH_LOGIN),
             data={"refresh": "invalid_token"},
         )
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
@@ -47,12 +48,12 @@ class TokenRefreshTestCase(APITestCase):
         """
         refresh_token = RefreshToken.for_user(self.user)
         response = self.client.post(
-            path=reverse("token_refresh"),
+            path=reverse(AccountsURLs.REFRESH_LOGIN),
             data={"refresh": str(refresh_token)},
         )
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         response = self.client.post(
-            path=reverse("token_refresh"),
+            path=reverse(AccountsURLs.REFRESH_LOGIN),
             data={"refresh": str(refresh_token)},
         )
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)

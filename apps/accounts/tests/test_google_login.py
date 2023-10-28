@@ -2,6 +2,8 @@ from rest_framework import status
 from rest_framework.reverse import reverse
 from rest_framework.test import APITestCase
 
+from apps.accounts.urls import AccountsURLs
+
 
 class GoogleLoginTestCase(APITestCase):
     def test_invalid_google_login(self):
@@ -9,7 +11,7 @@ class GoogleLoginTestCase(APITestCase):
         유효하지 않은 Google access token 으로 Google Login API 를 호출하면 400 응답을 받아야 합니다.
         """
         response = self.client.post(
-            path=reverse("google_login"),
+            path=reverse(AccountsURLs.GOOGLE_LOGIN),
             data={"access": "invalid_access_token"},
         )
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)

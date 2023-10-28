@@ -4,6 +4,7 @@ from rest_framework.test import APITestCase
 from rest_framework_simplejwt.tokens import RefreshToken
 
 from apps.accounts.models import User
+from apps.accounts.urls import AccountsURLs
 
 
 class LogoutTestCase(APITestCase):
@@ -20,12 +21,12 @@ class LogoutTestCase(APITestCase):
         """
         refresh_token = RefreshToken.for_user(self.user)
         response = self.client.post(
-            path=reverse("token_blacklist"),
+            path=reverse(AccountsURLs.LOGOUT),
             data={"refresh": str(refresh_token)},
         )
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         response = self.client.post(
-            path=reverse("token_refresh"),
+            path=reverse(AccountsURLs.REFRESH_LOGIN),
             data={"refresh": str(refresh_token)},
         )
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
