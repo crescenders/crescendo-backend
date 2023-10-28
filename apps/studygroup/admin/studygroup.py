@@ -8,27 +8,19 @@ from django.urls import reverse
 from django.utils.html import format_html
 
 from apps.studygroup.models import (
-    Category,
     StudyGroup,
     StudyGroupAssignmentRequest,
     StudyGroupAssignmentSubmission,
     StudyGroupMember,
     StudyGroupMemberRequest,
-    Tag,
 )
 
 
-@admin.register(Category)
-class CategoryAdmin(admin.ModelAdmin[Category]):
-    pass
-
-
-@admin.register(Tag)
-class TagAdmin(admin.ModelAdmin[Tag]):
-    list_display = (
-        "id",
-        "name",
-    )
+class StudyGroupMemberInline(admin.TabularInline[StudyGroupMember, StudyGroup]):
+    verbose_name = "스터디그룹 멤버"
+    verbose_name_plural = "스터디그룹 멤버들"
+    model = StudyGroupMember
+    extra = 0
 
 
 class StudyGroupMemberRequestInline(
@@ -37,13 +29,6 @@ class StudyGroupMemberRequestInline(
     verbose_name = "스터디그룹 가입 요청"
     verbose_name_plural = "스터디그룹 가입 요청들"
     model = StudyGroupMemberRequest
-    extra = 0
-
-
-class StudyGroupMemberInline(admin.TabularInline[StudyGroupMember, StudyGroup]):
-    verbose_name = "스터디그룹 멤버"
-    verbose_name_plural = "스터디그룹 멤버들"
-    model = StudyGroupMember
     extra = 0
 
 
