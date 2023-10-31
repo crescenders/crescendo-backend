@@ -12,9 +12,7 @@ from apps.studygroup.models import (
 )
 
 
-class StudyGroupAssignmentReadSerializer(
-    serializers.ModelSerializer[AssignmentRequest]
-):
+class AssignmentReadSerializer(serializers.ModelSerializer[AssignmentRequest]):
     """
     스터디그룹의 과제를 조회하기 위한 serializer 입니다.
     """
@@ -36,9 +34,7 @@ class StudyGroupAssignmentReadSerializer(
         ]
 
 
-class StudyGroupAssignmentCreateSerializer(
-    serializers.ModelSerializer[AssignmentRequest]
-):
+class AssignmentCreateSerializer(serializers.ModelSerializer[AssignmentRequest]):
     """
     스터디그룹의 과제를 생성하기 위한 serializer 입니다.
     """
@@ -51,11 +47,11 @@ class StudyGroupAssignmentCreateSerializer(
         ]
 
 
-class StudyGroupAssignmentSubmissionReadSerializer(
+class AssignmentSubmissionListReadSerializer(
     serializers.ModelSerializer[AssignmentRequest]
 ):
     """
-    스터디그룹의 과제 제출 목록을 조회하기 위한 serializer 입니다.
+    멤버들이 제출한 과제의 목록을 조회하기 위한 serializer 입니다.
     """
 
     author = ProfileSerializer(
@@ -74,11 +70,28 @@ class StudyGroupAssignmentSubmissionReadSerializer(
         ]
 
 
-class StudyGroupAssignmentSubmissionCreateSerializer(
+class AssignmentSubmissionDetailReadSerializer(AssignmentSubmissionListReadSerializer):
+    """
+    멤버들이 제출한 과제의 상세정보를 조회하기 위한 serializer 입니다.
+    """
+
+    class Meta:
+        model = AssignmentSubmission
+        fields = [
+            "id",
+            "author",
+            "title",
+            "content",
+            "created_at",
+            "updated_at",
+        ]
+
+
+class AssignmentSubmissionCreateSerializer(
     serializers.ModelSerializer[AssignmentRequest]
 ):
     """
-    스터디그룹의 과제 제출을 생성하기 위한 serializer 입니다.
+    새로운 과제를 제출하기 위한 serializer 입니다.
     """
 
     class Meta:
