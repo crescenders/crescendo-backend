@@ -39,7 +39,7 @@ class AssignmentRequestAPISet(viewsets.ModelViewSet):
 
     lookup_url_kwarg = "assignment_id"
     queryset = AssignmentRequest.objects.all()
-    permission_class_mapping = {
+    permission_classes_mapping = {
         "list": [AllowAny],
         "create": [IsStudygroupLeader],
         "retrieve": [IsStudygroupMember],
@@ -64,7 +64,7 @@ class AssignmentRequestAPISet(viewsets.ModelViewSet):
     def get_permissions(self) -> list:
         return [
             permission()
-            for permission in self.permission_class_mapping.get(self.action, [])
+            for permission in self.permission_classes_mapping.get(self.action, [])
         ]
 
     def get_serializer_class(self) -> BaseSerializer[AssignmentRequest]:
@@ -187,12 +187,24 @@ class AssignmentSubmissionAPISet(viewsets.ModelViewSet):
 
     - 제출된 과제의 목록과 상세정보를 조회하는 것은 스터디그룹의 멤버만 가능합니다.
     - 과제를 제출하는 것은 스터디그룹의 멤버만 가능합니다.
-    - 과제를 수정, 삭제하는 것은 과제를 제출한 사람이거나, 리더만 가능합니다.
+    - 과제를 수정하는 것은 과제를 제출한 사람만 가능합니다.
+    - 과제를 삭제하는 것은 과제를 제출한 사람과 스터디그룹의 리더만 가능합니다.
     """
 
     lookup_url_kwarg = "submission_id"
     queryset = AssignmentSubmission.objects.all()
     serializer_class = AssignmentSubmissionListReadSerializer
+    permission_classes_mapping = {
+        "list": [IsStudygroupMember],
+        "create": [IsStudygroupMember],
+        "retrieve": [IsStudygroupMember],
+        "update": [IsStudygroupMember, IsAssignmentSubmissionAuthor],
+        "partial_update": [IsStudygroupMember, IsAssignmentSubmissionAuthor],
+        "destroy": [
+            IsStudygroupMember,
+            IsAssignmentSubmissionAuthor | IsStudygroupLeader,
+        ],
+    }
     serializer_classes = {
         "list": AssignmentSubmissionListReadSerializer,
         "create": AssignmentSubmissionCreateSerializer,
@@ -205,19 +217,11 @@ class AssignmentSubmissionAPISet(viewsets.ModelViewSet):
         studygroup_uuid = self.kwargs.get("studygroup_uuid")
         return self.queryset.filter(studygroup__uuid=studygroup_uuid)
 
-    def get_permissions(self):
-        permissions = {
-            "list": [IsStudygroupMember],
-            "create": [IsStudygroupMember],
-            "retrieve": [IsStudygroupMember],
-            "update": [IsStudygroupMember, IsAssignmentSubmissionAuthor],
-            "partial_update": [IsStudygroupMember, IsAssignmentSubmissionAuthor],
-            "destroy": [
-                IsStudygroupMember,
-                IsAssignmentSubmissionAuthor | IsStudygroupLeader,
-            ],
-        }
-        return [permission() for permission in permissions.get(self.action, [])]
+    def get_permissions(self) -> list:
+        return [
+            permission()
+            for permission in self.permission_classes_mapping.get(self.action, [])
+        ]
 
     def get_serializer_class(self) -> BaseSerializer[AssignmentSubmission]:
         return self.serializer_classes.get(self.action, self.serializer_class)
