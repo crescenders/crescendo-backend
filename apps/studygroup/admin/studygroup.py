@@ -8,27 +8,19 @@ from django.urls import reverse
 from django.utils.html import format_html
 
 from apps.studygroup.models import (
-    Category,
+    AssignmentRequest,
+    AssignmentSubmission,
     StudyGroup,
-    StudyGroupAssignmentRequest,
-    StudyGroupAssignmentSubmission,
     StudyGroupMember,
     StudyGroupMemberRequest,
-    Tag,
 )
 
 
-@admin.register(Category)
-class CategoryAdmin(admin.ModelAdmin[Category]):
-    pass
-
-
-@admin.register(Tag)
-class TagAdmin(admin.ModelAdmin[Tag]):
-    list_display = (
-        "id",
-        "name",
-    )
+class StudyGroupMemberInline(admin.TabularInline[StudyGroupMember, StudyGroup]):
+    verbose_name = "스터디그룹 멤버"
+    verbose_name_plural = "스터디그룹 멤버들"
+    model = StudyGroupMember
+    extra = 0
 
 
 class StudyGroupMemberRequestInline(
@@ -40,19 +32,12 @@ class StudyGroupMemberRequestInline(
     extra = 0
 
 
-class StudyGroupMemberInline(admin.TabularInline[StudyGroupMember, StudyGroup]):
-    verbose_name = "스터디그룹 멤버"
-    verbose_name_plural = "스터디그룹 멤버들"
-    model = StudyGroupMember
-    extra = 0
-
-
 class StudyGroupAssignmentRequestInline(
-    admin.TabularInline[StudyGroupAssignmentRequest, StudyGroup]
+    admin.TabularInline[AssignmentRequest, StudyGroup]
 ):
     verbose_name = "스터디그룹 과제 요청"
     verbose_name_plural = "스터디그룹 과제 요청들"
-    model = StudyGroupAssignmentRequest
+    model = AssignmentRequest
     extra = 0
 
     def formfield_for_foreignkey(
@@ -68,11 +53,11 @@ class StudyGroupAssignmentRequestInline(
 
 
 class StudyGroupAssignmentSubmissionInline(
-    admin.TabularInline[StudyGroupAssignmentRequest, StudyGroup]
+    admin.TabularInline[AssignmentRequest, StudyGroup]
 ):
     verbose_name = "스터디그룹 과제 제출"
     verbose_name_plural = "스터디그룹 과제 제출들"
-    model = StudyGroupAssignmentSubmission
+    model = AssignmentSubmission
     extra = 0
 
     def formfield_for_foreignkey(
@@ -87,7 +72,7 @@ class StudyGroupAssignmentSubmissionInline(
         if db_field.name == "assignment":
             assert request.resolver_match is not None
             studygroup_id = request.resolver_match.kwargs["object_id"]
-            kwargs["queryset"] = StudyGroupAssignmentRequest.objects.filter(
+            kwargs["queryset"] = AssignmentRequest.objects.filter(
                 studygroup_id=studygroup_id
             )
         return super().formfield_for_foreignkey(db_field, request, **kwargs)

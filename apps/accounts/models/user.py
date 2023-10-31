@@ -4,6 +4,7 @@ from django.contrib.auth.base_user import AbstractBaseUser, BaseUserManager
 from django.contrib.auth.models import AnonymousUser, PermissionsMixin
 from django.db import models
 from django.db.models import Model
+from django.utils.translation import gettext_lazy as _
 
 from apps.core.models import TimestampedModel
 
@@ -41,9 +42,9 @@ class User(AbstractBaseUser, PermissionsMixin, TimestampedModel):
     objects = UserManager()
 
     uuid = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
-    email = models.EmailField(unique=True, max_length=80)
-    username = models.CharField(max_length=10, null=False)
-    is_admin = models.BooleanField(default=False)
+    email = models.EmailField(_("email"), unique=True, max_length=80)
+    username = models.CharField(_("username"), max_length=10, null=False)
+    is_admin = models.BooleanField(_("is_admin"), default=False)
 
     def __str__(self) -> str:
         return self.email

@@ -1,12 +1,6 @@
-from dj_rest_auth.registration.serializers import SocialLoginSerializer
 from rest_framework import serializers
 
 from apps.accounts.models import User
-
-
-class JWTSerializer(serializers.Serializer):
-    access = serializers.CharField()
-    refresh = serializers.CharField()
 
 
 class ProfileSerializer(serializers.ModelSerializer[User]):
@@ -25,12 +19,3 @@ class ProfileSerializer(serializers.ModelSerializer[User]):
             "created_at": {"read_only": True},
             "updated_at": {"read_only": True},
         }
-
-
-class GoogleLoginSerializer(SocialLoginSerializer):  # type: ignore
-    code = None
-    id_token = None
-    access_token = None
-    access = serializers.CharField(
-        source="access_token", required=True, allow_blank=False
-    )

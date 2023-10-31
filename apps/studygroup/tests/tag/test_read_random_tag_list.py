@@ -8,7 +8,7 @@ from apps.studygroup.tests.factories import TagFactory
 
 class TagTestCase(APITestCase):
     def setUp(self):
-        TagFactory.create_batch(10, name=factory.Faker("word"))
+        TagFactory.create_batch(10, name=factory.Faker("uuid4"))
 
     def test_read_random_tags_default_is_3(self):
         """

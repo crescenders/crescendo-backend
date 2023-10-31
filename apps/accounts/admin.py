@@ -7,6 +7,7 @@ from django.contrib.auth.forms import ReadOnlyPasswordHashField
 from django.contrib.auth.models import Group
 from django.core.exceptions import ValidationError
 from django.db.models import QuerySet
+from django.utils.translation import gettext_lazy as _
 from rest_framework.authtoken.models import TokenProxy
 
 from apps.accounts.models import User
@@ -94,12 +95,16 @@ class UserAdmin(BaseUserAdmin):
     ordering = ["email"]
 
     @staticmethod
+    @admin.display(description=_("related social account"))
     def social_accounts(obj: User) -> str | QuerySet[User]:
-        assert hasattr(obj, "socialaccount_set")
+        socialaccount_providers = [
+            social_account.provider for social_account in obj.socialaccount_set.all()
+        ]
         return (
-            obj.socialaccount_set.all()
+            f"You have {obj.socialaccount_set.all().count()} social accounts connected."
+            f"({', '.join(socialaccount_providers)})"
             if obj.socialaccount_set.all()
-            else "연결된 소셜 계정이 없습니다."
+            else _("No social accounts are connected.")
         )
 
 
