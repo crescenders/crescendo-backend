@@ -4,6 +4,7 @@ from apps.studygroup.serializers.assignment import (
     AssignmentSubmissionCreateSerializer,
     AssignmentSubmissionDetailReadSerializer,
     AssignmentSubmissionListReadSerializer,
+    AssignmentSubmissionUpdateSerializer,
 )
 from apps.studygroup.serializers.category import CategoryReadSerializer
 from apps.studygroup.serializers.member import (
@@ -35,5 +36,6 @@ __all__ = [
     "AssignmentSubmissionListReadSerializer",
     "AssignmentSubmissionDetailReadSerializer",
     "AssignmentSubmissionCreateSerializer",
+    "AssignmentSubmissionUpdateSerializer",
     "LeaderReadSerializer",
 ]

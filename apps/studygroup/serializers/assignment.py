@@ -1,15 +1,8 @@
-from collections import OrderedDict
-from typing import Any
-
+from django.utils.translation import gettext_lazy as _
 from rest_framework import serializers
 
 from apps.accounts.serializers import ProfileSerializer
-from apps.studygroup.models import (
-    AssignmentRequest,
-    AssignmentSubmission,
-    StudyGroup,
-    StudyGroupMember,
-)
+from apps.studygroup.models import AssignmentRequest, AssignmentSubmission
 
 
 class AssignmentReadSerializer(serializers.ModelSerializer[AssignmentRequest]):
@@ -101,22 +94,51 @@ class AssignmentSubmissionCreateSerializer(
             "content",
         ]
 
-    def validate(self, attrs: OrderedDict[str, Any]) -> OrderedDict[str, Any]:
+    def validate(self, attrs: dict) -> dict:
         """
-        이미 과제를 제출한 상태인지 확인합니다.
+        하나의 과제에 대해 한 명의 유저가 여러 번 제출하는 것을 방지합니다.
         """
-        uuid = self.__dict__["_context"]["view"].kwargs["studygroup_uuid"]
-        studygroup = StudyGroup.objects.get(uuid=uuid)
-        assignment_id = self.__dict__["_context"]["view"].kwargs["assignment_id"]
-        assignment = AssignmentRequest.objects.get(id=assignment_id)
-        request_user = self.__dict__["_context"]["request"].user
-        request_member = StudyGroupMember.objects.get(
-            studygroup=studygroup, user=request_user
-        )
+        studygroup_uuid = self.context["view"].kwargs["studygroup_uuid"]
+        assignment_id = self.context["view"].kwargs["assignment_id"]
+        request_user = self.context["request"].user
+
         if AssignmentSubmission.objects.filter(
-            studygroup=studygroup, assignment=assignment, author=request_member
+            studygroup__uuid=studygroup_uuid,
+            assignment_id=assignment_id,
+            author__user=request_user,
         ).exists():
             raise serializers.ValidationError(
-                "You have already submitted this assignment."
+                _("You have already submitted this assignment.")
             )
+
         return attrs
+
+
+class AssignmentSubmissionUpdateSerializer(
+    serializers.ModelSerializer[AssignmentRequest]
+):
+    """
+    과제 제출을 수정하기 위한 serializer 입니다.
+    """
+
+    class Meta:
+        model = AssignmentSubmission
+        fields = [
+            "title",
+            "content",
+        ]
+
+
+class AssignmentSubmissionDeleteSerializer(
+    serializers.ModelSerializer[AssignmentRequest]
+):
+    """
+    과제 제출을 삭제하기 위한 serializer 입니다.
+    """
+
+    class Meta:
+        model = AssignmentSubmission
+        fields = [
+            "title",
+            "content",
+        ]
