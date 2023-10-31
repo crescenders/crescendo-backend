@@ -1,8 +1,9 @@
 from apps.studygroup.serializers.assignment import (
-    StudyGroupAssignmentCreateSerializer,
-    StudyGroupAssignmentReadSerializer,
-    StudyGroupAssignmentSubmissionCreateSerializer,
-    StudyGroupAssignmentSubmissionReadSerializer,
+    AssignmentCreateSerializer,
+    AssignmentReadSerializer,
+    AssignmentSubmissionCreateSerializer,
+    AssignmentSubmissionDetailReadSerializer,
+    AssignmentSubmissionListReadSerializer,
 )
 from apps.studygroup.serializers.category import CategoryReadSerializer
 from apps.studygroup.serializers.member import (
@@ -29,9 +30,10 @@ __all__ = [
     "StudyGroupMemberRequestReadSerializer",
     "StudyGroupMemberRequestCreateSerializer",
     "StudyGroupMemberRequestManageSerializer",
-    "StudyGroupAssignmentReadSerializer",
-    "StudyGroupAssignmentCreateSerializer",
-    "StudyGroupAssignmentSubmissionReadSerializer",
-    "StudyGroupAssignmentSubmissionCreateSerializer",
+    "AssignmentReadSerializer",
+    "AssignmentCreateSerializer",
+    "AssignmentSubmissionListReadSerializer",
+    "AssignmentSubmissionDetailReadSerializer",
+    "AssignmentSubmissionCreateSerializer",
     "LeaderReadSerializer",
 ]
