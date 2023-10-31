@@ -4,15 +4,15 @@ from rest_framework.generics import get_object_or_404
 from rest_framework.request import Request
 from rest_framework.views import APIView
 
-from apps.studygroup.models import AssignmentRequest
+from apps.studygroup.models import AssignmentSubmission
 
 
-def _get_assignment(view: APIView) -> AssignmentRequest:
-    assert view.kwargs.get("assignment_id") is not None, _(
-        f"{view.__class__.__name__} requires assignment_id argument in view"
+def _get_submission(view: APIView) -> AssignmentSubmission:
+    assert view.kwargs.get("submission_id") is not None, _(
+        f"{view.__class__.__name__} requires assignment_submission_id argument in view"
     )
-    assignment_id = view.kwargs.get("assignment_id")
-    return get_object_or_404(AssignmentRequest, id=assignment_id)
+    submission_id = view.kwargs.get("submission_id")
+    return get_object_or_404(AssignmentSubmission, id=submission_id)
 
 
 class IsAssignmentSubmissionAuthor(permissions.BasePermission):
@@ -21,8 +21,8 @@ class IsAssignmentSubmissionAuthor(permissions.BasePermission):
     """
 
     def has_permission(self, request: Request, view: APIView) -> bool:
-        assignment = _get_assignment(view)
-        return assignment.author.user == request.user
+        submission = _get_submission(view)
+        return submission.author.user == request.user
 
 
 class IsAssignmentSubmissionAuthorOrReadOnly(permissions.BasePermission):
@@ -31,8 +31,8 @@ class IsAssignmentSubmissionAuthorOrReadOnly(permissions.BasePermission):
     """
 
     def has_permission(self, request: Request, view: APIView) -> bool:
-        assignment = _get_assignment(view)
+        submission = _get_submission(view)
         return (
-            assignment.author.user == request.user
+            submission.author.user == request.user
             or request.method in permissions.SAFE_METHODS
         )
