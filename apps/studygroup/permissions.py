@@ -25,23 +25,6 @@ class StudyGroupDeleteOrUpdatePermission(permissions.BasePermission):
         return request.user in group_leaders
 
 
-class IsLeaderOrReadOnly(permissions.BasePermission):
-    """
-    스터디그룹에 대한 권한을 설정합니다.
-    - 목록 보기, 상세 보기: 누구나 가능
-    - 생성: 로그인한 사람만 가능
-    - 수정, 삭제: 스터디그룹장만 가능
-    """
-
-    def has_object_permission(
-        self, request: Request, view: APIView, obj: StudyGroup
-    ) -> bool:
-        group_leaders = [leader.user for leader in obj.leaders]
-        return (
-            request.method in permissions.SAFE_METHODS or request.user in group_leaders
-        )
-
-
 class IsLeaderOrReadOnlyForAssignment(permissions.BasePermission):
     """
     스터디그룹에 과제에 대한 권한을 설정합니다.
@@ -78,15 +61,9 @@ class IsLeaderOrReadOnlyForAssignment(permissions.BasePermission):
         return request.user in [leader.user for leader in obj.studygroup.leaders.all()]
 
 
-class IsStudyGroupMember(permissions.BasePermission):
-    """
-    스터디그룹의 멤버인지 확인하는 권한을 설정합니다.
-    - 스터디그룹의 멤버만 가능
-    """
-
-    def has_permission(self, request: Request, view: APIView) -> bool:
-        studygroup = StudyGroup.objects.get(uuid=view.kwargs["studygroup_uuid"])
-        return request.user in [member.user for member in studygroup.members.all()]
+class IsMember(permissions.BasePermission):
+    def has_object_permission(self, request, view, obj):
+        return request.user in [member.user for member in obj.studygroup.members.all()]
 
 
 class IsStudyGroupLeader(permissions.BasePermission):
