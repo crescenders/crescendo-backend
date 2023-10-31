@@ -4,15 +4,15 @@ from rest_framework.generics import get_object_or_404
 from rest_framework.request import Request
 from rest_framework.views import APIView
 
-from apps.studygroup.models import AssignmentSubmission
+from apps.studygroup.models import AssignmentRequest
 
 
-def _get_assignment(view: APIView) -> AssignmentSubmission:
+def _get_assignment(view: APIView) -> AssignmentRequest:
     assert view.kwargs.get("assignment_id") is not None, _(
         f"{view.__class__.__name__} requires assignment_id argument in view"
     )
     assignment_id = view.kwargs.get("assignment_id")
-    return get_object_or_404(AssignmentSubmission, id=assignment_id)
+    return get_object_or_404(AssignmentRequest, id=assignment_id)
 
 
 class IsAssignmentSubmissionAuthor(permissions.BasePermission):
