@@ -1,0 +1,118 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2023-11-05 11:44+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+
+#: apps/accounts/admin.py:98
+msgid "related social account"
+msgstr "연결된 소셜 계정"
+
+#: apps/accounts/admin.py:107
+msgid "No social accounts are connected."
+msgstr "연결된 소셜 계정이 없습니다."
+
+#: apps/accounts/apps.py:8 apps/accounts/models/user.py:42
+msgid "Users"
+msgstr "사용자들"
+
+#: apps/accounts/models/user.py:41
+msgid "User"
+msgstr "사용자"
+
+#: apps/accounts/models/user.py:49
+msgid "email"
+msgstr "이메일"
+
+#: apps/accounts/models/user.py:50
+msgid "username"
+msgstr "닉네임"
+
+#: apps/accounts/models/user.py:51
+msgid "is_admin"
+msgstr "관리자 여부"
+
+#: apps/studygroup/apps.py:8 apps/studygroup/models/studygroup.py:16
+msgid "StudyGroup"
+msgstr "스터디그룹"
+
+#: apps/studygroup/filters.py:171
+msgid "ascending"
+msgstr "오름차순"
+
+#: apps/studygroup/filters.py:172
+msgid "descending"
+msgstr "내림차순"
+
+#: apps/studygroup/models/assignment.py:11
+msgid "StudyGroup Assignment Request"
+msgstr "스터디 그룹 과제 요청"
+
+#: apps/studygroup/models/assignment.py:12
+msgid "StudyGroup Assignment Requests"
+msgstr "스터디 그룹 과제 요청들"
+
+#: apps/studygroup/models/assignment.py:30
+msgid "StudyGroup Assignment Submission"
+msgstr "제출한 스터디그룹 과제"
+
+#: apps/studygroup/models/assignment.py:31
+msgid "StudyGroup Assignment Submissions"
+msgstr "제출한 스터디그룹 과제들"
+
+#: apps/studygroup/models/category.py:8
+msgid "Category"
+msgstr "카테고리"
+
+#: apps/studygroup/models/category.py:9
+msgid "Categories"
+msgstr "카테고리들"
+
+#: apps/studygroup/models/studygroup.py:17
+msgid "StudyGroups"
+msgstr "스터디그룹들"
+
+#: apps/studygroup/models/tag.py:9
+msgid "Tag"
+msgstr "태그"
+
+#: apps/studygroup/models/tag.py:10
+msgid "Tags"
+msgstr "태그들"
+
+#: apps/studygroup/permission/assignment.py:12
+#, python-brace-format
+msgid ""
+"{view.__class__.__name__} requires assignment_submission_id argument in view"
+msgstr ""
+
+#: apps/studygroup/permission/studygroup.py:12
+#, python-brace-format
+msgid "{view.__class__.__name__} requires studygroup_uuid argument in view"
+msgstr ""
+
+#: apps/studygroup/serializers/assignment.py:113
+msgid "You have already submitted this assignment."
+msgstr "과제를 이미 제출했습니다."
+
+#: apps/studygroup/serializers/assignment.py:122
+msgid "You cannot submit an assignment before the activity starts."
+msgstr "스터디그룹 활동이 시작되기 전에는 과제를 제출할 수 없습니다."
+
+#: config/settings/default.py:107
+msgid "Korean"
+msgstr "한국어"
