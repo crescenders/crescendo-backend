@@ -35,7 +35,7 @@ class TagRandomListAPI(ListAPIView):
     querystring에 전달된 숫자만큼의 랜덤 태그를 반환합니다.
     """
 
-    queryset = Tag.objects.all()
+    queryset = Tag.objects.filter(studygroups__isnull=False)
     serializer_class = TagReadSerializer
     permission_classes = (AllowAny,)
 
