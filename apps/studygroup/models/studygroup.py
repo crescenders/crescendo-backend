@@ -37,7 +37,7 @@ class StudyGroup(TimestampedModel):
         """
         스터디그룹의 기본 헤더 이미지를 반환합니다.
         """
-        return f"https://picsum.photos/seed/{self.uuid}/210/150"
+        return f"https://picsum.photos/seed/{self.uuid}/1080"
 
     @cached_property
     def approved_members(self) -> QuerySet[StudyGroupMember]:
