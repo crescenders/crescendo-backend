@@ -5,6 +5,7 @@ from django.db import models
 from django.db.models import QuerySet
 from django.utils.datetime_safe import date
 from django.utils.functional import cached_property
+from django.utils.translation import gettext_lazy as _
 
 from apps.core.models import TimestampedModel
 from apps.studygroup.models.member import StudyGroupMember
@@ -12,8 +13,8 @@ from apps.studygroup.models.member import StudyGroupMember
 
 class StudyGroup(TimestampedModel):
     class Meta:
-        verbose_name = "StudyGroup"
-        verbose_name_plural = "StudyGroups"
+        verbose_name = _("StudyGroup")
+        verbose_name_plural = _("StudyGroups")
         ordering = ["-pk"]
 
     uuid = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
