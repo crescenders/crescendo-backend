@@ -37,6 +37,10 @@ class UserManager(BaseUserManager["User"]):
 
 
 class User(AbstractBaseUser, PermissionsMixin, TimestampedModel):
+    class Meta:
+        verbose_name = _("User")
+        verbose_name_plural = _("Users")
+
     USERNAME_FIELD = "email"
     REQUIRED_FIELDS = ["username"]
     objects = UserManager()
