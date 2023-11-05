@@ -1,4 +1,5 @@
 from django.db import models
+from django.utils.translation import gettext_lazy as _
 
 from apps.core.models import TimestampedModel
 from apps.studygroup.models.member import StudyGroupMember
@@ -7,8 +8,8 @@ from apps.studygroup.models.studygroup import StudyGroup
 
 class AssignmentRequest(TimestampedModel):
     class Meta:
-        verbose_name = "StudyGroup Assignment Request"
-        verbose_name_plural = "StudyGroup Assignment Requests"
+        verbose_name = _("StudyGroup Assignment Request")
+        verbose_name_plural = _("StudyGroup Assignment Requests")
         ordering = ["-created_at"]
 
     studygroup = models.ForeignKey(
@@ -26,8 +27,8 @@ class AssignmentRequest(TimestampedModel):
 
 class AssignmentSubmission(TimestampedModel):
     class Meta:
-        verbose_name = "StudyGroup Assignment Submission"
-        verbose_name_plural = "StudyGroup Assignment Submissions"
+        verbose_name = _("StudyGroup Assignment Submission")
+        verbose_name_plural = _("StudyGroup Assignment Submissions")
         constraints = [
             models.UniqueConstraint(
                 fields=["author", "assignment"], name="unique_assignment_submission"
