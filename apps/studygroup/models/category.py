@@ -1,11 +1,12 @@
 from django.db import models
 from django.utils.functional import cached_property
+from django.utils.translation import gettext_lazy as _
 
 
 class Category(models.Model):
     class Meta:
-        verbose_name = "Category"
-        verbose_name_plural = "Categories"
+        verbose_name = _("Category")
+        verbose_name_plural = _("Categories")
 
     name = models.CharField(max_length=20, unique=True)
 
