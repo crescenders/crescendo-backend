@@ -3,6 +3,7 @@ from datetime import timedelta
 from pathlib import Path
 
 import django_stubs_ext
+from django.utils.translation import gettext_lazy as _
 from rest_framework import fields
 from rest_framework.settings import api_settings
 
@@ -101,6 +102,12 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 
 LANGUAGE_CODE = "ko-KR"
+
+LANGUAGES = [
+    ("ko", _("Korean")),
+]
+
+LOCALE_PATHS = (os.path.join(BASE_DIR, "locale"),)
 
 TIME_ZONE = "Asia/Seoul"
 

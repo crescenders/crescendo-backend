@@ -1,3 +1,4 @@
+from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 from rest_framework import serializers
 
@@ -96,7 +97,8 @@ class AssignmentSubmissionCreateSerializer(
 
     def validate(self, attrs: dict) -> dict:
         """
-        하나의 과제에 대해 한 명의 유저가 여러 번 제출하는 것을 방지합니다.
+        1. 하나의 과제에 대해 한 명의 유저가 여러 번 제출하는 것을 방지합니다.
+        2. 스터디그룹의 활동일이 시작되기 전, 과제를 제출하는 것을 방지합니다.
         """
         studygroup_uuid = self.context["view"].kwargs["studygroup_uuid"]
         assignment_id = self.context["view"].kwargs["assignment_id"]
@@ -109,6 +111,15 @@ class AssignmentSubmissionCreateSerializer(
         ).exists():
             raise serializers.ValidationError(
                 _("You have already submitted this assignment.")
+            )
+
+        if not AssignmentRequest.objects.filter(
+            studygroup__uuid=studygroup_uuid,
+            id=assignment_id,
+            studygroup__start_date__lte=timezone.now(),
+        ).exists():
+            raise serializers.ValidationError(
+                _("You cannot submit an assignment before the activity starts.")
             )
 
         return attrs

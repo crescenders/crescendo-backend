@@ -210,6 +210,7 @@ class AssignmentSubmissionAPISet(viewsets.ModelViewSet):
         "create": AssignmentSubmissionCreateSerializer,
         "retrieve": AssignmentSubmissionDetailReadSerializer,
         "update": AssignmentSubmissionUpdateSerializer,
+        "partial_update": AssignmentSubmissionUpdateSerializer,
     }
     pagination_class = StudyGroupAssignmentPagination
 
