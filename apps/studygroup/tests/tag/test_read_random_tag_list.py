@@ -3,12 +3,17 @@ from rest_framework import status
 from rest_framework.reverse import reverse
 from rest_framework.test import APITestCase
 
-from apps.studygroup.tests.factories import TagFactory
+from apps.studygroup.tests.factories import (
+    OpenedByDeadlineStudyGroupFactory,
+    TagFactory,
+)
 
 
 class TagTestCase(APITestCase):
     def setUp(self):
-        TagFactory.create_batch(10, name=factory.Faker("uuid4"))
+        associated_studygroup = OpenedByDeadlineStudyGroupFactory()
+        for tag in TagFactory.create_batch(10, name=factory.Faker("uuid4")):
+            associated_studygroup.tags.add(tag)
 
     def test_read_random_tags_default_is_3(self):
         """
