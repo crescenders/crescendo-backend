@@ -6,7 +6,7 @@ from django_filters.rest_framework import DjangoFilterBackend
 from drf_spectacular.utils import extend_schema
 from rest_framework import viewsets
 from rest_framework.parsers import FormParser, MultiPartParser
-from rest_framework.permissions import AllowAny, BasePermission
+from rest_framework.permissions import AllowAny, BasePermission, IsAuthenticated
 from rest_framework.request import Request
 from rest_framework.response import Response
 from rest_framework.serializers import BaseSerializer
@@ -15,10 +15,7 @@ from apps.accounts.models import User
 from apps.studygroup.filters import StudyGroupListFilter, StudyGroupOrderingFilter
 from apps.studygroup.models import StudyGroup, StudyGroupMember
 from apps.studygroup.pagination import StudyGroupPagination
-from apps.studygroup.permissions import (
-    StudyGroupCreatePermission,
-    StudyGroupDeleteOrUpdatePermission,
-)
+from apps.studygroup.permissions import StudyGroupDeleteOrUpdatePermission
 from apps.studygroup.serializers import (
     StudyGroupDetailSerializer,
     StudyGroupListSerializer,
@@ -50,7 +47,7 @@ class StudyGroupAPISet(viewsets.ModelViewSet):
         스터디그룹을 생성할 때, 스터디그룹장이 되는 유저는 스터디그룹장 권한을 가지고 있어야 합니다.
         """
         if self.action == "create":
-            return [permission() for permission in [StudyGroupCreatePermission]]
+            return [permission() for permission in [IsAuthenticated]]
         elif self.action in ["update", "partial_update", "destroy"]:
             return [permission() for permission in [StudyGroupDeleteOrUpdatePermission]]
         return super().get_permissions()

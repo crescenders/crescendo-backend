@@ -5,12 +5,6 @@ from rest_framework.views import APIView
 from apps.studygroup.models import StudyGroup, StudyGroupMember
 
 
-class StudyGroupCreatePermission(permissions.IsAuthenticated):
-    """
-    스터디그룹을 생성할 수 있는 권한을 설정합니다.
-    """
-
-
 class StudyGroupDeleteOrUpdatePermission(permissions.BasePermission):
     """
     스터디그룹을 삭제하거나 수정할 수 있는 권한을 설정합니다.
