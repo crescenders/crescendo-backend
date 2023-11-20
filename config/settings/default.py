@@ -173,8 +173,8 @@ SIMPLE_JWT = {
     "USER_ID_FIELD": "uuid",
     "USER_ID_CLAIM": "user_uuid",
 }
-
 SPECTACULAR_SETTINGS = {
+    "SERVE_PERMISSIONS": ["rest_framework.permissions.IsAdminUser"],
     "SCHEMA_PATH_PREFIX": "/api/v[0-9]",
     "TITLE": "Crescendo backend server API 문서",
     "DESCRIPTION": "백엔드 서버 API 문서입니다. >_<",
