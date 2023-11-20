@@ -26,7 +26,6 @@ from apps.studygroup.serializers import (
 @extend_schema(tags=["스터디그룹 가입요청 관리 API"])
 class StudyGroupMemberRequestListAPI(generics.ListCreateAPIView):
     permission_classes = (AllowAny,)
-    serializer_class = StudyGroupMemberRequestCreateSerializer
     queryset = StudyGroupMemberRequest.objects.all()
     serializer_classes = {
         "GET": StudyGroupMemberRequestReadSerializer,
