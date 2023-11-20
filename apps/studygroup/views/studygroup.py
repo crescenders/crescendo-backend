@@ -41,6 +41,7 @@ class StudyGroupAPISet(viewsets.ModelViewSet):
     }
     parser_classes = (MultiPartParser, FormParser)
     lookup_field = "uuid"
+    lookup_url_kwarg = "studygroup_uuid"
     permission_classes = (AllowAny,)
     filter_backends = (
         DjangoFilterBackend,
