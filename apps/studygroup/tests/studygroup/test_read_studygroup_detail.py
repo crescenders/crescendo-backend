@@ -98,7 +98,9 @@ class BaseStudyGroupTestCase(APITestCase):
         default_storage.delete(self.react_study.head_image.name)
 
     def test_read_detail_format_without_head_image(self):
-        url = reverse("studygroup-detail", kwargs={"uuid": self.django_study.uuid})
+        url = reverse(
+            "studygroup-detail", kwargs={"studygroup_uuid": self.django_study.uuid}
+        )
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200, f"response: {response.data}")
         # response.data 의 키들을 확인한다.
@@ -118,7 +120,9 @@ class BaseStudyGroupTestCase(APITestCase):
         )
 
     def test_read_detail_format_with_head_image(self):
-        url = reverse("studygroup-detail", kwargs={"uuid": self.react_study.uuid})
+        url = reverse(
+            "studygroup-detail", kwargs={"studygroup_uuid": self.react_study.uuid}
+        )
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200, f"response: {response.data}")
         # response.data 의 키들을 확인한다.
