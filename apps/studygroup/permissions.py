@@ -5,19 +5,6 @@ from rest_framework.views import APIView
 from apps.studygroup.models import StudyGroup, StudyGroupMember
 
 
-class StudyGroupDeleteOrUpdatePermission(permissions.BasePermission):
-    """
-    스터디그룹을 삭제하거나 수정할 수 있는 권한을 설정합니다.
-    - 스터디그룹의 리더만 가능
-    """
-
-    def has_object_permission(
-        self, request: Request, view: APIView, obj: StudyGroup
-    ) -> bool:
-        group_leaders = [leader.user for leader in obj.leaders]
-        return request.user in group_leaders
-
-
 class IsStudyGroupLeader(permissions.BasePermission):
     """
     스터디그룹의 멤버 신청자를 조회할 수 있는 권한을 설정합니다.

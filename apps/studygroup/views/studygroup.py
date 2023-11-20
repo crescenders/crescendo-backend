@@ -15,7 +15,7 @@ from apps.accounts.models import User
 from apps.studygroup.filters import StudyGroupListFilter, StudyGroupOrderingFilter
 from apps.studygroup.models import StudyGroup, StudyGroupMember
 from apps.studygroup.pagination import StudyGroupPagination
-from apps.studygroup.permissions import StudyGroupDeleteOrUpdatePermission
+from apps.studygroup.permission.studygroup import IsStudygroupLeader
 from apps.studygroup.serializers import (
     StudyGroupDetailSerializer,
     StudyGroupListSerializer,
@@ -35,9 +35,9 @@ class StudyGroupAPISet(viewsets.ModelViewSet):
         "list": [AllowAny],
         "create": [IsAuthenticated],
         "retrieve": [AllowAny],
-        "update": [StudyGroupDeleteOrUpdatePermission],
-        "partial_update": [StudyGroupDeleteOrUpdatePermission],
-        "destroy": [StudyGroupDeleteOrUpdatePermission],
+        "update": [IsStudygroupLeader],
+        "partial_update": [IsStudygroupLeader],
+        "destroy": [IsStudygroupLeader],
     }
     parser_classes = (MultiPartParser, FormParser)
     lookup_field = "uuid"

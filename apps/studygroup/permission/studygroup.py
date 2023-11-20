@@ -45,4 +45,7 @@ class IsStudygroupLeader(permissions.BasePermission):
 
     def has_permission(self, request: Request, view: APIView) -> bool:
         studygroup = _get_studygroup(view)
-        return studygroup.leaders.filter(user=request.user).exists()
+        return (
+            request.user.is_authenticated
+            and studygroup.leaders.filter(user=request.user).exists()
+        )
