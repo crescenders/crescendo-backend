@@ -31,6 +31,14 @@ class StudyGroupAPISet(viewsets.ModelViewSet):
         "retrieve": StudyGroupDetailSerializer,
         "update": StudyGroupDetailSerializer,
     }
+    permission_classes_mapping = {
+        "list": [AllowAny],
+        "create": [IsAuthenticated],
+        "retrieve": [AllowAny],
+        "update": [StudyGroupDeleteOrUpdatePermission],
+        "partial_update": [StudyGroupDeleteOrUpdatePermission],
+        "destroy": [StudyGroupDeleteOrUpdatePermission],
+    }
     parser_classes = (MultiPartParser, FormParser)
     lookup_field = "uuid"
     permission_classes = (AllowAny,)
@@ -46,11 +54,10 @@ class StudyGroupAPISet(viewsets.ModelViewSet):
         """
         스터디그룹을 생성할 때, 스터디그룹장이 되는 유저는 스터디그룹장 권한을 가지고 있어야 합니다.
         """
-        if self.action == "create":
-            return [permission() for permission in [IsAuthenticated]]
-        elif self.action in ["update", "partial_update", "destroy"]:
-            return [permission() for permission in [StudyGroupDeleteOrUpdatePermission]]
-        return super().get_permissions()
+        return [
+            permission()
+            for permission in self.permission_classes_mapping.get(self.action, [])
+        ]
 
     def get_queryset(self) -> QuerySet[StudyGroup]:
         queryset = StudyGroup.objects.all()
