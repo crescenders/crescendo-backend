@@ -4,17 +4,14 @@ from django.db import transaction
 from django.db.models import QuerySet
 from drf_spectacular.utils import extend_schema
 from rest_framework import generics, mixins
-from rest_framework.permissions import AllowAny, BasePermission, IsAuthenticated
+from rest_framework.permissions import BasePermission, IsAuthenticated
 from rest_framework.request import Request
 from rest_framework.response import Response
 from rest_framework.serializers import BaseSerializer
 
 from apps.studygroup.models import StudyGroup, StudyGroupMember, StudyGroupMemberRequest
-from apps.studygroup.permissions import (
-    IsStudyGroupLeader,
-    StudyGroupAddMember,
-    StudyGroupMemberRead,
-)
+from apps.studygroup.permission.studygroup import IsStudygroupLeader
+from apps.studygroup.permissions import StudyGroupAddMember, StudyGroupMemberRead
 from apps.studygroup.serializers import (
     StudyGroupMemberReadSerializer,
     StudyGroupMemberRequestCreateSerializer,
@@ -25,19 +22,23 @@ from apps.studygroup.serializers import (
 
 @extend_schema(tags=["스터디그룹 가입요청 관리 API"])
 class StudyGroupMemberRequestListAPI(generics.ListCreateAPIView):
-    permission_classes = (AllowAny,)
     queryset = StudyGroupMemberRequest.objects.all()
     serializer_classes = {
         "GET": StudyGroupMemberRequestReadSerializer,
         "POST": StudyGroupMemberRequestCreateSerializer,
     }
+    permission_classes_mapping = {
+        "GET": [IsStudygroupLeader],
+        "POST": [IsAuthenticated],
+    }
 
     def get_permissions(self) -> Sequence[BasePermission]:
-        if self.request.method == "GET":
-            return [permission() for permission in [IsStudyGroupLeader]]
-        elif self.request.method == "POST":
-            return [permission() for permission in [IsAuthenticated]]
-        return super().get_permissions()
+        return [
+            permission()
+            for permission in self.permission_classes_mapping.get(
+                self.request.method, []
+            )
+        ]
 
     def get_queryset(self) -> QuerySet[StudyGroupMemberRequest]:
         return self.queryset.filter(
@@ -73,7 +74,7 @@ class StudyGroupMemberRequestDetailAPI(
     mixins.DestroyModelMixin, mixins.CreateModelMixin, generics.GenericAPIView
 ):
     queryset = StudyGroupMemberRequest.objects.all()
-    permission_classes = (IsStudyGroupLeader,)
+    permission_classes = (IsStudygroupLeader,)
     serializer_class = StudyGroupMemberRequestManageSerializer
 
     @extend_schema(
