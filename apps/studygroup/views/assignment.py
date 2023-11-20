@@ -193,7 +193,6 @@ class AssignmentSubmissionAPISet(viewsets.ModelViewSet):
 
     lookup_url_kwarg = "submission_id"
     queryset = AssignmentSubmission.objects.all()
-    serializer_class = AssignmentSubmissionListReadSerializer
     permission_classes_mapping = {
         "list": [IsStudygroupMember],
         "create": [IsStudygroupMember],
@@ -211,6 +210,7 @@ class AssignmentSubmissionAPISet(viewsets.ModelViewSet):
         "retrieve": AssignmentSubmissionDetailReadSerializer,
         "update": AssignmentSubmissionUpdateSerializer,
         "partial_update": AssignmentSubmissionUpdateSerializer,
+        "destroy": AssignmentSubmissionDetailReadSerializer,
     }
     pagination_class = StudyGroupAssignmentPagination
 
