@@ -147,6 +147,7 @@ JAZZMIN_SETTINGS = {
 # DRF settings #
 ################
 REST_FRAMEWORK = {
+    "DEFAULT_RENDERER_CLASSES": ("rest_framework.renderers.JSONRenderer",),
     "DEFAULT_AUTHENTICATION_CLASSES": (
         "dj_rest_auth.jwt_auth.JWTAuthentication",
         "rest_framework.authentication.SessionAuthentication",
