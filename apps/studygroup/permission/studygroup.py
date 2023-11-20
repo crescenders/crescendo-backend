@@ -22,7 +22,10 @@ class IsStudygroupMember(permissions.BasePermission):
 
     def has_permission(self, request: Request, view: APIView) -> bool:
         studygroup = _get_studygroup(view)
-        return studygroup.members.filter(user=request.user).exists()
+        return (
+            request.user.is_authenticated
+            and studygroup.members.filter(user=request.user).exists()
+        )
 
 
 class IsStudygroupMemberOrReadOnly(permissions.BasePermission):
@@ -33,7 +36,8 @@ class IsStudygroupMemberOrReadOnly(permissions.BasePermission):
     def has_permission(self, request: Request, view: APIView) -> bool:
         studygroup = _get_studygroup(view)
         return (
-            studygroup.members.filter(user=request.user).exists()
+            request.user.is_authenticated
+            and studygroup.members.filter(user=request.user).exists()
             or request.method in permissions.SAFE_METHODS
         )
 
