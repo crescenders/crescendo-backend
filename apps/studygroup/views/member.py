@@ -10,7 +10,10 @@ from rest_framework.response import Response
 from rest_framework.serializers import BaseSerializer
 
 from apps.studygroup.models import StudyGroup, StudyGroupMember, StudyGroupMemberRequest
-from apps.studygroup.permission.studygroup import IsStudygroupLeader, IsStudygroupMember
+from apps.studygroup.permissions.studygroup import (
+    IsStudygroupLeader,
+    IsStudygroupMember,
+)
 from apps.studygroup.serializers import (
     StudyGroupMemberReadSerializer,
     StudyGroupMemberRequestCreateSerializer,

@@ -15,7 +15,7 @@ from apps.accounts.models import User
 from apps.studygroup.filters import StudyGroupListFilter, StudyGroupOrderingFilter
 from apps.studygroup.models import StudyGroup, StudyGroupMember
 from apps.studygroup.pagination import StudyGroupPagination
-from apps.studygroup.permission.studygroup import IsStudygroupLeader
+from apps.studygroup.permissions.studygroup import IsStudygroupLeader
 from apps.studygroup.serializers import (
     StudyGroupDetailSerializer,
     StudyGroupListSerializer,

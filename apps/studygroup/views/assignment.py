@@ -12,8 +12,11 @@ from apps.studygroup.models import (
     StudyGroupMember,
 )
 from apps.studygroup.pagination import StudyGroupAssignmentPagination
-from apps.studygroup.permission.assignment import IsAssignmentSubmissionAuthor
-from apps.studygroup.permission.studygroup import IsStudygroupLeader, IsStudygroupMember
+from apps.studygroup.permissions.assignment import IsAssignmentSubmissionAuthor
+from apps.studygroup.permissions.studygroup import (
+    IsStudygroupLeader,
+    IsStudygroupMember,
+)
 from apps.studygroup.serializers import (
     AssignmentCreateSerializer,
     AssignmentReadSerializer,
