@@ -11,7 +11,6 @@ from rest_framework.serializers import BaseSerializer
 
 from apps.studygroup.models import StudyGroup, StudyGroupMember, StudyGroupMemberRequest
 from apps.studygroup.permission.studygroup import IsStudygroupLeader, IsStudygroupMember
-from apps.studygroup.permissions import StudyGroupAddMember
 from apps.studygroup.serializers import (
     StudyGroupMemberReadSerializer,
     StudyGroupMemberRequestCreateSerializer,
@@ -146,7 +145,7 @@ class StudyGroupMemberListAPI(generics.ListAPIView):
 @extend_schema(tags=["스터디그룹 멤버 관리 API"])
 class StudyGroupMemberDetailAPI(generics.DestroyAPIView):
     serializer_class = StudyGroupMemberReadSerializer
-    permission_classes = (StudyGroupAddMember,)
+    permission_classes = (IsStudygroupLeader,)
 
     def get_queryset(self) -> QuerySet[StudyGroupMember]:
         assert self.kwargs.get("studygroup_uuid") is not None
