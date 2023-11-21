@@ -10,8 +10,8 @@ from rest_framework.response import Response
 from rest_framework.serializers import BaseSerializer
 
 from apps.studygroup.models import StudyGroup, StudyGroupMember, StudyGroupMemberRequest
-from apps.studygroup.permission.studygroup import IsStudygroupLeader
-from apps.studygroup.permissions import StudyGroupAddMember, StudyGroupMemberRead
+from apps.studygroup.permission.studygroup import IsStudygroupLeader, IsStudygroupMember
+from apps.studygroup.permissions import StudyGroupAddMember
 from apps.studygroup.serializers import (
     StudyGroupMemberReadSerializer,
     StudyGroupMemberRequestCreateSerializer,
@@ -125,9 +125,7 @@ class StudyGroupMemberRequestDetailAPI(
 
 @extend_schema(tags=["스터디그룹 멤버 관리 API"])
 class StudyGroupMemberListAPI(generics.ListAPIView):
-    permission_classes = (
-        StudyGroupMemberRead,
-    )  # 스터디그룹 멤버 조회는 스터디그룹의 가입된 멤버만 조회 가능합니다.
+    permission_classes = (IsStudygroupMember,)  # 스터디그룹 멤버 조회는 스터디그룹의 가입된 멤버만 조회 가능합니다.
     queryset = StudyGroupMember.objects.all()
     serializer_class = StudyGroupMemberReadSerializer
 

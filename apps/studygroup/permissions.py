@@ -5,28 +5,6 @@ from rest_framework.views import APIView
 from apps.studygroup.models import StudyGroup, StudyGroupMember
 
 
-class IsStudyGroupLeader(permissions.BasePermission):
-    """
-    스터디그룹의 멤버 신청자를 조회할 수 있는 권한을 설정합니다.
-    - 스터디그룹의 리더만 가능
-    """
-
-    def has_permission(self, request: Request, view: APIView) -> bool:
-        studygroup = StudyGroup.objects.get(uuid=view.kwargs["studygroup_uuid"])
-        return request.user in [leader.user for leader in studygroup.leaders.all()]
-
-
-class StudyGroupMemberRead(permissions.BasePermission):
-    """
-    스터디그룹의 멤버를 조회할 수 있는 권한을 설정합니다.
-    - 스터디그룹에 참여하고 있는 멤버만 가능
-    """
-
-    def has_permission(self, request: Request, view: APIView) -> bool:
-        studygroup = StudyGroup.objects.get(uuid=view.kwargs["studygroup_uuid"])
-        return request.user in [member.user for member in studygroup.members.all()]
-
-
 class StudyGroupAddMember(permissions.BasePermission):
     """
     스터디그룹에 멤버를 추가할 수 있는 권한을 설정합니다.
