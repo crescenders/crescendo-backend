@@ -147,6 +147,7 @@ JAZZMIN_SETTINGS = {
 # DRF settings #
 ################
 REST_FRAMEWORK = {
+    "DEFAULT_RENDERER_CLASSES": ("rest_framework.renderers.JSONRenderer",),
     "DEFAULT_AUTHENTICATION_CLASSES": (
         "dj_rest_auth.jwt_auth.JWTAuthentication",
         "rest_framework.authentication.SessionAuthentication",
@@ -172,8 +173,8 @@ SIMPLE_JWT = {
     "USER_ID_FIELD": "uuid",
     "USER_ID_CLAIM": "user_uuid",
 }
-
 SPECTACULAR_SETTINGS = {
+    "SERVE_PERMISSIONS": ["rest_framework.permissions.IsAdminUser"],
     "SCHEMA_PATH_PREFIX": "/api/v[0-9]",
     "TITLE": "Crescendo backend server API 문서",
     "DESCRIPTION": "백엔드 서버 API 문서입니다. >_<",

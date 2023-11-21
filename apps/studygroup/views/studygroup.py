@@ -6,7 +6,7 @@ from django_filters.rest_framework import DjangoFilterBackend
 from drf_spectacular.utils import extend_schema
 from rest_framework import viewsets
 from rest_framework.parsers import FormParser, MultiPartParser
-from rest_framework.permissions import AllowAny, BasePermission
+from rest_framework.permissions import AllowAny, BasePermission, IsAuthenticated
 from rest_framework.request import Request
 from rest_framework.response import Response
 from rest_framework.serializers import BaseSerializer
@@ -15,10 +15,7 @@ from apps.accounts.models import User
 from apps.studygroup.filters import StudyGroupListFilter, StudyGroupOrderingFilter
 from apps.studygroup.models import StudyGroup, StudyGroupMember
 from apps.studygroup.pagination import StudyGroupPagination
-from apps.studygroup.permissions import (
-    StudyGroupCreatePermission,
-    StudyGroupDeleteOrUpdatePermission,
-)
+from apps.studygroup.permissions.studygroup import IsStudygroupLeader
 from apps.studygroup.serializers import (
     StudyGroupDetailSerializer,
     StudyGroupListSerializer,
@@ -34,8 +31,17 @@ class StudyGroupAPISet(viewsets.ModelViewSet):
         "retrieve": StudyGroupDetailSerializer,
         "update": StudyGroupDetailSerializer,
     }
+    permission_classes_mapping = {
+        "list": [AllowAny],
+        "create": [IsAuthenticated],
+        "retrieve": [AllowAny],
+        "update": [IsStudygroupLeader],
+        "partial_update": [IsStudygroupLeader],
+        "destroy": [IsStudygroupLeader],
+    }
     parser_classes = (MultiPartParser, FormParser)
     lookup_field = "uuid"
+    lookup_url_kwarg = "studygroup_uuid"
     permission_classes = (AllowAny,)
     filter_backends = (
         DjangoFilterBackend,
@@ -49,11 +55,10 @@ class StudyGroupAPISet(viewsets.ModelViewSet):
         """
         스터디그룹을 생성할 때, 스터디그룹장이 되는 유저는 스터디그룹장 권한을 가지고 있어야 합니다.
         """
-        if self.action == "create":
-            return [permission() for permission in [StudyGroupCreatePermission]]
-        elif self.action in ["update", "partial_update", "destroy"]:
-            return [permission() for permission in [StudyGroupDeleteOrUpdatePermission]]
-        return super().get_permissions()
+        return [
+            permission()
+            for permission in self.permission_classes_mapping.get(self.action, [])
+        ]
 
     def get_queryset(self) -> QuerySet[StudyGroup]:
         queryset = StudyGroup.objects.all()

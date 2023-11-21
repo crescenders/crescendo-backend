@@ -12,8 +12,11 @@ from apps.studygroup.models import (
     StudyGroupMember,
 )
 from apps.studygroup.pagination import StudyGroupAssignmentPagination
-from apps.studygroup.permission.assignment import IsAssignmentSubmissionAuthor
-from apps.studygroup.permission.studygroup import IsStudygroupLeader, IsStudygroupMember
+from apps.studygroup.permissions.assignment import IsAssignmentSubmissionAuthor
+from apps.studygroup.permissions.studygroup import (
+    IsStudygroupLeader,
+    IsStudygroupMember,
+)
 from apps.studygroup.serializers import (
     AssignmentCreateSerializer,
     AssignmentReadSerializer,
@@ -193,7 +196,6 @@ class AssignmentSubmissionAPISet(viewsets.ModelViewSet):
 
     lookup_url_kwarg = "submission_id"
     queryset = AssignmentSubmission.objects.all()
-    serializer_class = AssignmentSubmissionListReadSerializer
     permission_classes_mapping = {
         "list": [IsStudygroupMember],
         "create": [IsStudygroupMember],
@@ -211,6 +213,7 @@ class AssignmentSubmissionAPISet(viewsets.ModelViewSet):
         "retrieve": AssignmentSubmissionDetailReadSerializer,
         "update": AssignmentSubmissionUpdateSerializer,
         "partial_update": AssignmentSubmissionUpdateSerializer,
+        "destroy": AssignmentSubmissionDetailReadSerializer,
     }
     pagination_class = StudyGroupAssignmentPagination
 
