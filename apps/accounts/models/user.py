@@ -47,7 +47,7 @@ class User(AbstractBaseUser, PermissionsMixin, TimestampedModel):
 
     uuid = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
     email = models.EmailField(_("email"), unique=True, max_length=80)
-    username = models.CharField(_("username"), max_length=10, null=False)
+    username = models.CharField(_("username"), max_length=64, null=False)
     is_admin = models.BooleanField(_("is_admin"), default=False)
 
     def __str__(self) -> str:
