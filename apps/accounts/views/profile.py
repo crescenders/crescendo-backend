@@ -51,7 +51,7 @@ class MyProfileAPI(generics.RetrieveUpdateDestroyAPIView):
 @extend_schema(
     tags=["사용자 정보 API"],
 )
-class MyStudyAPI(mixins.ListModelMixin, generics.GenericAPIView):
+class MyStudyAPI(mixins.ListModelMixin, generics.GenericAPIView[StudyGroup]):
     """
     로그인한 사용자와 관련된 스터디 그룹을 조회합니다.
     """
@@ -73,7 +73,7 @@ class MyStudyAPI(mixins.ListModelMixin, generics.GenericAPIView):
 @extend_schema(
     tags=["사용자 정보 API"],
 )
-class UUIDProfileAPI(generics.RetrieveAPIView):
+class UUIDProfileAPI(generics.RetrieveAPIView[User]):
     """
     UUID를 이용하여 사용자의 정보를 조회합니다.
     """

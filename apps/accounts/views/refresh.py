@@ -8,7 +8,7 @@ from rest_framework.response import Response
 from rest_framework_simplejwt.views import TokenRefreshView as _TokenRefreshView
 
 
-class TokenRefreshAPI(_TokenRefreshView):  # type: ignore
+class TokenRefreshAPI(_TokenRefreshView):
     """
     클라이언트가 가지고 있는 refresh token 을 이용하여 새로운 access token 을 발급합니다.
     """
@@ -21,4 +21,4 @@ class TokenRefreshAPI(_TokenRefreshView):  # type: ignore
         },
     )
     def post(self, request: Request, *args: Any, **kwargs: Any) -> Response:
-        return super().post(request, *args, **kwargs)  # type: ignore
+        return super().post(request, *args, **kwargs)
