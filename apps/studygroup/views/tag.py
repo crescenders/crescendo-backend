@@ -44,9 +44,21 @@ class TagRandomListAPI(ListAPIView):
         return self.queryset.order_by("?")[:random_count]
 
     def list(self, request: Request, *args: Any, **kwargs: Any) -> Response:
-        random_count = int(request.query_params.get("random_count", 3))
+        self._validate_random_count(
+            random_count=request.query_params.get("random_count", 3)
+        )
+        return super().list(request, *args, **kwargs)
+
+    @staticmethod
+    def _validate_random_count(random_count: int) -> int:
+        try:
+            random_count = int(random_count)
+        except ValueError:
+            raise ValidationError(detail={"random_count": "숫자만 입력할 수 있습니다."})
+
         if random_count < 1 or random_count > 10:
             raise ValidationError(
                 detail={"random_count": "최소 1개, 최대 10개의 태그만 랜덤으로 조회할 수 있습니다."}
             )
-        return super().list(request, *args, **kwargs)
+
+        return random_count
