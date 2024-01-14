@@ -4,10 +4,10 @@ from pathlib import Path
 
 import django_stubs_ext
 from django.utils.translation import gettext_lazy as _
-from rest_framework import fields, generics
+from rest_framework import fields
 from rest_framework.settings import api_settings
 
-django_stubs_ext.monkeypatch(extra_classes=(fields.Field, generics.GenericAPIView))
+django_stubs_ext.monkeypatch(extra_classes=(fields.Field,))
 
 ###################
 # Django settings #
@@ -190,5 +190,3 @@ SOCIALACCOUNT_PROVIDERS = {
         },
     }
 }
-
-api_settings.reload()
