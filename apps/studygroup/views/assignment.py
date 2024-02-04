@@ -159,10 +159,10 @@ class AssignmentRequestAPISet(viewsets.ModelViewSet):
         멤버인지 확인합니다.
         """
         studygroup_uuid = self.kwargs.get("studygroup_uuid")
-        studygroup = StudyGroup.objects.get(uuid=studygroup_uuid)
-        users = [member.user for member in studygroup.members.all()]
-        if request.user in users:
-            return True
+        if request.user.is_authenticated:
+            return StudyGroupMember.objects.filter(
+                studygroup__uuid=studygroup_uuid, user=request.user
+            ).exists()
         return False
 
     @staticmethod
