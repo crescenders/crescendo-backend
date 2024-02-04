@@ -28,3 +28,26 @@ REST_FRAMEWORK["DEFAULT_RENDERER_CLASSES"] = [
     "rest_framework.renderers.JSONRenderer",
     "rest_framework.renderers.BrowsableAPIRenderer",
 ]
+
+if os.environ.get("ECHO_SQL", False):
+    LOGGING = {
+        "version": 1,
+        "filters": {
+            "require_debug_true": {
+                "()": "django.utils.log.RequireDebugTrue",
+            }
+        },
+        "handlers": {
+            "console": {
+                "level": "DEBUG",
+                "filters": ["require_debug_true"],
+                "class": "logging.StreamHandler",
+            }
+        },
+        "loggers": {
+            "django.db.backends": {
+                "level": "DEBUG",
+                "handlers": ["console"],
+            }
+        },
+    }
