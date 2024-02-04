@@ -1,6 +1,7 @@
 from django.db.models import QuerySet
 from drf_spectacular.utils import OpenApiParameter, extend_schema
 from rest_framework import viewsets
+from rest_framework.exceptions import ValidationError
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 from rest_framework.serializers import BaseSerializer
@@ -97,7 +98,7 @@ class AssignmentRequestAPISet(viewsets.ModelViewSet):
         - 멤버인 사람은 과제의 제목, 내용을 조회할 수 있습니다.
         """
         queryset = self.filter_queryset(self.get_queryset())
-        truncate = int(request.query_params.get("truncate", 20))
+        truncate = self._validate_truncate(request.query_params.get("truncate", 20))
 
         page = self.paginate_queryset(queryset)
         if self._check_user_is_member(request):
@@ -159,10 +160,10 @@ class AssignmentRequestAPISet(viewsets.ModelViewSet):
         멤버인지 확인합니다.
         """
         studygroup_uuid = self.kwargs.get("studygroup_uuid")
-        studygroup = StudyGroup.objects.get(uuid=studygroup_uuid)
-        users = [member.user for member in studygroup.members.all()]
-        if request.user in users:
-            return True
+        if request.user.is_authenticated:
+            return StudyGroupMember.objects.filter(
+                studygroup__uuid=studygroup_uuid, user=request.user
+            ).exists()
         return False
 
     @staticmethod
@@ -173,6 +174,23 @@ class AssignmentRequestAPISet(viewsets.ModelViewSet):
         if len(content) > truncate:
             return content[:truncate] + "..."
         return content[:truncate]
+
+    @staticmethod
+    def _validate_truncate(truncate: int) -> int:
+        """
+        truncate를 검증합니다.
+        """
+        try:
+            truncate = int(truncate)
+        except ValueError:
+            raise ValidationError(detail={"truncate": "숫자만 입력할 수 있습니다."})
+
+        if truncate < 0 or truncate > 150:
+            raise ValidationError(
+                detail={"truncate": "최소 0자, 최대 150자만큼의 내용을 조회할 수 있습니다."}
+            )
+
+        return truncate
 
     @staticmethod
     def _get_empty_content(content: str) -> str:

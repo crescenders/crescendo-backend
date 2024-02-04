@@ -7,6 +7,7 @@ from factory.django import DjangoModelFactory
 
 from apps.accounts.models import User
 from apps.studygroup.models import (
+    AssignmentRequest,
     Category,
     StudyGroup,
     StudyGroupMember,
@@ -131,3 +132,16 @@ class ClosedByDeadlineStudyGroupFactory(DjangoModelFactory):
         + relativedelta.relativedelta(days=random.randrange(1, 30))
     )
     members = factory.RelatedFactory(StudyGroupLeaderMemberFactory, "studygroup")
+
+
+class AssignmentRequestFactory(DjangoModelFactory):
+    """
+    스터디그룹 과제 요청을 생성합니다.
+    """
+
+    class Meta:
+        model = AssignmentRequest
+
+    studygroup = factory.SubFactory(OpenedByDeadlineStudyGroupFactory)
+    title = factory.Faker("text")
+    content = factory.Faker("text")
