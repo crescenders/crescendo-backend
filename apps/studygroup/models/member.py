@@ -19,7 +19,7 @@ class StudyGroupMemberRequest(models.Model):
         "StudyGroup", on_delete=models.CASCADE, related_name="requests"
     )
     created_at = models.DateTimeField(auto_now_add=True)  # 신청 시간
-    request_message = models.CharField(max_length=200, blank=False)
+    request_message = models.CharField(max_length=500, blank=False)
     processed = models.BooleanField(default=False)  # 최종 처리 여부
     is_approved = models.BooleanField(default=False)  # 승인 여부
 
