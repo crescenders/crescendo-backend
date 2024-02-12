@@ -42,7 +42,7 @@ class AssignmentRequestAPISet(viewsets.ModelViewSet):
     """
 
     lookup_url_kwarg = "assignment_id"
-    queryset = AssignmentRequest.objects.all()
+    queryset = AssignmentRequest.objects.all().prefetch_related("author__user")
     permission_classes_mapping = {
         "list": [AllowAny],
         "create": [IsStudygroupLeader],
